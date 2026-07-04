@@ -711,14 +711,14 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     </div>
     <!-- SUPPLIERS -->
     <div class="module" id="mod-suppliers">
-      <div class="section-hdr"><div><h3>Supplier & Vendor Directory</h3><p>Hotels, transport, guides, activities</p></div><button class="btn btn-primary" onclick="openSupModal()">+ Add Supplier</button></div>
+      <div class="section-hdr"><div><h3>Supplier & Vendor Directory</h3><p>Hotels, transport, guides, activities, insurance</p></div><button class="btn btn-primary" onclick="openSupModal()">+ Add Supplier</button></div>
       <!-- Excel-style filter toolbar -->
       <div class="xf-toolbar">
         <label>Category
           <select id="supCat" onchange="renderSuppliers();this.classList.toggle('xf-active',!!this.value)">
             <option value="">All</option><option>Hotel</option><option>Homestay</option><option>Camp</option>
             <option>Transport</option><option>Guide</option><option>Activity</option>
-            <option>Attraction</option><option>F&B</option><option>Agri</option>
+            <option>Attraction</option><option>F&B</option><option>Agri</option><option>Insurance</option>
           </select>
         </label>
         <label>Status
@@ -1197,7 +1197,6 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
             <input type="text" id="ins-search" placeholder="🔍 Search guest name or policy no…" style="flex:1;min-width:180px;max-width:280px" oninput="renderInsurance()">
             <select id="ins-filter-provider" onchange="renderInsurance()">
               <option value="">All Providers</option>
-              <option>New India Assurance</option><option>HDFC Ergo</option><option>Bajaj Allianz</option><option>Star Health</option><option>Oriental Insurance</option><option>TATA AIG</option><option>ICICI Lombard</option><option>United India</option><option>Other</option>
             </select>
             <select id="ins-filter-status" onchange="renderInsurance()">
               <option value="">All Status</option><option>Active</option><option>Expired</option><option>Claimed</option><option>Cancelled</option>
@@ -1795,7 +1794,7 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group"><label>Supplier Name *</label><input id="s-name" placeholder="e.g. Nilgiri Nest Resort"></div>
-        <div class="form-group"><label>Category *</label><select id="s-cat" onchange="toggleSupHotelFields()"><option>Hotel</option><option>Homestay</option><option>Camp</option><option>Transport</option><option>Guide</option><option>Activity</option><option>Attraction</option><option>F&B</option><option>Agri</option></select></div>
+        <div class="form-group"><label>Category *</label><select id="s-cat" onchange="toggleSupHotelFields()"><option>Hotel</option><option>Homestay</option><option>Camp</option><option>Transport</option><option>Guide</option><option>Activity</option><option>Attraction</option><option>F&B</option><option>Agri</option><option>Insurance</option></select></div>
         <div class="form-group"><label>Contact Person</label><input id="s-contact" placeholder="Name"></div>
         <div class="form-group"><label>Phone</label><input id="s-phone" placeholder="Phone number"></div>
         <div class="form-group form-full"><label>Email</label><input id="s-email" placeholder="email@supplier.com"></div>
@@ -2490,8 +2489,7 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         <div class="form-group"><label>Linked Booking *</label><select id="ins-booking"><option value="">— Select Booking —</option></select></div>
         <div class="form-group"><label>Guest Name *</label><input id="ins-guest" placeholder="Insured guest full name"></div>
         <div class="form-group"><label>Insurance Provider *</label><select id="ins-provider">
-          <option value="">— Select —</option>
-          <option>New India Assurance</option><option>HDFC Ergo</option><option>Bajaj Allianz</option><option>Star Health</option><option>Oriental Insurance</option><option>TATA AIG</option><option>ICICI Lombard</option><option>United India</option><option>Other</option>
+          <option value="">— Select Provider —</option>
         </select></div>
         <div class="form-group"><label>Policy No. *</label><input id="ins-policy-no" placeholder="Policy / certificate number"></div>
         <div class="form-group"><label>Insurance Type</label><select id="ins-type">
@@ -8470,9 +8468,25 @@ function insTab(t,el){
   document.getElementById('ins-tab-claims').style.display=t==='claims'?'block':'none';
 }
 
+/* ─── INSURANCE PROVIDER HELPER ──────────────────────────────────── */
+const _INS_DEFAULTS=['New India Assurance','HDFC Ergo','Bajaj Allianz','Star Health','Oriental Insurance','TATA AIG','ICICI Lombard','United India','Other'];
+function _getInsuranceProviders(){
+  const dbProviders=DB.get('suppliers').filter(s=>s.category==='Insurance'&&s.name).map(s=>s.name);
+  return dbProviders.length?dbProviders:_INS_DEFAULTS;
+}
+function _populateInsProviderSel(selId,selectedVal){
+  const sel=document.getElementById(selId);if(!sel)return;
+  const providers=_getInsuranceProviders();
+  const first=selId==='ins-provider'?'<option value="">— Select Provider —</option>':'<option value="">All Providers</option>';
+  sel.innerHTML=first+providers.map(p=>`<option${p===selectedVal?' selected':''}>${p}</option>`).join('');
+}
+/* ────────────────────────────────────────────────────────────────── */
 function renderInsurance(){
   const policies=DB.get('insurance');
   const claims=DB.get('claims');
+  // Refresh provider filter from DB
+  const curProvF=document.getElementById('ins-filter-provider')?.value||'';
+  _populateInsProviderSel('ins-filter-provider',curProvF);
   // KPIs
   const active=policies.filter(p=>p.status==='Active').length;
   const totalPrem=policies.reduce((s,p)=>s+(+p.premium||0),0);
@@ -8542,7 +8556,8 @@ function openInsuranceModal(id){
   const bSel=document.getElementById('ins-booking');
   bSel.innerHTML=`<option value="">— Optional —</option>`+DB.get('bookings').map(b=>`<option value="${b.id}"${p?.bookingId===b.id?' selected':''}>${b.id} — ${b.customerName}</option>`).join('');
   document.getElementById('ins-guest').value=p?.guestName||'';
-  document.getElementById('ins-provider').value=p?.provider||'';
+  // Populate provider dropdown from Insurance suppliers in Masters (or fallback defaults)
+  _populateInsProviderSel('ins-provider',p?.provider||'');
   document.getElementById('ins-policy-no').value=p?.policyNo||'';
   document.getElementById('ins-type').value=p?.type||'Individual Travel';
   document.getElementById('ins-premium').value=p?.premium||'';
