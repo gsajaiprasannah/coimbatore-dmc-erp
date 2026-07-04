@@ -28,8 +28,6 @@ pool.query(`
   .catch(e  => console.error('DB init error:', e.message));
 
 // ── Auth middleware ───────────────────────────────────────────
-// The HTML sends the API key in the "apikey" header (Supabase format)
-// and also as "Authorization: Bearer <key>".
 const API_KEY = process.env.API_KEY;
 function auth(req, res, next) {
   const key = req.headers['apikey']
@@ -41,8 +39,6 @@ function auth(req, res, next) {
 }
 
 // ── Serve the HTML app ────────────────────────────────────────
-// Inject the Render URL and API key into the HTML at request time
-// so credentials never live in the source file.
 app.get('/', (req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'index.html');
   if (!fs.existsSync(htmlPath)) {
@@ -57,15 +53,9 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
-// All other static files (if any) served normally
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Supabase-compatible REST endpoints ────────────────────────
-// The app calls:
-//   GET  /rest/v1/app_data?select=key,value
-//   POST /rest/v1/app_data   (with Prefer: resolution=merge-duplicates)
-
-// GET — load all data on page start
 app.get('/rest/v1/app_data', auth, async (req, res) => {
   try {
     const result = await pool.query('SELECT key, value FROM app_data ORDER BY key');
@@ -76,7 +66,6 @@ app.get('/rest/v1/app_data', auth, async (req, res) => {
   }
 });
 
-// POST — upsert a single key (called on every DB.set())
 app.post('/rest/v1/app_data', auth, async (req, res) => {
   const { key, value } = req.body;
   if (!key) return res.status(400).json({ error: 'key is required' });
@@ -96,7 +85,38 @@ app.post('/rest/v1/app_data', auth, async (req, res) => {
   }
 });
 
-// Health check — Render pings this to keep the service warm
+// ── Claude AI Proxy ───────────────────────────────────────────
+// Forwards requests to Anthropic API — keeps API key server-side.
+app.options('/api/claude', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.sendStatus(200);
+});
+
+app.post('/api/claude', async (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set on server' });
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (e) {
+    console.error('Claude proxy error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 
 // ── Start ─────────────────────────────────────────────────────
