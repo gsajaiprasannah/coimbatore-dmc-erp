@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9399,106 +9399,155 @@ function _mailGetAll(){return DB.get('mail_messages')||[];}
 function _mailSave(msgs){DB.set('mail_messages',msgs.slice(0,500));}
 
 // ═══════════════════════════════════════════════════════════════════
-// GMAIL API INTEGRATION — Google Identity Services (OAuth2)
+// GMAIL API INTEGRATION — Multi-Account (Apple Mail Style)
 // ═══════════════════════════════════════════════════════════════════
-// ▶ STEP 1: Paste your Google Client ID here (from Google Cloud Console)
-//   Go to: console.cloud.google.com → APIs & Services → Credentials
-//   Create OAuth2 Client ID (Web App) → authorised origin: http://localhost:8080
 const GMAIL_CLIENT_ID = '1026772528936-qh26upsi6ds0f884fnckscs152s8kih7.apps.googleusercontent.com';
 const GMAIL_SCOPES = 'https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/userinfo.email';
+const _GMAIL_COLORS = ['#4285F4','#0F9D58','#F4B400','#DB4437','#AB47BC','#00ACC1','#FF7043','#43A047'];
 
-let _gToken = null;          // current access token
-let _gEmail = null;          // connected Gmail address
-let _gTokenClient = null;    // GIS token client instance
-let _gMsgCache = [];         // cached Gmail message metadata
-let _gLoading = false;       // loading guard
-let _gCurrentGmailMsg = null;// full Gmail message currently open
+// Multi-account state
+let _gmailAccounts = [];       // [{email, token, tokenClient, msgCache, color}]
+let _gmailActiveEmail = 'all'; // 'all' or specific email
+let _gCurrentGmailMsg = null;  // {accEmail, msgId, msgObj}
 
-// Initialise Google Identity Services (called on login)
 function gmailInit() {
-  // file:// protocol doesn't support OAuth — must use http://localhost
-  if (location.protocol === 'file:') { return; }
+  if (location.protocol === 'file:') return;
   if (!window.google || !window.google.accounts) { setTimeout(gmailInit, 700); return; }
-  if (GMAIL_CLIENT_ID.includes('PASTE_YOUR')) { return; }
+  if (GMAIL_CLIENT_ID.includes('PASTE_YOUR')) return;
   try {
-    _gTokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GMAIL_CLIENT_ID,
-      scope: GMAIL_SCOPES,
-      callback: async (resp) => {
-        if (resp.error) { toast('Gmail auth failed: ' + resp.error, 'error'); return; }
-        _gToken = resp.access_token;
-        // Silent refresh 55 min from now (tokens expire in 60 min)
-        setTimeout(() => { if (_gTokenClient) _gTokenClient.requestAccessToken({ prompt: '' }); }, 55 * 60 * 1000);
-        try {
-          const prof = await _gFetch('/users/me/profile');
-          _gEmail = prof.emailAddress;
-          localStorage.setItem('gmail_email', _gEmail);
-          _gmailUpdateSidebarUI(true);
-          toast('✅ Connected to ' + _gEmail, 'success');
-          if (_mailCurrentBox) gmailLoadBox(_mailCurrentBox);
-        } catch (e) { toast('Gmail: could not load profile', 'error'); }
+    // Restore saved accounts
+    const saved = JSON.parse(localStorage.getItem('gmail_accounts') || '[]');
+    saved.forEach(email => {
+      if (!_gmailAccounts.find(a => a.email === email)) {
+        const color = _GMAIL_COLORS[_gmailAccounts.length % _GMAIL_COLORS.length];
+        const acc = { email, token: null, tokenClient: null, msgCache: [], color };
+        acc.tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GMAIL_CLIENT_ID, scope: GMAIL_SCOPES, hint: email,
+          callback: resp => _gmailHandleToken(acc, resp)
+        });
+        _gmailAccounts.push(acc);
       }
     });
-    // Restore remembered email label (token still needs re-auth on page load)
-    const saved = localStorage.getItem('gmail_email');
-    if (saved) { _gEmail = saved; _gmailUpdateSidebarUI(true); }
-  } catch (e) { console.warn('Gmail init error:', e); }
+    _gmailUpdateSidebarUI();
+  } catch(e) { console.warn('Gmail init error:', e); }
 }
 
-function gmailSignIn() {
-  if (location.protocol === 'file:') {
-    toast('⚠️ Gmail needs a web server. In Terminal run:  python3 -m http.server 8080  then open http://localhost:8080/Coimbatore_DMC_ERP.html', 'error', 7000);
-    return;
+function _gmailHandleToken(acc, resp) {
+  if (resp.error) { toast('Gmail auth failed: ' + resp.error, 'error'); return; }
+  acc.token = resp.access_token;
+  setTimeout(() => { if (acc.tokenClient) acc.tokenClient.requestAccessToken({ prompt: '' }); }, 55 * 60 * 1000);
+  _gFetchFor(acc, '/users/me/profile').then(prof => {
+    const email = prof.emailAddress;
+    // Handle new account (email not yet set)
+    if (!acc.email) {
+      if (_gmailAccounts.find(a => a !== acc && a.email === email)) {
+        _gmailAccounts = _gmailAccounts.filter(a => a !== acc);
+        toast('Account already connected: ' + email, 'error'); _gmailUpdateSidebarUI(); return;
+      }
+      acc.email = email;
+    }
+    _gmailSaveAccounts(); _gmailUpdateSidebarUI();
+    toast('✅ Connected: ' + acc.email, 'success');
+    gmailLoadBox(_mailCurrentBox);
+  }).catch(() => toast('Gmail: could not load profile', 'error'));
+}
+
+function gmailAddAccount() {
+  if (location.protocol === 'file:') { toast('⚠️ Gmail needs a web server', 'error', 5000); return; }
+  if (GMAIL_CLIENT_ID.includes('PASTE_YOUR')) { toast('⚠️ Configure Client ID first', 'error', 5000); return; }
+  if (!window.google?.accounts) { toast('Google API still loading', 'error'); return; }
+  const color = _GMAIL_COLORS[_gmailAccounts.length % _GMAIL_COLORS.length];
+  const acc = { email: null, token: null, tokenClient: null, msgCache: [], color };
+  _gmailAccounts.push(acc);
+  acc.tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GMAIL_CLIENT_ID, scope: GMAIL_SCOPES,
+    callback: resp => _gmailHandleToken(acc, resp)
+  });
+  acc.tokenClient.requestAccessToken({ prompt: 'select_account consent' });
+}
+
+function gmailRemoveAccount(email) {
+  if (!confirm('Remove ' + email + ' from Mail?')) return;
+  const acc = _gmailAccounts.find(a => a.email === email);
+  if (acc?.token) { try { google.accounts.oauth2.revoke(acc.token); } catch(e) {} }
+  _gmailAccounts = _gmailAccounts.filter(a => a.email !== email);
+  _gmailSaveAccounts();
+  if (_gmailActiveEmail === email) _gmailActiveEmail = 'all';
+  _gmailUpdateSidebarUI(); _mailCurrentMsg = null; gmailRenderMergedList();
+  toast(email + ' removed');
+}
+
+function gmailReconnectAccount(email) {
+  const acc = _gmailAccounts.find(a => a.email === email);
+  if (!acc || !acc.tokenClient) return;
+  acc.tokenClient.requestAccessToken({ prompt: '' });
+}
+
+function _gmailSaveAccounts() {
+  localStorage.setItem('gmail_accounts', JSON.stringify(_gmailAccounts.filter(a => a.email).map(a => a.email)));
+}
+
+function gmailSetActiveAccount(email) {
+  _gmailActiveEmail = email; _mailCurrentMsg = null;
+  _gmailUpdateSidebarUI(); gmailLoadBox(_mailCurrentBox);
+}
+
+function _gmailUpdateSidebarUI() {
+  const accsEl = document.getElementById('gmail-accounts-list');
+  const allRow = document.getElementById('gmail-all-inboxes-row');
+  if (allRow) allRow.style.background = _gmailActiveEmail === 'all' ? 'rgba(255,255,255,.18)' : 'transparent';
+  if (!accsEl) return;
+  const accounts = _gmailAccounts.filter(a => a.email);
+  if (!accounts.length) {
+    accsEl.innerHTML = '<div style="font-size:10.5px;color:#666;text-align:center;padding:8px 4px">No accounts — click + Add</div>';
+    // Update compose From selector
+    _gmailUpdateFromSelect(); return;
   }
-  if (GMAIL_CLIENT_ID.includes('PASTE_YOUR')) {
-    toast('⚠️ Add your Google Client ID in the GMAIL_CLIENT_ID constant (search for PASTE_YOUR in the file)', 'error', 5000);
-    return;
+  accsEl.innerHTML = accounts.map(acc => {
+    const isActive = _gmailActiveEmail === acc.email;
+    const isConnected = !!acc.token;
+    const initials = (acc.email[0] || '?').toUpperCase();
+    return `<div onclick="gmailSetActiveAccount('${acc.email}')" style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;margin-bottom:2px;background:${isActive ? 'rgba(255,255,255,.18)' : 'transparent'};transition:.15s">
+      <div style="width:26px;height:26px;border-radius:50%;background:${acc.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;color:${isConnected ? '#e0e0e0' : '#888'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${acc.email}">${acc.email}</div>
+        <div style="font-size:9.5px;color:${isConnected ? '#4ade80' : '#f87171'};cursor:${isConnected ? 'default' : 'pointer'}" onclick="event.stopPropagation();${isConnected ? '' : 'gmailReconnectAccount(\'' + acc.email + '\')'}">${isConnected ? '● Connected' : '○ Tap to reconnect'}</div>
+      </div>
+      <button onclick="event.stopPropagation();gmailRemoveAccount('${acc.email}')" style="background:none;border:none;color:#555;cursor:pointer;font-size:12px;padding:2px 4px;border-radius:3px;line-height:1" title="Remove account">✕</button>
+    </div>`;
+  }).join('');
+  _gmailUpdateFromSelect();
+}
+
+function _gmailUpdateFromSelect() {
+  const sel = document.getElementById('mail-from-gmail');
+  const row = document.getElementById('mail-from-gmail-row');
+  if (!sel) return;
+  const accounts = _gmailAccounts.filter(a => a.email && a.token);
+  if (!accounts.length) {
+    sel.innerHTML = '<option value="">No Gmail accounts connected</option>';
+    if (row) row.style.display = 'none'; return;
   }
-  if (!_gTokenClient) { toast('Google API still loading — wait a moment and try again', 'error'); return; }
-  _gTokenClient.requestAccessToken({ prompt: _gToken ? '' : 'consent' });
+  sel.innerHTML = '<option value="">— From Gmail account —</option>' +
+    accounts.map(a => `<option value="${a.email}" style="background:#fff">${a.email}</option>`).join('');
+  if (row) row.style.display = 'flex';
+  // Pre-select active account if specific
+  if (_gmailActiveEmail !== 'all') sel.value = _gmailActiveEmail;
+  else if (accounts.length === 1) sel.value = accounts[0].email;
 }
 
-function gmailSignOut() {
-  if (_gToken) { try { google.accounts.oauth2.revoke(_gToken); } catch (e) {} }
-  _gToken = null; _gEmail = null; _gMsgCache = []; _gCurrentGmailMsg = null;
-  localStorage.removeItem('gmail_email');
-  _gmailUpdateSidebarUI(false);
-  toast('Gmail disconnected');
-  _mailCurrentMsg = null;
-  mailRefreshList();
-  const toolbar = document.getElementById('mail-preview-toolbar');
-  const prev = document.getElementById('mail-preview-body');
-  if (toolbar) toolbar.style.display = 'none';
-  if (prev) prev.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#aaa;text-align:center"><div style="font-size:48px;margin-bottom:12px;opacity:.3">✉️</div><div style="font-size:14px;font-weight:500">No message selected</div></div>';
-}
-
-function _gmailUpdateSidebarUI(connected) {
-  const btn = document.getElementById('gmail-connect-btn');
-  const info = document.getElementById('gmail-connected-info');
-  const lbl = document.getElementById('gmail-email-label');
-  if (!btn || !info) return;
-  btn.style.display = connected ? 'none' : 'flex';
-  info.style.display = connected ? 'block' : 'none';
-  if (lbl && _gEmail) lbl.textContent = '✓ ' + _gEmail;
-}
-
-// Low-level authenticated fetch to Gmail API
-async function _gFetch(path, opts = {}) {
-  if (!_gToken) throw new Error('Not signed in to Gmail');
+// Authenticated fetch for a specific account
+async function _gFetchFor(acc, path, opts = {}) {
+  if (!acc.token) throw new Error('Not signed in: ' + (acc.email || 'unknown'));
   const url = path.startsWith('http') ? path : 'https://gmail.googleapis.com/gmail/v1' + path;
   const resp = await fetch(url, {
     ...opts,
-    headers: {
-      'Authorization': 'Bearer ' + _gToken,
-      'Content-Type': 'application/json',
-      ...(opts.headers || {})
-    }
+    headers: { 'Authorization': 'Bearer ' + acc.token, 'Content-Type': 'application/json', ...(opts.headers || {}) }
   });
   if (resp.status === 401) {
-    _gToken = null;
-    // Try silent refresh
-    if (_gTokenClient) _gTokenClient.requestAccessToken({ prompt: '' });
-    throw new Error('Gmail session expired — reconnecting…');
+    acc.token = null; _gmailUpdateSidebarUI();
+    if (acc.tokenClient) acc.tokenClient.requestAccessToken({ prompt: '' });
+    throw new Error('Session expired for ' + acc.email + ' — reconnecting…');
   }
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
@@ -9507,55 +9556,53 @@ async function _gFetch(path, opts = {}) {
   return resp.json();
 }
 
-// Load Gmail mailbox and populate the message list
+// Load Gmail messages from all connected accounts (or one)
 async function gmailLoadBox(box) {
-  if (!_gToken || _gLoading) return;
-  _gLoading = true;
+  const accs = (_gmailActiveEmail === 'all'
+    ? _gmailAccounts.filter(a => a.email && a.token)
+    : _gmailAccounts.filter(a => a.email === _gmailActiveEmail && a.token));
   const listEl = document.getElementById('mail-msg-list');
-  if (listEl) listEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:50px;flex-direction:column;gap:12px"><div class="gmail-spinner"></div><div style="font-size:12px;color:#888">Loading Gmail…</div></div>';
-  const queryMap = {
-    inbox: 'in:inbox',
-    sent: 'in:sent',
-    drafts: 'in:drafts',
-    flagged: 'is:starred',
-    trash: 'in:trash',
-    archive: '-in:inbox -in:sent -in:drafts -in:trash -in:spam'
-  };
-  const q = queryMap[box] || 'in:inbox';
-  try {
-    const data = await _gFetch('/users/me/messages?maxResults=50&q=' + encodeURIComponent(q));
-    const ids = data.messages || [];
-    if (!ids.length) { _gMsgCache = []; gmailRenderList([]); _gLoading = false; return; }
-    // Fetch metadata in batches of 10
-    const meta = [];
-    for (let i = 0; i < ids.length; i += 10) {
-      const batch = ids.slice(i, i + 10);
-      const results = await Promise.all(
-        batch.map(m => _gFetch('/users/me/messages/' + m.id + '?format=metadata&metadataHeaders=Subject,From,To,Date'))
-      );
-      meta.push(...results);
-    }
-    _gMsgCache = meta;
-    gmailRenderList(_gMsgCache);
-  } catch (e) {
-    if (listEl) listEl.innerHTML = '<div style="padding:30px;color:#e74c3c;font-size:12px;text-align:center;line-height:1.6">Failed to load Gmail:<br><b>' + _gEsc(e.message) + '</b></div>';
+  if (!accs.length) {
+    if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:50px 16px;color:#aaa"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-size:13px">No Gmail accounts connected</div><div style="font-size:11px;margin-top:6px;color:#bbb">Click + Add in the sidebar</div></div>';
+    return;
   }
-  _gLoading = false;
+  if (listEl) listEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:50px;flex-direction:column;gap:12px"><div class="gmail-spinner"></div><div style="font-size:12px;color:#888">Loading Gmail…</div></div>';
+  const queryMap = { inbox:'in:inbox', sent:'in:sent', drafts:'in:drafts', flagged:'is:starred', trash:'in:trash', archive:'-in:inbox -in:sent -in:drafts -in:trash -in:spam' };
+  const q = queryMap[box] || 'in:inbox';
+  await Promise.allSettled(accs.map(async acc => {
+    try {
+      const data = await _gFetchFor(acc, '/users/me/messages?maxResults=30&q=' + encodeURIComponent(q));
+      const ids = data.messages || [];
+      if (!ids.length) { acc.msgCache = []; return; }
+      const meta = [];
+      for (let i = 0; i < ids.length; i += 10) {
+        const batch = ids.slice(i, i + 10);
+        const r = await Promise.all(batch.map(m => _gFetchFor(acc, '/users/me/messages/' + m.id + '?format=metadata&metadataHeaders=Subject,From,To,Date')));
+        meta.push(...r);
+      }
+      meta.forEach(m => { m._accEmail = acc.email; m._accColor = acc.color; });
+      acc.msgCache = meta;
+    } catch(e) { acc.msgCache = []; }
+  }));
+  gmailRenderMergedList();
 }
 
-// Render the message list from cached Gmail metadata
-function gmailRenderList(msgs) {
+// Render merged list from all account caches
+function gmailRenderMergedList(msgs) {
+  if (!msgs) {
+    const accs = _gmailActiveEmail === 'all'
+      ? _gmailAccounts.filter(a => a.email)
+      : _gmailAccounts.filter(a => a.email === _gmailActiveEmail);
+    msgs = accs.flatMap(a => a.msgCache || []);
+  }
   const listEl = document.getElementById('mail-msg-list');
   if (!listEl) return;
   const q = (document.getElementById('mail-search')?.value || '').toLowerCase();
   let filtered = msgs;
-  if (q) {
-    filtered = msgs.filter(m => {
-      const gh = n => (m.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
-      return (gh('from') + ' ' + gh('subject') + ' ' + (m.snippet || '')).toLowerCase().includes(q);
-    });
-  }
-  // Sort by internalDate
+  if (q) filtered = msgs.filter(m => {
+    const gh = n => (m.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
+    return (gh('from') + ' ' + gh('subject') + ' ' + (m.snippet || '')).toLowerCase().includes(q);
+  });
   filtered = [...filtered].sort((a, b) => _mailSortAsc
     ? parseInt(a.internalDate) - parseInt(b.internalDate)
     : parseInt(b.internalDate) - parseInt(a.internalDate));
@@ -9564,6 +9611,7 @@ function gmailRenderList(msgs) {
     return;
   }
   const now = new Date();
+  const multiAcc = _gmailAccounts.filter(a => a.email).length > 1 && _gmailActiveEmail === 'all';
   listEl.innerHTML = filtered.map(m => {
     const gh = n => (m.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
     const isUnread = (m.labelIds || []).includes('UNREAD');
@@ -9578,10 +9626,12 @@ function gmailRenderList(msgs) {
       else if (now - d < 7 * 864e5) dateStr = d.toLocaleDateString('en-IN', { weekday: 'short' });
       else dateStr = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
     }
-    const msgId = 'gmail:' + m.id;
+    const safeEmail = (m._accEmail || '').replace(/'/g, "\\'")
+    const msgId = 'gmail:' + safeEmail + ':' + m.id;
+    const dot = multiAcc ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${m._accColor||'#4285F4'};margin-right:5px;flex-shrink:0;vertical-align:middle"></span>` : '';
     return `<div class="mail-msg-row${isUnread ? ' unread' : ''}${_mailCurrentMsg === msgId ? ' active' : ''}" onclick="mailOpenMsg('${msgId}')">
       <div class="mail-msg-meta">
-        <div class="mail-msg-sender" style="font-weight:${isUnread ? '700' : '500'}">${_gEsc(fromName)}${isStarred ? '<span class="mail-msg-flag" style="margin-left:4px">⭐</span>' : ''}</div>
+        <div class="mail-msg-sender" style="font-weight:${isUnread ? '700' : '500'};display:flex;align-items:center">${dot}${_gEsc(fromName)}${isStarred ? '<span style="margin-left:5px">⭐</span>' : ''}</div>
         <div class="mail-msg-date">${dateStr}</div>
       </div>
       <div class="mail-msg-subject" style="font-weight:${isUnread ? '600' : '400'}">${_gEsc(subj)}</div>
@@ -9590,21 +9640,26 @@ function gmailRenderList(msgs) {
   }).join('');
 }
 
+// Compatibility alias for old single-account render calls
+function gmailRenderList(msgs) { gmailRenderMergedList(msgs); }
+
 // HTML-escape helper for Gmail content
 function _gEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-// Open a Gmail message (full fetch)
-async function gmailOpenMsg(gmailMsgId) {
-  _mailCurrentMsg = 'gmail:' + gmailMsgId;
+// Open a Gmail message (accEmail + msgId)
+async function gmailOpenMsg(accEmail, msgId) {
+  const compositeId = 'gmail:' + accEmail + ':' + msgId;
+  _mailCurrentMsg = compositeId;
+  const acc = _gmailAccounts.find(a => a.email === accEmail);
   const prev = document.getElementById('mail-preview-body');
   const toolbar = document.getElementById('mail-preview-toolbar');
   if (prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:80px;flex-direction:column;gap:14px"><div class="gmail-spinner" style="width:28px;height:28px;border-width:3px"></div><div style="font-size:12px;color:#888">Loading message…</div></div>';
   if (toolbar) toolbar.style.display = 'none';
+  if (!acc) { if (prev) prev.innerHTML = '<div style="padding:30px;color:#e74c3c;text-align:center">Account not found</div>'; return; }
   try {
-    const msg = await _gFetch('/users/me/messages/' + gmailMsgId + '?format=full');
-    _gCurrentGmailMsg = msg;
+    const msg = await _gFetchFor(acc, '/users/me/messages/' + msgId + '?format=full');
+    _gCurrentGmailMsg = { ...msg, _accEmail: accEmail, _accColor: acc.color };
     const gh = n => (msg.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
-    // Recursive MIME body extraction
     let htmlBody = '', textBody = '';
     function _extractMime(part) {
       if (!part) return;
@@ -9620,26 +9675,21 @@ async function gmailOpenMsg(gmailMsgId) {
     }
     _extractMime(msg.payload);
     const body = htmlBody || (textBody ? '<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7;color:#333">' + _gEsc(textBody) + '</pre>' : '<em style="color:#aaa">(empty message)</em>');
-    // Mark as read
     if ((msg.labelIds || []).includes('UNREAD')) {
-      _gFetch('/users/me/messages/' + gmailMsgId + '/modify', {
-        method: 'POST', body: JSON.stringify({ removeLabelIds: ['UNREAD'] })
-      });
-      const cached = _gMsgCache.find(m => m.id === gmailMsgId);
-      if (cached && cached.labelIds) cached.labelIds = cached.labelIds.filter(l => l !== 'UNREAD');
+      _gFetchFor(acc, '/users/me/messages/' + msgId + '/modify', { method: 'POST', body: JSON.stringify({ removeLabelIds: ['UNREAD'] }) });
+      const cached = (acc.msgCache || []).find(m => m.id === msgId);
+      if (cached?.labelIds) cached.labelIds = cached.labelIds.filter(l => l !== 'UNREAD');
     }
     const from = gh('from'), to = gh('to'), subj = gh('subject'), cc = gh('cc');
     const fromName = from.replace(/<[^>]+>/, '').trim() || from;
     const fromEmail = (from.match(/<(.+?)>/) || [])[1] || from;
-    const d = msg.internalDate
-      ? new Date(parseInt(msg.internalDate)).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-      : '—';
+    const d = msg.internalDate ? new Date(parseInt(msg.internalDate)).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
     const isStarred = (msg.labelIds || []).includes('STARRED');
     if (prev) prev.innerHTML = `
       <div style="padding-bottom:16px;border-bottom:1px solid #f0f0f0;margin-bottom:18px">
         <div style="font-size:19px;font-weight:700;color:#111;margin-bottom:14px;line-height:1.3">${_gEsc(subj || '(no subject)')}</div>
         <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
-          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#0F9D58);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0;text-transform:uppercase">${(fromName[0] || '?')}</div>
+          <div style="width:40px;height:40px;border-radius:50%;background:${acc.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0;text-transform:uppercase">${(fromName[0] || '?')}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:700;color:#222">${_gEsc(fromName)}</div>
             <div style="font-size:11px;color:#888;margin-top:1px">${_gEsc(fromEmail ? '<' + fromEmail + '>' : '')}</div>
@@ -9647,19 +9697,17 @@ async function gmailOpenMsg(gmailMsgId) {
           </div>
           <div style="text-align:right;flex-shrink:0">
             <div style="font-size:11px;color:#888">${d}</div>
-            <span style="margin-top:6px;display:inline-block;background:#4285F420;color:#4285F4;border:1px solid #4285F440;border-radius:12px;font-size:10px;font-weight:700;padding:2px 9px">Gmail</span>
+            <span style="margin-top:4px;display:inline-block;background:${acc.color}22;color:${acc.color};border:1px solid ${acc.color}44;border-radius:12px;font-size:10px;font-weight:700;padding:2px 9px">${_gEsc(accEmail)}</span>
           </div>
         </div>
       </div>
       <div style="font-size:13px;line-height:1.85;color:#333;flex:1;overflow:auto">${body}</div>`;
     if (toolbar) toolbar.style.display = 'flex';
-    // Update toolbar buttons
     const flagBtn = document.getElementById('mail-flag-btn');
     const readBtn = document.getElementById('mail-read-btn');
     if (flagBtn) flagBtn.textContent = isStarred ? '⭐ Unstar' : '⭐ Star';
     if (readBtn) readBtn.textContent = '✉️ Mark Unread';
-    // Refresh list to update unread dot
-    gmailRenderList(_gMsgCache);
+    gmailRenderMergedList();
   } catch (e) {
     if (prev) prev.innerHTML = '<div style="padding:30px;color:#e74c3c;font-size:12px;text-align:center">Failed to load: ' + _gEsc(e.message) + '</div>';
   }
@@ -9667,118 +9715,120 @@ async function gmailOpenMsg(gmailMsgId) {
 
 // Reply / Reply All / Forward for Gmail messages
 function gmailReply(mode) {
-  const msg = _gCurrentGmailMsg;
-  if (!msg) return;
-  const gh = n => (msg.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
+  const msgObj = _gCurrentGmailMsg;
+  if (!msgObj) return;
+  const accEmail = msgObj._accEmail;
+  const gh = n => (msgObj.payload?.headers?.find(h => h.name.toLowerCase() === n) || {}).value || '';
   const subj = gh('subject'), from = gh('from'), to = gh('to'), replyTo = gh('reply-to') || from;
   const fromEmail = (from.match(/<(.+?)>/) || [])[1] || from;
   const isForward = mode === 'forward';
   const prefill = {
     to: isForward ? '' : (mode === 'replyall' ? [replyTo, to].filter(Boolean).join(', ') : fromEmail),
-    subject: isForward ? (subj.startsWith('Fwd:') ? subj : 'Fwd: ' + subj) : (subj.startsWith('Re:') ? subj : 'Re: ' + subj)
+    subject: isForward ? (subj.startsWith('Fwd:') ? subj : 'Fwd: ' + subj) : (subj.startsWith('Re:') ? subj : 'Re: ' + subj),
+    fromGmail: accEmail
   };
-  _mailReplyMode = { mode, gmailMsg: msg };
+  _mailReplyMode = { mode, gmailMsg: msgObj, accEmail };
   mailOpenCompose(prefill);
   setTimeout(() => {
     const ed = document.getElementById('mail-body-editor');
     if (!ed) return;
     const fromName = from.replace(/<[^>]+>/, '').trim() || from;
-    const dStr = msg.internalDate ? new Date(parseInt(msg.internalDate)).toLocaleString('en-IN') : '';
+    const dStr = msgObj.internalDate ? new Date(parseInt(msgObj.internalDate)).toLocaleString('en-IN') : '';
     const quoteHdr = isForward
       ? `<br><br>———— Forwarded message ————<br>From: ${_gEsc(from)}<br>Date: ${dStr}<br>Subject: ${_gEsc(subj)}<br>To: ${_gEsc(to)}<br><br>`
       : `<br><br>On ${dStr}, ${_gEsc(fromName)} wrote:<br>`;
     ed.innerHTML = quoteHdr + `<blockquote style="border-left:3px solid #ccc;margin:0 0 0 4px;padding-left:10px;color:#666">(original message)</blockquote>`;
     const range = document.createRange(); range.setStart(ed, 0); range.collapse(true);
     const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    // Pre-select From account
+    const fromSel = document.getElementById('mail-from-gmail');
+    if (fromSel && accEmail) fromSel.value = accEmail;
     ed.focus();
   }, 120);
 }
 
-// Send via Gmail API (RFC 2822 → base64url)
-async function gmailSend(to, subject, bodyHtml, cc, bcc, fromAddr, threadId) {
-  const from = fromAddr || _gEmail;
+// Send via Gmail API using the correct account
+async function gmailSend(to, subject, bodyHtml, cc, bcc, fromAddr, threadId, accEmail) {
+  // Find the account: by explicit accEmail, or by fromAddr, or first connected
+  let acc = _gmailAccounts.find(a => a.email === accEmail && a.token)
+    || _gmailAccounts.find(a => a.email === fromAddr && a.token)
+    || _gmailAccounts.find(a => a.token);
+  if (!acc) throw new Error('No connected Gmail account to send from');
+  const from = fromAddr || acc.email;
   const lines = ['MIME-Version: 1.0', 'From: ' + from, 'To: ' + to];
   if (cc) lines.push('Cc: ' + cc);
   if (bcc) lines.push('Bcc: ' + bcc);
   lines.push('Subject: ' + subject, 'Content-Type: text/html; charset=UTF-8', '', bodyHtml);
   const raw = lines.join('\r\n');
-  // UTF-8 → bytes → base64url
   const bytes = new TextEncoder().encode(raw);
   let bin = '';
   bytes.forEach(b => { bin += String.fromCharCode(b); });
   const encoded = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const payload = { raw: encoded };
   if (threadId) payload.threadId = threadId;
-  return _gFetch('/users/me/messages/send', { method: 'POST', body: JSON.stringify(payload) });
+  return _gFetchFor(acc, '/users/me/messages/send', { method: 'POST', body: JSON.stringify(payload) });
 }
 
-// Archive a Gmail message (remove INBOX label)
-async function gmailArchiveMsg(gmailMsgId) {
+function _gmailClearPreview() {
+  _mailCurrentMsg = null;
+  const toolbar = document.getElementById('mail-preview-toolbar');
+  const prev = document.getElementById('mail-preview-body');
+  if (toolbar) toolbar.style.display = 'none';
+  if (prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:13px">No message selected</div>';
+}
+
+// Archive a Gmail message
+async function gmailArchiveMsg(accEmail, msgId) {
+  const acc = _gmailAccounts.find(a => a.email === accEmail);
+  if (!acc) return;
   try {
-    await _gFetch('/users/me/messages/' + gmailMsgId + '/modify', {
-      method: 'POST', body: JSON.stringify({ removeLabelIds: ['INBOX'] })
-    });
-    _gMsgCache = _gMsgCache.filter(m => m.id !== gmailMsgId);
-    _mailCurrentMsg = null;
-    gmailRenderList(_gMsgCache);
-    const toolbar = document.getElementById('mail-preview-toolbar');
-    const prev = document.getElementById('mail-preview-body');
-    if (toolbar) toolbar.style.display = 'none';
-    if (prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:13px">No message selected</div>';
-    toast('Archived');
+    await _gFetchFor(acc, '/users/me/messages/' + msgId + '/modify', { method: 'POST', body: JSON.stringify({ removeLabelIds: ['INBOX'] }) });
+    acc.msgCache = (acc.msgCache || []).filter(m => m.id !== msgId);
+    _gmailClearPreview(); gmailRenderMergedList(); toast('Archived');
   } catch (e) { toast('Archive failed: ' + e.message, 'error'); }
 }
 
 // Trash a Gmail message
-async function gmailTrashMsg(gmailMsgId) {
+async function gmailTrashMsg(accEmail, msgId) {
+  const acc = _gmailAccounts.find(a => a.email === accEmail);
+  if (!acc) return;
   try {
-    await _gFetch('/users/me/messages/' + gmailMsgId + '/trash', { method: 'POST' });
-    _gMsgCache = _gMsgCache.filter(m => m.id !== gmailMsgId);
-    _mailCurrentMsg = null;
-    gmailRenderList(_gMsgCache);
-    const toolbar = document.getElementById('mail-preview-toolbar');
-    const prev = document.getElementById('mail-preview-body');
-    if (toolbar) toolbar.style.display = 'none';
-    if (prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:13px">No message selected</div>';
-    toast('Moved to Trash');
+    await _gFetchFor(acc, '/users/me/messages/' + msgId + '/trash', { method: 'POST' });
+    acc.msgCache = (acc.msgCache || []).filter(m => m.id !== msgId);
+    _gmailClearPreview(); gmailRenderMergedList(); toast('Moved to Trash');
   } catch (e) { toast('Trash failed: ' + e.message, 'error'); }
 }
 
 // Star / unstar a Gmail message
-async function gmailToggleStar(gmailMsgId) {
-  const cached = _gMsgCache.find(m => m.id === gmailMsgId);
+async function gmailToggleStar(accEmail, msgId) {
+  const acc = _gmailAccounts.find(a => a.email === accEmail);
+  if (!acc) return;
+  const cached = (acc.msgCache || []).find(m => m.id === msgId);
   const isStarred = (cached?.labelIds || []).includes('STARRED');
   try {
-    await _gFetch('/users/me/messages/' + gmailMsgId + '/modify', {
-      method: 'POST',
-      body: JSON.stringify(isStarred ? { removeLabelIds: ['STARRED'] } : { addLabelIds: ['STARRED'] })
+    await _gFetchFor(acc, '/users/me/messages/' + msgId + '/modify', {
+      method: 'POST', body: JSON.stringify(isStarred ? { removeLabelIds: ['STARRED'] } : { addLabelIds: ['STARRED'] })
     });
-    if (cached && cached.labelIds) {
-      cached.labelIds = isStarred
-        ? cached.labelIds.filter(l => l !== 'STARRED')
-        : [...cached.labelIds, 'STARRED'];
-    }
+    if (cached?.labelIds) cached.labelIds = isStarred ? cached.labelIds.filter(l => l !== 'STARRED') : [...cached.labelIds, 'STARRED'];
     toast(isStarred ? 'Star removed' : '⭐ Starred!');
-    if (_gCurrentGmailMsg && _gCurrentGmailMsg.id === gmailMsgId) {
-      const flagBtn = document.getElementById('mail-flag-btn');
-      if (flagBtn) flagBtn.textContent = isStarred ? '⭐ Star' : '⭐ Unstar';
-    }
+    const flagBtn = document.getElementById('mail-flag-btn');
+    if (flagBtn) flagBtn.textContent = isStarred ? '⭐ Star' : '⭐ Unstar';
+    gmailRenderMergedList();
   } catch (e) { toast('Star failed: ' + e.message, 'error'); }
 }
 
 // Mark Gmail message as unread
-async function gmailMarkUnread(gmailMsgId) {
+async function gmailMarkUnread(accEmail, msgId) {
+  const acc = _gmailAccounts.find(a => a.email === accEmail);
+  if (!acc) return;
   try {
-    await _gFetch('/users/me/messages/' + gmailMsgId + '/modify', {
-      method: 'POST', body: JSON.stringify({ addLabelIds: ['UNREAD'] })
-    });
-    const cached = _gMsgCache.find(m => m.id === gmailMsgId);
-    if (cached && cached.labelIds && !cached.labelIds.includes('UNREAD')) cached.labelIds.push('UNREAD');
-    gmailRenderList(_gMsgCache);
-    toast('Marked as unread');
+    await _gFetchFor(acc, '/users/me/messages/' + msgId + '/modify', { method: 'POST', body: JSON.stringify({ addLabelIds: ['UNREAD'] }) });
+    const cached = (acc.msgCache || []).find(m => m.id === msgId);
+    if (cached?.labelIds && !cached.labelIds.includes('UNREAD')) cached.labelIds.push('UNREAD');
+    gmailRenderMergedList(); toast('Marked as unread');
   } catch (e) { toast('Failed: ' + e.message, 'error'); }
 }
-// ─── End Gmail Integration ────────────────────────────────────────────────────
+// ─── End Gmail Integration ────────────────────────────────────────────────────────────────────────────
 
 function renderMail(){
   _mailPopulateAccSwitch();
