@@ -11108,3 +11108,64 @@ function printQuotePDF(){
 </script>
 </body>
 </html>
+
+<script>
+/* mail-hotfix: fix _gToken references */
+function renderMail(){
+  _mailPopulateAccSwitch();
+  _mailPopulateFromSel();
+  mailSelectBox('inbox',document.querySelector('.mail-mb-item[data-box="inbox"]'));
+  _mailUpdateBadges();
+  gmailInit(); // Restore multi-account Gmail state
+}
+function mailSelectBox(box,el){
+  _mailCurrentBox=box;
+  _mailCurrentMsg=null;
+  document.querySelectorAll('.mail-mb-item').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const lbl=document.getElementById('mail-box-label');
+  const labels={inbox:'Inbox',drafts:'Drafts',sent:'Sent',flagged:'Flagged',archive:'Archive',trash:'Trash'};
+  if(lbl)lbl.textContent=labels[box]||box;
+  mailRefreshList();
+  // Clear preview
+  const prev=document.getElementById('mail-preview-body');
+  const toolbar=document.getElementById('mail-preview-toolbar');
+  if(prev)prev.innerHTML<`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#aaa;text-align:center"><div style="font-size:48px;margin-bottom:12px;opacity:.3">âï¸</div><div style="font-size:14px;font-weight:500">No message selected</div><div style="font-size:12px;margin-top:6px;opacity:.7">Select a message from the list to read it</div></div>`;
+  if(toolbar)toolbar.style.display='none';
+  // Gmail mode: load box from API
+  if(_gmailAccounts.some(a=>a.email&&a.token)) gmailLoadBox(box);
+}
+function mailRefreshList(){
+  const list=document.getElementById('mail-msg-list');
+  if(!list)return;
+  // Gmail mode: delegate to Gmail renderer
+  if(_gmailAccounts.some(a=>a.email)){gmailRenderMergedList();return;}
+  const search=(document.getElementById('mail-search')?.value||'').toLowerCase();
+  let msgs=_mailFilteredMsgs();
+  if(search)msgs=msgs.filter(m=>(m.from||'').toLowerCase().includes(search)||(m.to||'').toLowerCase().includes(search)||(m.subject||'').toLowerCase().includes(search)||(m.bodyText||'').toLowerCase().includes(search));
+  if(!msgs.length){
+    list.innerHTML=`<div style="text-align:center;padding:40px 16px;color:#aaa"><div style="font-size:32px;margin-bottom:10px;opacity:.4">ð­</div><div style="font-size:13px">No messages</div></div>`;
+    return;
+  }
+  list.innerHTML=msgs.map(m=>{
+    const d=m.date?new Date(m.date):null;
+    const now=new Date();
+    let dateStr='';
+    if(d){
+      if(d.toDateString()===now.toDateString())dateStr=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      else if(now-d<7*864e5)dateStr=d.toLocaleDateString('en-IN',{weekday:'short'});
+      else dateStr=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    }
+    const fromLabel=m.status==='Sent'||m.status==='Draft'?'To: '+(m.to||''):'From: '+(m.from||m.fromEmail||'Unknown');
+    const preview=(m.bodyText||'').replace(/<[^>]+>/g,'').slice(0,80);
+    return `<div class="mail-msg-row${m.unread?' unread':''}${_mailCurrentMsg===m.id?' active':''}" onclick="mailOpenMsg('${m.id}')">
+      <div class="mail-msg-meta">
+        <div class="mail-msg-sender" style="max-width:190px">${fromLabel}${m.flagged?'<span class="mail-msg-flag">ð©</span>':''}</div>
+        <div class="mail-msg-date">${dateStr}</div>
+      </div>
+      <div class="mail-msg-subject">${m.subject||'(no subject)'}</div>
+      <div class="mail-msg-preview">${preview||'â'}</div>
+    </div>`;
+  }).join('');
+}
+</script>
