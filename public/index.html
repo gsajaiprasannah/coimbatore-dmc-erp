@@ -8,7 +8,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--teal:#006B6B;--teal-light:#E0F4F4;--teal-dark:#004F4F;--gold:#C8963E;--gold-light:#FDF3E3;--red:#C0392B;--green:#27AE60;--blue:#2980B9;--purple:#8E44AD;--bg:#F0F4F4;--white:#fff;--grey1:#f5f5f5;--grey2:#e0e0e0;--grey3:#999;--grey4:#555;--dark:#1a1a1a;--sidebar:220px;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.10)}
+:root{--teal:#006B6B;--teal-light:#E0F4F4;--teal-dark:#004F4F;--gold:#C896E;--gold-light:#FDF3E3;--red:#C0392B;--green:#27AE60;--blue:#2980B9;--purple:#8E44AD;--bg:#F0F4F4;--white:#fff;--grey1:#f5f5f5;--grey2:#e0e0e0;--grey3:#999;--grey4:#555;--dark:#1a1a1a;--sidebar:220px;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.10)}
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--dark);display:flex;min-height:100vh;font-size:13px}
 /* SIDEBAR */
 #sidebar{width:var(--sidebar);background:var(--teal-dark);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:.3s}
@@ -9404,7 +9404,7 @@ function _mailSave(msgs){DB.set('mail_messages',msgs.slice(0,500));}
 // ▶ STEP 1: Paste your Google Client ID here (from Google Cloud Console)
 //   Go to: console.cloud.google.com → APIs & Services → Credentials
 //   Create OAuth2 Client ID (Web App) → authorised origin: http://localhost:8080
-const GMAIL_CLIENT_ID = 'PASTE_YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const GMAIL_CLIENT_ID = '1026772528936-qh26upsi6ds0f884fnckscs152s8kih7.apps.googleusercontent.com';
 const GMAIL_SCOPES = 'https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/userinfo.email';
 
 let _gToken = null;          // current access token
