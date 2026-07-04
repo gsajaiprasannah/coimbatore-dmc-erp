@@ -11192,15 +11192,15 @@ const chatHTML = `
 .ai-bubble-bot { background:#ede9fe;border-radius:10px 10px 10px 2px;padding:10px 13px;font-size:13px;max-width:88%;line-height:1.55;color:#1e1b4b;align-self:flex-start }
 .ai-bubble-usr { background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px 10px 2px 10px;padding:10px 13px;font-size:13px;max-width:88%;line-height:1.55;align-self:flex-end }
 </style>
-<button id="ai-fab" title="AI Assistant" onclick="aiToggle()">✨</button>
+<button id="ai-fab" title="Chat with Cobi 🐘" onclick="aiToggle()"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44' width='32' height='32'><circle cx='22' cy='22' r='22' fill='#fff3e0'/><ellipse cx='8' cy='26' rx='6' ry='8' fill='#9e9e9e'/><ellipse cx='8' cy='26' rx='3.5' ry='5.5' fill='#f48fb1'/><ellipse cx='36' cy='26' rx='6' ry='8' fill='#9e9e9e'/><ellipse cx='36' cy='26' rx='3.5' ry='5.5' fill='#f48fb1'/><ellipse cx='22' cy='37' rx='9' ry='6' fill='#9e9e9e'/><circle cx='22' cy='22' r='12' fill='#bdbdbd'/><ellipse cx='22' cy='11.5' rx='13' ry='2.5' fill='#c8a056'/><rect x='12' y='6' width='20' height='6.5' rx='3' fill='#d4b070'/><line x1='13' y1='8' x2='31' y2='8' stroke='#a07830' stroke-width='0.7'/><line x1='13' y1='9.8' x2='31' y2='9.8' stroke='#a07830' stroke-width='0.7'/><line x1='13' y1='11.5' x2='31' y2='11.5' stroke='#a07830' stroke-width='0.7'/><circle cx='18' cy='21' r='2.8' fill='white'/><circle cx='26' cy='21' r='2.8' fill='white'/><circle cx='18.8' cy='21.3' r='1.7' fill='#4e342e'/><circle cx='26.8' cy='21.3' r='1.7' fill='#4e342e'/><circle cx='19.3' cy='20.6' r='0.6' fill='white'/><circle cx='27.3' cy='20.6' r='0.6' fill='white'/><path d='M16 18.5 Q18 17.5 20 18.5' stroke='#757575' stroke-width='1' fill='none' stroke-linecap='round'/><path d='M24 18.5 Q26 17.5 28 18.5' stroke='#757575' stroke-width='1' fill='none' stroke-linecap='round'/><path d='M17 28 Q11 33 11 38 Q11 41 14 41' stroke='#bdbdbd' stroke-width='4' fill='none' stroke-linecap='round'/><ellipse cx='14' cy='41' rx='2.5' ry='1.5' fill='#9e9e9e'/><path d='M18 26.5 Q22 30 26 26.5' stroke='#9e9e9e' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg></button>
 <div id="ai-panel">
-  <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-    <span style="font-size:20px">✨</span>
-    <div style="flex:1"><div style="font-weight:700;font-size:14px">AI Assistant</div><div style="font-size:11px;opacity:.8">Coimbatour DMC</div></div>
+  <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.4)"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44' width='40' height='40'><circle cx='22' cy='22' r='22' fill='#fff3e0'/><ellipse cx='8' cy='26' rx='6' ry='8' fill='#9e9e9e'/><ellipse cx='8' cy='26' rx='3.5' ry='5.5' fill='#f48fb1'/><ellipse cx='36' cy='26' rx='6' ry='8' fill='#9e9e9e'/><ellipse cx='36' cy='26' rx='3.5' ry='5.5' fill='#f48fb1'/><ellipse cx='22' cy='37' rx='9' ry='6' fill='#9e9e9e'/><circle cx='22' cy='22' r='12' fill='#bdbdbd'/><ellipse cx='22' cy='11.5' rx='13' ry='2.5' fill='#c8a056'/><rect x='12' y='6' width='20' height='6.5' rx='3' fill='#d4b070'/><line x1='13' y1='8' x2='31' y2='8' stroke='#a07830' stroke-width='0.7'/><line x1='13' y1='9.8' x2='31' y2='9.8' stroke='#a07830' stroke-width='0.7'/><line x1='13' y1='11.5' x2='31' y2='11.5' stroke='#a07830' stroke-width='0.7'/><circle cx='18' cy='21' r='2.8' fill='white'/><circle cx='26' cy='21' r='2.8' fill='white'/><circle cx='18.8' cy='21.3' r='1.7' fill='#4e342e'/><circle cx='26.8' cy='21.3' r='1.7' fill='#4e342e'/><circle cx='19.3' cy='20.6' r='0.6' fill='white'/><circle cx='27.3' cy='20.6' r='0.6' fill='white'/><path d='M16 18.5 Q18 17.5 20 18.5' stroke='#757575' stroke-width='1' fill='none' stroke-linecap='round'/><path d='M24 18.5 Q26 17.5 28 18.5' stroke='#757575' stroke-width='1' fill='none' stroke-linecap='round'/><path d='M17 28 Q11 33 11 38 Q11 41 14 41' stroke='#bdbdbd' stroke-width='4' fill='none' stroke-linecap='round'/><ellipse cx='14' cy='41' rx='2.5' ry='1.5' fill='#9e9e9e'/><path d='M18 26.5 Q22 30 26 26.5' stroke='#9e9e9e' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg></div>
+    <div style="flex:1"><div style="font-weight:700;font-size:15px">Cobi 🐘</div><div style="font-size:11px;opacity:.85">Your Friendly Coimbatour Guide</div></div>
     <button onclick="aiToggle()" style="background:none;border:none;color:#fff;font-size:17px;cursor:pointer;opacity:.85;line-height:1">✕</button>
   </div>
   <div id="ai-msgs" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8f9fb">
-    <div class="ai-bubble-bot">👋 Hi! I'm your AI assistant for Coimbatour DMC. Ask me about itinerary ideas, package pricing, travel tips, or let me help draft emails!</div>
+    <div class="ai-bubble-bot">Hello Makkale! 🐘 Vanakkam! I'm Cobi, your friendly elephant guide from Coimbatour! I know everything about Coimbatore, Ooty, Valparai, Pollachi and all the hidden gems around here. Ask me about trips, food, packages, or let me help you with emails and marketing — Vango, let's get started! 🌴🥥</div>
   </div>
   <div style="padding:10px 12px;border-top:1px solid #e5e7eb;display:flex;gap:8px;flex-shrink:0;background:#fff">
     <input id="ai-input" placeholder="Ask anything…" style="flex:1;border:1.5px solid #e0e0e0;border-radius:20px;padding:9px 15px;font-size:13px;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='#667eea'" onblur="this.style.borderColor='#e0e0e0'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSend()}">
@@ -11224,13 +11224,13 @@ window.aiSend = async function() {
   inp.value = '';
   msgs.scrollTop = msgs.scrollHeight;
   const thinkId = 'ai-t' + Date.now();
-  msgs.insertAdjacentHTML('beforeend', `<div class="ai-bubble-bot" id="${thinkId}">⏳ Thinking…</div>`);
+  msgs.insertAdjacentHTML('beforeend', `<div class="ai-bubble-bot" id="${thinkId}">🐘 Hmm, let me check with my elephant memory…</div>`);
   msgs.scrollTop = msgs.scrollHeight;
   try {
     const mod = document.querySelector('[data-mod].active')?.dataset?.mod || 'dashboard';
     const reply = await callClaude(text, {
       maxTokens: 512,
-      system: `You are an AI assistant for Coimbatour DMC, a Destination Management Company in Coimbatore, Tamil Nadu, India. The user is in the "${mod}" module. Be concise, professional, and helpful. Use ₹ for INR. Focus on travel, DMC operations, and the Nilgiris/Western Ghats region.`
+      system: `You are Cobi 🐘, the official mascot and brand voice of Coimbatour — a Destination Management Company based in Coimbatore, Tamil Nadu, India. You are a 5-year-old (in elephant years) male elephant who is enthusiastic, humble, and deeply knowledgeable about the Coimbatore region. The user is in the "${mod}" module of the ERP.\n\nPersonality: Soft-natured, humble, energetic, enthusiastic, knowledgeable, polite. Treat every user like a close friend or family member. Never arrogant — explain things with patience and kindness.\n\nLanguage & Voice: ALWAYS start each new conversation with "Hello Makkale! 🐘" or "Vanakkam Makkale!" (Makkale = folks/people in Tamil). Adapt to the user's language immediately. Use Kongu slang for flavor: "Vango" (come/let's go), "Sollungo" (tell me), "Sema" (awesome), "Romba" (very), "Aaho!" (wow). Don't overuse slang — use it for warmth and flavor.\n\nEmojis: Use 🐘 🌴 🥥 ⛰️ 🥜 frequently. Keep paragraphs short and punchy — you are energetic, not a boring lecturer.\n\nWhat you know: Everything about Coimbatore, Pollachi, Valparai, Ooty, Coonoor, Kodaikanal, Anamalai Tiger Reserve, and surrounding areas. Love suggesting Kongunadu cuisine (Arisi Paruppu Sadam, Bun Parotta, Annapoorna Sambar). Help plan trips, describe hotels, suggest hidden gems. Expert marketing professional — know marketing plans, promotions, sales, and DMC business strategy.\n\nConstraints: Never rude or sarcastic. If you don't know something (rare!), modestly say you'll ask the "elders" (human team at Coimbatour). Avoid corporate jargon. Speak like a friend. Keep chat replies concise (2-4 sentences). Use ₹ for INR.`
     });
     document.getElementById(thinkId).innerHTML = reply.replace(/\n/g,'<br>');
   } catch(e) {
@@ -11425,6 +11425,5 @@ window.addEventListener('load', () => {
 
 })(); // end IIFE
 </script>
-
 </body>
 </html>
