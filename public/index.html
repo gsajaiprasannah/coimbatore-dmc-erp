@@ -1648,6 +1648,33 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         <div class="form-group"><label>No. of Pax *</label><input type="number" id="b-pax" value="2" min="1" oninput="calcBkgTotal()"></div>
         <div class="form-group"><label>Price per Pax ₹</label><input type="number" id="b-ppax" oninput="calcBkgTotal()"></div>
         <div class="form-group"><label>Total Amount ₹</label><input type="number" id="b-total" readonly style="background:var(--grey1)"></div>
+        <!-- PASSENGER DETAILS SECTION -->
+        <div class="form-group form-full" style="padding:0;margin-top:4px">
+          <div id="pax-details-toggle" onclick="togglePaxDetails()" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 14px;background:var(--grey1);border-radius:8px;border:1.5px solid var(--grey2);user-select:none">
+            <span id="pax-toggle-chevron" style="font-size:11px;transition:transform .2s;display:inline-block">▶</span>
+            <span style="font-size:13px;font-weight:700;color:var(--dark)">👥 Passenger Details</span>
+            <span style="font-size:11px;color:var(--grey3)">· Fill now or update later · used for insurance &amp; visa</span>
+            <span id="pax-filled-badge" style="margin-left:auto;font-size:11px;color:var(--teal);font-weight:700;background:rgba(0,168,150,.1);padding:2px 8px;border-radius:20px;display:none"></span>
+          </div>
+          <div id="pax-details-body" style="display:none;margin-top:8px">
+            <div style="overflow-x:auto;border-radius:8px;border:1.5px solid var(--grey2)">
+              <table id="pax-table" style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px">
+                <thead>
+                  <tr style="background:var(--grey1)">
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2);white-space:nowrap">#</th>
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Full Name <span style="color:var(--grey3);font-weight:400">(as per ID)</span></th>
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2);white-space:nowrap">Date of Birth</th>
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2);white-space:nowrap">Passport No. <span style="color:var(--grey3);font-weight:400">(opt)</span></th>
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2);white-space:nowrap">Passport Expiry <span style="color:var(--grey3);font-weight:400">(opt)</span></th>
+                    <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2);white-space:nowrap">Nationality</th>
+                  </tr>
+                </thead>
+                <tbody id="pax-rows-container"></tbody>
+              </table>
+            </div>
+            <div style="font-size:11px;color:var(--grey3);margin-top:6px;padding:0 2px">🔒 Passport details are optional — fill when required for insurance or visa processing</div>
+          </div>
+        </div>
         <div class="form-group"><label>Advance Paid ₹</label><input type="number" id="b-adv" value="0" oninput="calcBkgBalance()"></div>
         <div class="form-group"><label>Balance Due ₹</label><input type="number" id="b-bal" readonly style="background:var(--grey1)"></div>
         <div class="form-group"><label>Booking Source</label><select id="b-src"><option>Direct / Phone</option><option>Agent Referral</option><option>WhatsApp</option><option>Website</option><option>OTA – MakeMyTrip</option><option>Corporate</option></select></div>
@@ -3927,6 +3954,16 @@ function openBkgModal(id){
     document.getElementById('b-bal').value='';
     document.getElementById('b-status').value='Confirmed';
   }
+  // Passenger section: render rows and reset collapsed state
+  const _paxN=+document.getElementById('b-pax').value||2;
+  const _savedPax=id?(DB.get('bookings').find(x=>x.id===id)?.passengers||[]):[];
+  renderPassengerInputs(_paxN,_savedPax);
+  _paxSectionOpen=false;
+  const _pb=document.getElementById('pax-details-body');if(_pb)_pb.style.display='none';
+  const _pc=document.getElementById('pax-toggle-chevron');if(_pc)_pc.style.transform='none';
+  // Show badge if editing and passengers exist
+  const _badge=document.getElementById('pax-filled-badge');
+  if(_badge){const filled=_savedPax.filter(p=>p.name).length;_badge.textContent=`${filled}/${_paxN} filled`;_badge.style.display=filled?'inline':'none';}
   openModal('bkg-modal');
 }
 function editBkg(id){openBkgModal(id)}
@@ -3973,12 +4010,70 @@ function calcBkgTotal(){
   const total=pax*ppax;
   document.getElementById('b-total').value=total;
   calcBkgBalance();
+  renderPassengerInputs(pax);
 }
 function calcBkgBalance(){
   const total=+document.getElementById('b-total').value||0;
   const adv=+document.getElementById('b-adv').value||0;
   document.getElementById('b-bal').value=Math.max(0,total-adv);
 }
+/* ─── PASSENGER DETAILS ─────────────────────────────────────────── */
+let _paxSectionOpen=false;
+function togglePaxDetails(){
+  _paxSectionOpen=!_paxSectionOpen;
+  const body=document.getElementById('pax-details-body');
+  const chev=document.getElementById('pax-toggle-chevron');
+  if(body) body.style.display=_paxSectionOpen?'block':'none';
+  if(chev) chev.style.transform=_paxSectionOpen?'rotate(90deg)':'none';
+}
+function renderPassengerInputs(n,existing){
+  const tbody=document.getElementById('pax-rows-container');if(!tbody)return;
+  n=Math.max(1,Math.min(+(n||document.getElementById('b-pax').value)||1,100));
+  existing=existing||[];
+  // Preserve any values already typed into existing rows
+  const cur=[];
+  [...(tbody.querySelectorAll('tr')||[])].forEach(tr=>{
+    cur.push({
+      name:tr.querySelector('.px-name')?.value||'',
+      dob:tr.querySelector('.px-dob')?.value||'',
+      passportNo:tr.querySelector('.px-ppt')?.value||'',
+      passportExpiry:tr.querySelector('.px-exp')?.value||'',
+      nationality:tr.querySelector('.px-nat')?.value||''
+    });
+  });
+  tbody.innerHTML='';
+  for(let i=0;i<n;i++){
+    const ex=existing[i]||cur[i]||{};
+    const tr=document.createElement('tr');
+    tr.style.cssText='border-bottom:1px solid var(--grey2)';
+    tr.innerHTML=
+      `<td style="padding:5px 10px;color:var(--grey3);font-weight:700;font-size:11px;white-space:nowrap;background:var(--grey1)">${i+1}</td>`+
+      `<td style="padding:4px 5px"><input class="px-name" placeholder="Full name as per ID" value="${(ex.name||'').replace(/"/g,'&quot;')}" style="width:180px;padding:5px 8px;border:1.5px solid var(--grey2);border-radius:6px;font-size:12px;outline:none" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--grey2)'"></td>`+
+      `<td style="padding:4px 5px"><input class="px-dob" type="date" value="${ex.dob||''}" style="padding:5px 8px;border:1.5px solid var(--grey2);border-radius:6px;font-size:12px;outline:none" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--grey2)'"></td>`+
+      `<td style="padding:4px 5px"><input class="px-ppt" placeholder="Optional" value="${(ex.passportNo||'').replace(/"/g,'&quot;')}" style="width:130px;padding:5px 8px;border:1.5px solid var(--grey2);border-radius:6px;font-size:12px;outline:none;text-transform:uppercase" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--grey2)'"></td>`+
+      `<td style="padding:4px 5px"><input class="px-exp" type="date" value="${ex.passportExpiry||''}" style="padding:5px 8px;border:1.5px solid var(--grey2);border-radius:6px;font-size:12px;outline:none" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--grey2)'"></td>`+
+      `<td style="padding:4px 5px"><input class="px-nat" placeholder="Indian" value="${(ex.nationality||'').replace(/"/g,'&quot;')}" style="width:90px;padding:5px 8px;border:1.5px solid var(--grey2);border-radius:6px;font-size:12px;outline:none" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--grey2)'"></td>`;
+    tbody.appendChild(tr);
+  }
+  // Update badge in the toggle header
+  const filled=[...existing,...cur].slice(0,n).filter(p=>p.name).length;
+  const badge=document.getElementById('pax-filled-badge');
+  if(badge){
+    if(filled>0){badge.textContent=`${filled}/${n} filled`;badge.style.display='inline';}
+    else badge.style.display='none';
+  }
+}
+function collectPassengers(){
+  const rows=document.querySelectorAll('#pax-rows-container tr');
+  return [...rows].map(tr=>({
+    name:(tr.querySelector('.px-name')?.value||'').trim(),
+    dob:tr.querySelector('.px-dob')?.value||'',
+    passportNo:(tr.querySelector('.px-ppt')?.value||'').trim().toUpperCase(),
+    passportExpiry:tr.querySelector('.px-exp')?.value||'',
+    nationality:(tr.querySelector('.px-nat')?.value||'').trim()||'Indian'
+  }));
+}
+/* ─────────────────────────────────────────────────────────────────── */
 function saveBkg(){
   if(currentEditId&&!guardAdmin())return;
   const custId=document.getElementById('b-customer').value;
@@ -4012,7 +4107,8 @@ function saveBkg(){
     agentRef:document.getElementById('b-agent').value,
     agentName:(()=>{const o=document.getElementById('b-agent');const sel=o.options[o.selectedIndex];return sel&&sel.value?sel.dataset.name||sel.text.split(' (')[0].replace(/^[👤🧳] /,''):''})(),
     specialRequests:document.getElementById('b-req').value,
-    remarks:document.getElementById('b-rem').value
+    remarks:document.getElementById('b-rem').value,
+    passengers:collectPassengers()
   };
   if(currentEditId){const i=bkgs.findIndex(b=>b.id===currentEditId);bkgs[i]=obj}else bkgs.push(obj);
   DB.set('bookings',bkgs);
@@ -4054,7 +4150,38 @@ function viewBkg(id){
       <span style="font-size:11px;color:var(--grey4)">Guide: <b>${b.guide||'—'}</b></span>
       <span style="font-size:11px;color:var(--grey4)">Source: <b>${b.source}</b></span>
       ${b.agentName?`<span style="font-size:11px;color:var(--teal)">🧑‍💼 Agent: <b>${b.agentName}</b></span>`:''}
-    </div>`;
+    </div>
+    ${(b.passengers&&b.passengers.length)?`
+    <div style="margin-top:16px">
+      <div style="font-weight:700;font-size:13px;color:var(--dark);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        👥 Passenger Details
+        <span style="font-size:11px;font-weight:400;color:var(--grey3)">${b.passengers.filter(p=>p.name).length} of ${b.passengers.length} filled</span>
+      </div>
+      <div style="overflow-x:auto;border-radius:8px;border:1.5px solid var(--grey2)">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">
+          <thead>
+            <tr style="background:var(--grey1)">
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">#</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Name</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Date of Birth</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Passport No.</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Expiry</th>
+              <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--grey4);border-bottom:1.5px solid var(--grey2)">Nationality</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${b.passengers.map((p,i)=>`<tr style="border-bottom:1px solid var(--grey2)${p.name?'':'opacity:.5'}">
+              <td style="padding:6px 10px;color:var(--grey3);font-weight:700;font-size:11px;background:var(--grey1)">${i+1}</td>
+              <td style="padding:6px 10px;font-weight:${p.name?'600':'400'};color:${p.name?'var(--dark)':'var(--grey3)'}">${p.name||'<em style="color:var(--grey3);font-style:italic">Not filled</em>'}</td>
+              <td style="padding:6px 10px;color:var(--grey4)">${p.dob||'—'}</td>
+              <td style="padding:6px 10px;font-family:monospace;color:var(--dark)">${p.passportNo||'—'}</td>
+              <td style="padding:6px 10px;color:${p.passportExpiry&&new Date(p.passportExpiry)<new Date()?'var(--red)':'var(--grey4)'}">${p.passportExpiry||'—'}</td>
+              <td style="padding:6px 10px;color:var(--grey4)">${p.nationality||'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`:''}`;
   openModal('bkg-view-modal');
 }
 function createInvFromBkg(){
