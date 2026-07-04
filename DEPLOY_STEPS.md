@@ -11,6 +11,7 @@ your-repo/
 ├── package.json
 ├── render.yaml        ← Render infrastructure-as-code
 └── public/
+<!-- Updated: 2026-07-04 -->
     └── index.html     ← The ERP app (unchanged)
 ```
 
