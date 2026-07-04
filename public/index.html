@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--teal:#006B6B;--teal-light:#E0F4F4;--teal-dark:#004F4F;--gold:#C896E;--gold-light:#FDF3E3;--red:#C0392B;--green:#27AE60;--blue:#2980B9;--purple:#8E44AD;--bg:#F0F4F4;--white:#fff;--grey1:#f5f5f5;--grey2:#e0e0e0;--grey3:#999;--grey4:#555;--dark:#1a1a1a;--sidebar:220px;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.10)}
+:root{--teal:#006B6B;--teal-light:#E0F4F4;--teal-dark:#004F4F;--gold:#C8963E;--gold-light:#FDF3E3;--red:#C0392B;--green:#27AE60;--blue:#2980B9;--purple:#8E44AD;--bg:#F0F4F4;--white:#fff;--grey1:#f5f5f5;--grey2:#e0e0e0;--grey3:#999;--grey4:#555;--dark:#1a1a1a;--sidebar:220px;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.10)}
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--dark);display:flex;min-height:100vh;font-size:13px}
 /* SIDEBAR */
 #sidebar{width:var(--sidebar);background:var(--teal-dark);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:.3s}
@@ -1429,16 +1429,20 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
               </div>
             </div>
           </div>
-          <!-- Gmail Connect -->
+          <!-- Gmail Multi-Account -->
           <div style="padding:10px 12px 6px;border-top:1px solid rgba(255,255,255,.08)">
-            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888;margin-bottom:7px">Gmail</div>
-            <button id="gmail-connect-btn" onclick="gmailSignIn()" style="width:100%;background:linear-gradient(135deg,#4285F4,#0F9D58);color:#fff;border:none;border-radius:7px;padding:7px 8px;font-size:11.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;letter-spacing:.2px">
-              <svg viewBox="0 0 18 18" width="14" height="14" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.42 14.013 17.64 11.73 17.64 9.2z"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A9.009 9.009 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
-              Connect Gmail
-            </button>
-            <div id="gmail-connected-info" style="display:none;margin-top:6px">
-              <div id="gmail-email-label" style="font-size:10px;color:#4ade80;margin-bottom:5px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px">✓ Connected</div>
-              <button onclick="gmailSignOut()" style="width:100%;background:transparent;color:#f87171;border:1px solid rgba(248,113,113,.35);border-radius:5px;padding:5px;font-size:10.5px;cursor:pointer;font-weight:500">↩ Disconnect Gmail</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888">Gmail Accounts</div>
+              <button onclick="gmailAddAccount()" title="Add Gmail account" style="background:linear-gradient(135deg,#4285F4,#0F9D58);color:#fff;border:none;border-radius:5px;padding:2px 8px;font-size:11px;cursor:pointer;font-weight:700;line-height:1.6">+ Add</button>
+            </div>
+            <!-- All Inboxes row -->
+            <div id="gmail-all-inboxes-row" onclick="gmailSetActiveAccount('all')" style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;margin-bottom:3px;background:rgba(255,255,255,.12);transition:.15s">
+              <div style="width:26px;height:26px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📥</div>
+              <div style="font-size:11px;color:#e0e0e0;font-weight:600">All Inboxes</div>
+            </div>
+            <!-- Connected accounts -->
+            <div id="gmail-accounts-list" style="margin-top:2px">
+              <div style="font-size:10.5px;color:#666;text-align:center;padding:8px 4px">No accounts — click + Add</div>
             </div>
           </div>
           <!-- Spacer -->
@@ -1526,6 +1530,12 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
           <span style="font-size:11px;font-weight:600;color:#888;width:28px;flex-shrink:0">From</span>
           <select id="mail-from-acc" style="flex:1;border:none;font-size:13px;color:#222;background:transparent;outline:none">
             <option value="">— Select account —</option>
+          </select>
+        </div>
+        <div id="mail-from-gmail-row" style="border-bottom:1px solid #f0f0f0;padding:8px 0;display:none;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:600;color:#4285F4;width:28px;flex-shrink:0">G</span>
+          <select id="mail-from-gmail" style="flex:1;border:none;font-size:13px;color:#222;background:transparent;outline:none">
+            <option value="">No Gmail accounts connected</option>
           </select>
         </div>
         <div style="border-bottom:1px solid #f0f0f0;padding:8px 0;display:flex;align-items:center;gap:10px">
@@ -9626,7 +9636,7 @@ function gmailRenderMergedList(msgs) {
       else if (now - d < 7 * 864e5) dateStr = d.toLocaleDateString('en-IN', { weekday: 'short' });
       else dateStr = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
     }
-    const safeEmail = (m._accEmail || '').replace(/'/g, "\\'")
+    const safeEmail = (m._accEmail || '').replace(/'/g, "\\'");
     const msgId = 'gmail:' + safeEmail + ':' + m.id;
     const dot = multiAcc ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${m._accColor||'#4285F4'};margin-right:5px;flex-shrink:0;vertical-align:middle"></span>` : '';
     return `<div class="mail-msg-row${isUnread ? ' unread' : ''}${_mailCurrentMsg === msgId ? ' active' : ''}" onclick="mailOpenMsg('${msgId}')">
@@ -9828,16 +9838,14 @@ async function gmailMarkUnread(accEmail, msgId) {
     gmailRenderMergedList(); toast('Marked as unread');
   } catch (e) { toast('Failed: ' + e.message, 'error'); }
 }
-// ─── End Gmail Integration ────────────────────────────────────────────────────────────────────────────
+// ─── End Gmail Integration ────────────────────────────────────────────────────
 
 function renderMail(){
   _mailPopulateAccSwitch();
   _mailPopulateFromSel();
   mailSelectBox('inbox',document.querySelector('.mail-mb-item[data-box="inbox"]'));
   _mailUpdateBadges();
-  // Restore Gmail sidebar state
-  const savedGmailEmail=localStorage.getItem('gmail_email');
-  if(savedGmailEmail||_gToken){_gmailUpdateSidebarUI(true);}
+  gmailInit(); // Restore multi-account Gmail state
 }
 
 function _mailPopulateAccSwitch(){
@@ -9904,13 +9912,13 @@ function mailSelectBox(box,el){
   if(prev)prev.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#aaa;text-align:center"><div style="font-size:48px;margin-bottom:12px;opacity:.3">✉️</div><div style="font-size:14px;font-weight:500">No message selected</div><div style="font-size:12px;margin-top:6px;opacity:.7">Select a message from the list to read it</div></div>`;
   if(toolbar)toolbar.style.display='none';
   // Gmail mode: load box from API
-  if(_gToken) gmailLoadBox(box);
+  if(_gmailAccounts.some(a=>a.email&&a.token)) gmailLoadBox(box);
 }
 function mailRefreshList(){
   const list=document.getElementById('mail-msg-list');
   if(!list)return;
   // Gmail mode: delegate to Gmail renderer
-  if(_gToken){gmailRenderList(_gMsgCache);return;}
+  if(_gmailAccounts.some(a=>a.email)){gmailRenderMergedList();return;}
   const search=(document.getElementById('mail-search')?.value||'').toLowerCase();
   let msgs=_mailFilteredMsgs();
   if(search)msgs=msgs.filter(m=>(m.from||'').toLowerCase().includes(search)||(m.to||'').toLowerCase().includes(search)||(m.subject||'').toLowerCase().includes(search)||(m.bodyText||'').toLowerCase().includes(search));
@@ -9946,9 +9954,15 @@ function mailSort(){
   if(btn)btn.textContent=_mailSortAsc?'↑':'↓';
   mailRefreshList();
 }
+function _gmailParseId(id){
+  // id format: 'gmail:email@x.com:msgId'
+  const rest=id.slice(6); // strip 'gmail:'
+  const sep=rest.indexOf(':');
+  return {accEmail:rest.slice(0,sep),msgId:rest.slice(sep+1)};
+}
 function mailOpenMsg(id){
   // Gmail message — delegate to Gmail handler
-  if(id&&id.startsWith('gmail:')){gmailOpenMsg(id.slice(6));return;}
+  if(id&&id.startsWith('gmail:')){const p=_gmailParseId(id);gmailOpenMsg(p.accEmail,p.msgId);return;}
   const msgs=_mailGetAll();
   const idx=msgs.findIndex(m=>m.id===id);
   if(idx<0)return;
@@ -9993,7 +10007,7 @@ function mailOpenMsg(id){
 }
 function mailToggleFlag(){
   if(!_mailCurrentMsg)return;
-  if(_mailCurrentMsg.startsWith('gmail:')){gmailToggleStar(_mailCurrentMsg.slice(6));return;}
+  if(_mailCurrentMsg.startsWith('gmail:')){const p=_gmailParseId(_mailCurrentMsg);gmailToggleStar(p.accEmail,p.msgId);return;}
   const msgs=_mailGetAll();
   const idx=msgs.findIndex(m=>m.id===_mailCurrentMsg);
   if(idx<0)return;
@@ -10006,7 +10020,7 @@ function mailToggleFlag(){
 }
 function mailToggleRead(){
   if(!_mailCurrentMsg)return;
-  if(_mailCurrentMsg.startsWith('gmail:')){gmailMarkUnread(_mailCurrentMsg.slice(6));return;}
+  if(_mailCurrentMsg.startsWith('gmail:')){const p=_gmailParseId(_mailCurrentMsg);gmailMarkUnread(p.accEmail,p.msgId);return;}
   const msgs=_mailGetAll();
   const idx=msgs.findIndex(m=>m.id===_mailCurrentMsg);
   if(idx<0)return;
@@ -10018,7 +10032,7 @@ function mailToggleRead(){
 }
 function mailArchive(){
   if(!_mailCurrentMsg)return;
-  if(_mailCurrentMsg.startsWith('gmail:')){gmailArchiveMsg(_mailCurrentMsg.slice(6));return;}
+  if(_mailCurrentMsg.startsWith('gmail:')){const p=_gmailParseId(_mailCurrentMsg);gmailArchiveMsg(p.accEmail,p.msgId);return;}
   const msgs=_mailGetAll();
   const idx=msgs.findIndex(m=>m.id===_mailCurrentMsg);
   if(idx<0)return;
@@ -10030,7 +10044,7 @@ function mailArchive(){
 }
 function mailTrash(){
   if(!_mailCurrentMsg)return;
-  if(_mailCurrentMsg.startsWith('gmail:')){if(!confirm('Move to Gmail Trash?'))return;gmailTrashMsg(_mailCurrentMsg.slice(6));return;}
+  if(_mailCurrentMsg.startsWith('gmail:')){if(!confirm('Move to Gmail Trash?'))return;const p=_gmailParseId(_mailCurrentMsg);gmailTrashMsg(p.accEmail,p.msgId);return;}
   if(!confirm('Move to Trash?'))return;
   const msgs=_mailGetAll();
   const idx=msgs.findIndex(m=>m.id===_mailCurrentMsg);
@@ -10070,6 +10084,8 @@ function mailOpenCompose(prefill){
   if(!overlay)return;
   overlay.style.display='block';
   _mailPopulateFromSel();
+  _gmailUpdateFromSelect();
+  if(prefill?.fromGmail){const s=document.getElementById('mail-from-gmail');if(s)s.value=prefill.fromGmail;}
   // Clear fields
   document.getElementById('mail-to').value=prefill?.to||'';
   document.getElementById('mail-subject').value=prefill?.subject||'';
@@ -10156,19 +10172,22 @@ function sendMailClient(){
   const bodyText=editor?.innerText||'';
   if(!to){toast('Recipient (To) is required','error');return;}
   if(!subject){toast('Subject is required','error');return;}
-  // ── Gmail API send (when connected) ──
-  if(_gToken){
+  // ── Gmail API send (multi-account) ──
+  const gmailFromSel=document.getElementById('mail-from-gmail');
+  const chosenGmailAcc=gmailFromSel?.value||_mailReplyMode?.accEmail||null;
+  const hasGmail=_gmailAccounts.some(a=>a.email&&a.token);
+  if(hasGmail){
     const sig=fromSig?`<div style="margin-top:22px;padding-top:12px;border-top:1px solid #e8e8ea;color:#888;font-size:12px;white-space:pre-line">${fromSig}</div>`:'';
     const fullHtml=bodyHtml+sig;
     const threadId=_mailReplyMode?.gmailMsg?.threadId||null;
-    const fromAddr=_gEmail||fromEmail;
-    gmailSend(to,subject,fullHtml,cc||null,bcc||null,fromAddr,threadId)
+    const accEmail=chosenGmailAcc||_gmailAccounts.find(a=>a.token)?.email;
+    gmailSend(to,subject,fullHtml,cc||null,bcc||null,accEmail,threadId,accEmail)
       .then(()=>{
         logActivity('Sent','Mail','GMAIL','To: '+to+' — '+subject);
-        toast('✅ Sent via Gmail!','success');
+        toast('✅ Sent via Gmail ('+accEmail+')!','success');
         mailCloseCompose();
         // Refresh sent box
-        if(_mailCurrentBox==='sent'){_gMsgCache=[];gmailLoadBox('sent');}
+        if(_mailCurrentBox==='sent'){const a=_gmailAccounts.find(x=>x.email===accEmail);if(a)a.msgCache=[];gmailLoadBox('sent');}
       })
       .catch(e=>toast('Gmail send failed: '+(e.message||e),'error'));
     return;
@@ -11108,64 +11127,3 @@ function printQuotePDF(){
 </script>
 </body>
 </html>
-
-<script>
-/* mail-hotfix: fix _gToken references */
-function renderMail(){
-  _mailPopulateAccSwitch();
-  _mailPopulateFromSel();
-  mailSelectBox('inbox',document.querySelector('.mail-mb-item[data-box="inbox"]'));
-  _mailUpdateBadges();
-  gmailInit(); // Restore multi-account Gmail state
-}
-function mailSelectBox(box,el){
-  _mailCurrentBox=box;
-  _mailCurrentMsg=null;
-  document.querySelectorAll('.mail-mb-item').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
-  const lbl=document.getElementById('mail-box-label');
-  const labels={inbox:'Inbox',drafts:'Drafts',sent:'Sent',flagged:'Flagged',archive:'Archive',trash:'Trash'};
-  if(lbl)lbl.textContent=labels[box]||box;
-  mailRefreshList();
-  // Clear preview
-  const prev=document.getElementById('mail-preview-body');
-  const toolbar=document.getElementById('mail-preview-toolbar');
-  if(prev)prev.innerHTML<`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#aaa;text-align:center"><div style="font-size:48px;margin-bottom:12px;opacity:.3">âï¸</div><div style="font-size:14px;font-weight:500">No message selected</div><div style="font-size:12px;margin-top:6px;opacity:.7">Select a message from the list to read it</div></div>`;
-  if(toolbar)toolbar.style.display='none';
-  // Gmail mode: load box from API
-  if(_gmailAccounts.some(a=>a.email&&a.token)) gmailLoadBox(box);
-}
-function mailRefreshList(){
-  const list=document.getElementById('mail-msg-list');
-  if(!list)return;
-  // Gmail mode: delegate to Gmail renderer
-  if(_gmailAccounts.some(a=>a.email)){gmailRenderMergedList();return;}
-  const search=(document.getElementById('mail-search')?.value||'').toLowerCase();
-  let msgs=_mailFilteredMsgs();
-  if(search)msgs=msgs.filter(m=>(m.from||'').toLowerCase().includes(search)||(m.to||'').toLowerCase().includes(search)||(m.subject||'').toLowerCase().includes(search)||(m.bodyText||'').toLowerCase().includes(search));
-  if(!msgs.length){
-    list.innerHTML=`<div style="text-align:center;padding:40px 16px;color:#aaa"><div style="font-size:32px;margin-bottom:10px;opacity:.4">ð­</div><div style="font-size:13px">No messages</div></div>`;
-    return;
-  }
-  list.innerHTML=msgs.map(m=>{
-    const d=m.date?new Date(m.date):null;
-    const now=new Date();
-    let dateStr='';
-    if(d){
-      if(d.toDateString()===now.toDateString())dateStr=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-      else if(now-d<7*864e5)dateStr=d.toLocaleDateString('en-IN',{weekday:'short'});
-      else dateStr=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
-    }
-    const fromLabel=m.status==='Sent'||m.status==='Draft'?'To: '+(m.to||''):'From: '+(m.from||m.fromEmail||'Unknown');
-    const preview=(m.bodyText||'').replace(/<[^>]+>/g,'').slice(0,80);
-    return `<div class="mail-msg-row${m.unread?' unread':''}${_mailCurrentMsg===m.id?' active':''}" onclick="mailOpenMsg('${m.id}')">
-      <div class="mail-msg-meta">
-        <div class="mail-msg-sender" style="max-width:190px">${fromLabel}${m.flagged?'<span class="mail-msg-flag">ð©</span>':''}</div>
-        <div class="mail-msg-date">${dateStr}</div>
-      </div>
-      <div class="mail-msg-subject">${m.subject||'(no subject)'}</div>
-      <div class="mail-msg-preview">${preview||'â'}</div>
-    </div>`;
-  }).join('');
-}
-</script>
