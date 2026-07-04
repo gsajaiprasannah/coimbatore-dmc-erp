@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coimbatour — Supplier Portal</title>
+<style>
+  :root{
+    --teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
+    --gold:#C8963E;--gold-light:#FDF3E3;
+    --dark:#1A1A2E;--grey1:#F7F8FA;--grey2:#E8EAED;--grey3:#9AA0AB;--grey4:#6B7280;--grey5:#374151;
+    --white:#fff;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#F0F4F8;color:var(--dark);font-size:14px}
+
+  /* ── LOGIN ── */
+  #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#003333 0%,#004444 50%,#005555 100%);display:flex;align-items:center;justify-content:center;z-index:999}
+  .login-card{background:#fff;border-radius:16px;padding:40px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+  .login-logo{font-size:42px;margin-bottom:8px}
+  .login-brand{font-size:22px;font-weight:800;color:var(--teal-dark);letter-spacing:.5px}
+  .login-sub{font-size:12px;color:var(--gold);letter-spacing:1px;margin-bottom:24px;text-transform:uppercase}
+  .login-badge{background:#FDF3E3;color:#a07030;font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;display:inline-block;margin-bottom:24px}
+  .login-card input{width:100%;border:1.5px solid var(--grey2);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}
+  .login-card input:focus{border-color:var(--gold)}
+  .login-card button{width:100%;background:var(--gold);color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
+  .login-card button:hover{background:#a07030}
+  .login-err{color:#e74c3c;font-size:12px;margin-top:6px;display:none}
+
+  /* ── LAYOUT ── */
+  #app{display:none;min-height:100vh}
+  .sidebar{width:230px;background:linear-gradient(180deg,#004444,#002222);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+  .sb-logo{padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .sb-logo-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:.3px}
+  .sb-logo-sub{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase}
+  .sb-sup-info{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05)}
+  .sb-sup-name{font-size:13px;font-weight:700;color:#fff}
+  .sb-sup-type{font-size:10px;color:rgba(255,255,255,.5)}
+  .sb-nav{padding:10px 0;flex:1}
+  .sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+  .sb-nav a:hover,.sb-nav a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--gold)}
+  .sb-nav .icon{font-size:16px;width:20px;text-align:center}
+  .sb-footer{padding:14px 16px;font-size:10px;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.1)}
+  .sb-logout{color:rgba(255,255,255,.5);cursor:pointer;font-size:11px;display:block;margin-top:6px}
+  .sb-logout:hover{color:#fff}
+  .main{margin-left:230px;min-height:100vh}
+  .topbar{background:#fff;padding:14px 24px;border-bottom:1px solid var(--grey2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+  .page-title{font-size:18px;font-weight:700;color:var(--dark)}
+  .page-sub{font-size:12px;color:var(--grey3);margin-top:2px}
+  .content{padding:24px}
+  .module{display:none}
+  .module.active{display:block}
+
+  /* ── UI COMPONENTS ── */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+  .kpi-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border-top:3px solid var(--gold)}
+  .kpi-label{font-size:11px;color:var(--grey3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .kpi-value{font-size:22px;font-weight:800;color:var(--dark)}
+  .card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--grey2)}
+  .card-hdr h3{font-size:15px;font-weight:700;color:var(--dark)}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+  .btn-primary{background:var(--gold);color:#fff}.btn-primary:hover{background:#a07030}
+  .btn-outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}.btn-outline:hover{background:var(--gold-light)}
+  .btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--teal-dark)}
+  .btn-sm{padding:5px 10px;font-size:11px}
+  .badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700}
+  .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--grey2)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--teal-dark);color:#fff}
+  th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.3px}
+  td{padding:10px 12px;border-bottom:1px solid var(--grey2);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--grey1)}
+  .tbl-toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--grey2);background:var(--grey1);border-radius:var(--radius) var(--radius) 0 0}
+  .tbl-toolbar input,.tbl-toolbar select{border:1.5px solid var(--grey2);border-radius:6px;padding:7px 10px;font-size:12px;outline:none;background:#fff}
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-hdr h3{font-size:16px;font-weight:700;color:var(--dark)}
+  .section-hdr p{font-size:12px;color:var(--grey3);margin-top:3px}
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--grey2);margin-bottom:16px}
+  .tab-btn{padding:8px 16px;background:none;border:none;font-size:13px;font-weight:600;color:var(--grey4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+  .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .tab-pane{display:none}.tab-pane.active{display:block}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9000;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-lg{max-width:720px}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--grey2);background:var(--gold-light)}
+  .modal-hdr h3{font-size:16px;font-weight:700;color:#a07030}
+  .modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--grey4)}
+  .modal-body{padding:22px}
+  .modal-footer{padding:16px 22px;border-top:1px solid var(--grey2);display:flex;justify-content:flex-end;gap:10px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-group label{font-size:11px;font-weight:700;color:var(--grey5);text-transform:uppercase;letter-spacing:.3px}
+  .form-group input,.form-group select,.form-group textarea{border:1.5px solid var(--grey2);border-radius:6px;padding:8px 11px;font-size:13px;outline:none;width:100%;transition:border .2s;background:#fff}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .form-full{grid-column:1/-1}
+
+  /* ── TOUR ASSIGNMENT CARD ── */
+  .tour-assign-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--gold);overflow:hidden}
+  .tour-assign-hdr{padding:14px 18px;background:var(--gold-light);border-bottom:1px solid #f0dfc0;display:flex;align-items:center;justify-content:space-between}
+  .tour-assign-body{padding:14px 18px}
+  .guest-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--grey2)}
+  .guest-row:last-child{border-bottom:none}
+  .guest-icon{width:32px;height:32px;background:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+  /* ── MESSAGE ── */
+  .conv-panel{display:grid;grid-template-columns:260px 1fr;border:1px solid var(--grey2);border-radius:var(--radius);overflow:hidden;min-height:380px}
+  .conv-list{background:var(--grey1);border-right:1px solid var(--grey2);overflow-y:auto}
+  .conv-item{padding:12px 14px;border-bottom:1px solid var(--grey2);cursor:pointer;transition:background .15s}
+  .conv-item:hover,.conv-item.active{background:var(--gold-light)}
+  .msg-thread{padding:16px;overflow-y:auto;background:#f9f9f9;min-height:260px}
+  .msg-bubble{margin-bottom:12px;display:flex}
+  .msg-bubble.mine{justify-content:flex-end}
+  .msg-content{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13px}
+  .msg-bubble.mine .msg-content{background:var(--gold);color:#fff;border-radius:12px 12px 0 12px}
+  .msg-bubble.theirs .msg-content{background:#fff;color:var(--dark);border-radius:12px 12px 12px 0;border:1px solid var(--grey2)}
+  .msg-meta{font-size:10px;opacity:.6;margin-bottom:4px}
+
+  #toast{position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:8px}
+  .toast-msg{background:#1A1A2E;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;animation:fadeIn .3s;box-shadow:var(--shadow)}
+  .toast-msg.error{background:#c0392b}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🏭</div>
+    <div class="login-brand">Coimbatour DMC</div>
+    <div class="login-sub">Supplier Portal</div>
+    <div class="login-badge">Partner / Supplier Login</div>
+    <input type="text" id="sp-code" placeholder="Supplier Code (e.g. SUP-001)">
+    <input type="password" id="sp-pass" placeholder="Password" onkeydown="if(event.key==='Enter')spLogin()">
+    <button onclick="spLogin()">Sign In →</button>
+    <div class="login-err" id="sp-err">Invalid supplier code or password.</div>
+    <div style="font-size:11px;color:var(--grey3);margin-top:16px">Demo: Code <b>SUP-001</b> / Pass <b>hotel123</b></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">🌿 Coimbatour</div>
+      <div class="sb-logo-sub">Supplier Portal</div>
+    </div>
+    <div class="sb-sup-info">
+      <div class="sb-sup-name" id="sp-sup-name">—</div>
+      <div class="sb-sup-type" id="sp-sup-type">Supplier Type</div>
+    </div>
+    <div class="sb-nav">
+      <a class="active" data-mod="dashboard" onclick="spNav('dashboard')"><span class="icon">📊</span>Dashboard</a>
+      <a data-mod="upcoming" onclick="spNav('upcoming')"><span class="icon">📅</span>Upcoming Tours</a>
+      <a data-mod="guests" onclick="spNav('guests')"><span class="icon">👥</span>Guest List</a>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 14px"></div>
+      <a data-mod="rates" onclick="spNav('rates')"><span class="icon">💰</span>My Rates</a>
+      <a data-mod="availability" onclick="spNav('availability')"><span class="icon">🗓️</span>Availability</a>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 14px"></div>
+      <a data-mod="messages" onclick="spNav('messages')"><span class="icon">💬</span>Message DMC</a>
+      <a data-mod="profile" onclick="spNav('profile')"><span class="icon">👤</span>My Profile</a>
+    </div>
+    <div class="sb-footer">
+      Coimbatour DMC · Supplier Portal
+      <span class="sb-logout" onclick="spLogout()">⇠ Sign Out</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="sp-page-title">Dashboard</div>
+        <div class="page-sub" id="sp-page-sub">Supplier partner hub</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="sp-today" style="font-size:12px;color:var(--grey3)"></span>
+        <span style="background:var(--gold-light);color:#a07030;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px">🏭 Supplier</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="module active" id="sp-mod-dashboard">
+        <div class="kpi-grid" id="sp-kpis"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-hdr"><h3>This Month's Tours</h3><button class="btn btn-outline btn-sm" onclick="spNav('upcoming')">View All</button></div>
+            <div id="sp-month-tours"></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><h3>Action Items</h3></div>
+            <div id="sp-actions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPCOMING TOURS -->
+      <div class="module" id="sp-mod-upcoming">
+        <div class="section-hdr">
+          <div><h3>Upcoming Tour Assignments</h3><p>Tours you are assigned to service through Coimbatour DMC</p></div>
+        </div>
+        <div class="tbl-toolbar" style="border:1px solid var(--grey2);border-radius:var(--radius) var(--radius) 0 0">
+          <input type="text" id="sp-tour-search" placeholder="🔍 Search by booking ID or customer…" oninput="spRenderUpcoming()">
+          <select id="sp-tour-month" onchange="spRenderUpcoming()">
+            <option value="">All Months</option>
+            <option value="2026-07">Jul 2026</option><option value="2026-08">Aug 2026</option>
+            <option value="2026-09">Sep 2026</option><option value="2026-10">Oct 2026</option>
+            <option value="2026-11">Nov 2026</option><option value="2026-12">Dec 2026</option>
+          </select>
+        </div>
+        <div id="sp-upcoming-cards" style="border:1px solid var(--grey2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:14px;background:#fff"></div>
+      </div>
+
+      <!-- GUEST LIST -->
+      <div class="module" id="sp-mod-guests">
+        <div class="section-hdr">
+          <div><h3>Guest Information</h3><p>Guest details for your upcoming tours — provided by Coimbatour DMC</p></div>
+          <select id="sp-guest-booking" onchange="spRenderGuests()" style="border:1.5px solid var(--grey2);border-radius:6px;padding:7px 12px;font-size:12px;outline:none">
+            <option value="">Select Booking</option>
+          </select>
+        </div>
+        <div id="sp-guests-content"></div>
+      </div>
+
+      <!-- MY RATES -->
+      <div class="module" id="sp-mod-rates">
+        <div class="section-hdr">
+          <div><h3>My Contracted Rates</h3><p>Rates agreed with Coimbatour DMC for your services</p></div>
+          <button class="btn btn-primary" onclick="openSpRateModal()">+ Propose New Rate</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Service</th><th>Rate ₹</th><th>Unit</th><th>GST %</th><th>Total ₹</th><th>Valid From</th><th>Valid To</th><th>Status</th></tr></thead>
+            <tbody id="sp-rates-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AVAILABILITY -->
+      <div class="module" id="sp-mod-availability">
+        <div class="section-hdr">
+          <div><h3>Availability Calendar</h3><p>Mark your availability and capacity for DMC planning</p></div>
+          <button class="btn btn-primary" onclick="openSpAvailModal()">+ Update Availability</button>
+        </div>
+        <div class="kpi-grid" id="sp-avail-kpis"></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Date Range</th><th>Service / Room Type</th><th>Units Available</th><th>Status</th><th>Notes</th></tr></thead>
+            <tbody id="sp-avail-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="module" id="sp-mod-messages">
+        <div class="section-hdr">
+          <div><h3>Message Coimbatour DMC</h3><p>Direct communication channel with your DMC partner</p></div>
+          <button class="btn btn-primary" onclick="openSpMsgModal()">+ New Message</button>
+        </div>
+        <div class="conv-panel">
+          <div class="conv-list">
+            <div style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--grey3);border-bottom:1px solid var(--grey2)">CONVERSATIONS</div>
+            <div id="sp-conv-list"></div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <div id="sp-msg-header" style="padding:12px 16px;border-bottom:1px solid var(--grey2);font-size:13px;font-weight:600;color:var(--grey4)">Select a conversation</div>
+            <div id="sp-msg-thread" class="msg-thread"></div>
+            <div style="padding:10px 14px;border-top:1px solid var(--grey2);display:flex;gap:8px;background:var(--white)">
+              <input id="sp-reply-input" placeholder="Type your message to DMC…" style="flex:1;border:1.5px solid var(--grey2);border-radius:6px;padding:8px 12px;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')spSendReply()">
+              <button class="btn btn-primary btn-sm" onclick="spSendReply()">Send →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="module" id="sp-mod-profile">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-hdr"><h3>Supplier Profile</h3><button class="btn btn-outline btn-sm" onclick="saveSpProfile()">💾 Save</button></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="form-group"><label>Business Name</label><input id="sp-prof-name" placeholder="Your business name"></div>
+              <div class="form-group"><label>Type</label><select id="sp-prof-type"><option>Hotel</option><option>Homestay</option><option>Camp</option><option>Transport</option><option>Guide</option><option>Activity</option><option>Attraction</option><option>F&B</option></select></div>
+              <div class="form-group"><label>Contact Person</label><input id="sp-prof-contact" placeholder="Primary contact name"></div>
+              <div class="form-group"><label>Phone</label><input id="sp-prof-phone" placeholder="+91 XXXXX XXXXX"></div>
+              <div class="form-group"><label>Email</label><input id="sp-prof-email" placeholder="supplier@email.com"></div>
+              <div class="form-group"><label>GSTIN *</label><input id="sp-prof-gstin" placeholder="33AAAAA0000A1Z5" style="text-transform:uppercase"></div>
+              <div class="form-group"><label>Aadhaar / PAN (KYC)</label><input id="sp-prof-aadhaar" placeholder="Aadhaar or PAN number"></div>
+              <div class="form-group"><label>Address</label><textarea id="sp-prof-address" placeholder="Full business address"></textarea></div>
+              <div class="form-group"><label>Bank Account (for payments)</label><input id="sp-prof-bank" placeholder="Account No — IFSC"></div>
+              <div class="form-group"><label>UPI ID</label><input id="sp-prof-upi" placeholder="your@upi"></div>
+              <div class="form-group form-full"><label>Services Offered</label><textarea id="sp-prof-services" placeholder="Describe your services, specialities, capacity…"></textarea></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><h3>Performance Summary</h3></div>
+            <div class="kpi-grid" id="sp-perf-kpis" style="margin-bottom:0"></div>
+            <div class="card-hdr" style="margin-top:20px"><h3>Change Password</h3></div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+              <div class="form-group"><label>Current Password</label><input type="password" id="sp-pwd-cur" placeholder="Current password"></div>
+              <div class="form-group"><label>New Password</label><input type="password" id="sp-pwd-new" placeholder="New password"></div>
+              <div class="form-group"><label>Confirm Password</label><input type="password" id="sp-pwd-confirm" placeholder="Confirm new password"></div>
+              <button class="btn btn-teal" onclick="spChangePwd()">Update Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="sp-rate-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3>Propose / Update Rate</h3><button class="modal-close" onclick="closeSpModal('sp-rate-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Service / Room Type *</label><input id="spr-service" placeholder="e.g. Standard Room, Innova Per Day, Adult Entry"></div>
+        <div class="form-group"><label>Proposed Rate ₹ *</label><input type="number" id="spr-rate" placeholder="0"></div>
+        <div class="form-group"><label>Rate Unit</label><select id="spr-unit"><option>Per night</option><option>Per day</option><option>Per trip</option><option>Per person</option><option>Per km</option><option>Per hour</option></select></div>
+        <div class="form-group"><label>GST Rate</label><select id="spr-gst"><option value="5">5% (Hotels/Transport)</option><option value="12">12% (Other Services)</option><option value="0">Nil (0%)</option></select></div>
+        <div class="form-group"><label>Valid From *</label><input type="date" id="spr-from"></div>
+        <div class="form-group"><label>Valid To *</label><input type="date" id="spr-to"></div>
+        <div class="form-group"><label>Min Booking</label><input id="spr-min" placeholder="e.g. Min 2 nights, 100 km min"></div>
+        <div class="form-group"><label>Cancellation Policy</label><select id="spr-cancel"><option>Free cancellation 48h prior</option><option>Free cancellation 24h prior</option><option>No cancellation</option><option>50% refund up to 24h</option></select></div>
+        <div class="form-group form-full"><label>Terms &amp; Conditions</label><textarea id="spr-notes" placeholder="Blackout dates, advance payment terms, special conditions…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeSpModal('sp-rate-modal')">Cancel</button><button class="btn btn-primary" onclick="spSaveRate()">Submit Rate</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="sp-avail-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3>Update Availability</h3><button class="modal-close" onclick="closeSpModal('sp-avail-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Service / Room Type</label><input id="spa-service" placeholder="e.g. Standard Room, Innova"></div>
+        <div class="form-group"><label>Units Available</label><input type="number" id="spa-units" placeholder="e.g. 5 rooms, 3 vehicles" min="0"></div>
+        <div class="form-group"><label>Available From *</label><input type="date" id="spa-from"></div>
+        <div class="form-group"><label>Available To *</label><input type="date" id="spa-to"></div>
+        <div class="form-group"><label>Status</label><select id="spa-status"><option>Available</option><option>Fully Booked</option><option>Partially Available</option><option>Maintenance</option></select></div>
+        <div class="form-group"><label>Priority Bookings</label><select id="spa-priority"><option>Any</option><option>Pre-agreed Parties Only</option><option>DMC Exclusive</option></select></div>
+        <div class="form-group form-full"><label>Notes</label><textarea id="spa-notes" placeholder="Special conditions, blackout dates within range, etc."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeSpModal('sp-avail-modal')">Cancel</button><button class="btn btn-primary" onclick="spSaveAvailability()">Save Availability</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="sp-msg-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>New Message to DMC</h3><button class="modal-close" onclick="closeSpModal('sp-msg-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Subject *</label><input id="spm-subject" placeholder="Message subject"></div>
+        <div class="form-group"><label>Priority</label><select id="spm-priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+        <div class="form-group"><label>Linked Booking</label><input id="spm-booking" placeholder="Booking ID (optional)"></div>
+        <div class="form-group form-full"><label>Message *</label><textarea id="spm-body" rows="5" placeholder="Type your message to Coimbatour DMC…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeSpModal('sp-msg-modal')">Cancel</button><button class="btn btn-primary" onclick="spSendMsg()">Send Message</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── SUPABASE CONFIG ──────────────────────────────────────────
+const SP_SUPABASE_URL='YOUR_SUPABASE_PROJECT_URL';
+const SP_SUPABASE_KEY='YOUR_SUPABASE_ANON_KEY';
+
+// ─── LOCAL CACHE ──────────────────────────────────────────────
+const SP_CACHE={};
+const SP_DB={
+  get(k){return SP_CACHE[k]||JSON.parse(localStorage.getItem('sp_'+k)||'null')||[]},
+  set(k,v){SP_CACHE[k]=v;localStorage.setItem('sp_'+k,JSON.stringify(v))}
+};
+
+async function spFetchFromSupabase(){
+  if(SP_SUPABASE_URL==='YOUR_SUPABASE_PROJECT_URL')return;
+  const headers={'apikey':SP_SUPABASE_KEY,'Authorization':'Bearer '+SP_SUPABASE_KEY};
+  const tables=['bookings','packages','tourstatus','contracted','messages','suppliers'];
+  await Promise.all(tables.map(async t=>{
+    try{const r=await fetch(SP_SUPABASE_URL+'/rest/v1/'+t+'?select=*',{headers});
+    if(r.ok){const d=await r.json();SP_CACHE[t]=d;}}catch(e){}
+  }));
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────
+let spCurrentSupplier=null;
+const SP_ACCOUNTS=[
+  {code:'SUP-001',password:'hotel123',name:'The Heritage Hotel',type:'Hotel',city:'Ooty'},
+  {code:'SUP-002',password:'drive456',name:'Green Valley Cabs',type:'Transport',city:'Coimbatore'},
+  {code:'SUP-003',password:'guide789',name:'Rajan Nature Guides',type:'Guide',city:'Anamalai'}
+];
+
+function spLogin(){
+  const code=document.getElementById('sp-code').value.trim().toUpperCase();
+  const pass=document.getElementById('sp-pass').value;
+  const sup=SP_ACCOUNTS.find(a=>a.code===code&&a.password===pass);
+  if(!sup){document.getElementById('sp-err').style.display='block';return;}
+  spCurrentSupplier=sup;
+  sessionStorage.setItem('sp_session',JSON.stringify(sup));
+  document.getElementById('sp-err').style.display='none';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('sp-sup-name').textContent=sup.name;
+  document.getElementById('sp-sup-type').textContent=sup.type+' · '+sup.city;
+  document.getElementById('sp-today').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  spNav('dashboard');spLoadProfile();
+}
+
+function spLogout(){
+  sessionStorage.removeItem('sp_session');
+  spCurrentSupplier=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────
+const SP_PAGE_META={
+  dashboard:{title:'Supplier Dashboard',sub:'Welcome to your Coimbatour partner hub'},
+  upcoming:{title:'Upcoming Tour Assignments',sub:'Tours assigned to you by Coimbatour DMC'},
+  guests:{title:'Guest Information',sub:'Guest details for your upcoming tour services'},
+  rates:{title:'My Contracted Rates',sub:'Service rates agreed with Coimbatour DMC'},
+  availability:{title:'Availability Calendar',sub:'Your availability for DMC planning'},
+  messages:{title:'Message DMC',sub:'Direct line to your Coimbatour partner'},
+  profile:{title:'My Profile',sub:'Supplier profile, KYC and account settings'}
+};
+
+function spNav(m){
+  document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.sb-nav a').forEach(x=>x.classList.remove('active'));
+  document.getElementById('sp-mod-'+m).classList.add('active');
+  document.querySelector(`.sb-nav a[data-mod="${m}"]`)?.classList.add('active');
+  document.getElementById('sp-page-title').textContent=SP_PAGE_META[m]?.title||m;
+  document.getElementById('sp-page-sub').textContent=SP_PAGE_META[m]?.sub||'';
+  const renders={dashboard:spRenderDashboard,upcoming:spRenderUpcoming,guests:spRenderGuestDropdown,
+    rates:spRenderRates,availability:spRenderAvailability,messages:spRenderMessages};
+  if(renders[m])renders[m]();
+}
+
+// ─── UTILITY ──────────────────────────────────────────────────
+function fmt(n){return (+n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function spToast(msg,type=''){
+  const t=document.createElement('div');
+  t.className='toast-msg'+(type?' '+type:'');t.textContent=msg;
+  document.getElementById('toast').appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+function openSpModal(id){document.getElementById(id).classList.add('open')}
+function closeSpModal(id){document.getElementById(id).classList.remove('open')}
+
+function spMyBookings(){
+  // In real app, filter bookings that include this supplier. For demo, show all.
+  return SP_DB.get('bookings')||[];
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────
+function spRenderDashboard(){
+  const bkgs=spMyBookings();
+  const upcoming=bkgs.filter(b=>b.travelDate&&b.travelDate>=new Date().toISOString().slice(0,10)&&['Confirmed','In Progress'].includes(b.status));
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const monthTours=bkgs.filter(b=>b.travelDate&&b.travelDate.startsWith(thisMonth));
+  const rates=SP_DB.get('sp_rates_'+(spCurrentSupplier?.code||'anon'))||[];
+  document.getElementById('sp-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Upcoming Tours</div><div class="kpi-value" style="color:var(--gold)">${upcoming.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">This Month Tours</div><div class="kpi-value" style="color:var(--teal)">${monthTours.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Active Rates</div><div class="kpi-value" style="color:#0a8a0a">${rates.filter(r=>r.status!=='Rejected').length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Pax (Month)</div><div class="kpi-value">${monthTours.reduce((s,b)=>s+(+b.pax||0),0)}</div></div>`;
+  // Month tours preview
+  document.getElementById('sp-month-tours').innerHTML=monthTours.slice(0,5).map(b=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--grey2);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:600;font-size:13px">${b.id} — ${b.packageName||'—'}</div>
+        <div style="font-size:11px;color:var(--grey3)">${b.travelDate} · ${b.pax||1} pax</div>
+      </div>
+      <span class="badge" style="background:var(--gold);color:#fff">${b.status}</span>
+    </div>`).join('')||'<div style="color:var(--grey3);padding:16px;text-align:center">No tours this month yet</div>';
+  // Action items
+  const actions=[];
+  upcoming.slice(0,3).forEach(b=>actions.push({icon:'📅',text:'Upcoming: '+b.id+' — '+b.customerName+' on '+b.travelDate+' ('+b.pax+' pax)'}));
+  const expRates=rates.filter(r=>r.validTo&&r.validTo<new Date(Date.now()+14*86400000).toISOString().slice(0,10));
+  expRates.forEach(r=>actions.push({icon:'⚠️',text:'Rate expiring soon: '+r.service+' on '+r.validTo}));
+  document.getElementById('sp-actions').innerHTML=actions.length?actions.map(a=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--grey2);display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:18px">${a.icon}</span><span style="font-size:13px">${a.text}</span>
+    </div>`).join(''):'<div style="color:var(--grey3);padding:16px;text-align:center">No pending actions 🎉</div>';
+}
+
+// ─── UPCOMING TOURS ───────────────────────────────────────────
+function spRenderUpcoming(){
+  const q=(document.getElementById('sp-tour-search')?.value||'').toLowerCase();
+  const mf=document.getElementById('sp-tour-month')?.value||'';
+  const bkgs=spMyBookings().filter(b=>{
+    if(!['Confirmed','In Progress'].includes(b.status))return false;
+    const txt=(b.id+' '+(b.customerName||'')+(b.packageName||'')).toLowerCase();
+    if(q&&!txt.includes(q))return false;
+    if(mf&&(!b.travelDate||!b.travelDate.startsWith(mf)))return false;
+    return true;
+  });
+  const el=document.getElementById('sp-upcoming-cards');
+  if(!bkgs.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--grey3)">No upcoming tours assigned yet.</div>';return;}
+  el.innerHTML=bkgs.map(b=>{
+    const ts=(SP_DB.get('tourstatus')||[]).find(t=>t.bookingId===b.id);
+    const supType=spCurrentSupplier?.type||'';
+    const relevantMs=supType==='Hotel'?['hotel']:supType==='Transport'?['transport']:supType==='Guide'?['guide']:supType==='Attraction'?['tickets']:['booking'];
+    return `<div class="tour-assign-card">
+      <div class="tour-assign-hdr">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#a07030">${b.id} — ${b.packageName||'—'}</div>
+          <div style="font-size:12px;color:var(--grey4)">📅 ${b.travelDate||'—'} · 👥 ${b.pax||1} pax · 📍 ${b.destination||b.packageName||'—'}</div>
+        </div>
+        <div style="text-align:right">
+          <span class="badge" style="background:${b.status==='In Progress'?'var(--teal)':'var(--gold)'};color:#fff">${b.status}</span>
+          ${ts?`<div style="font-size:11px;color:var(--grey3);margin-top:4px">Your task: <b>${relevantMs.map(m=>ts.milestones?.[m]?'✅ Done':'⏳ Pending').join(', ')}</b></div>`:''}
+        </div>
+      </div>
+      <div class="tour-assign-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:12px">
+          <div><span style="color:var(--grey3)">Customer:</span> <b>${b.customerName||'—'}</b></div>
+          <div><span style="color:var(--grey3)">Contact:</span> <b>${b.customerPhone||'—'}</b></div>
+          <div><span style="color:var(--grey3)">Agent:</span> <b>${b.agentCode||'Direct'}</b></div>
+          <div><span style="color:var(--grey3)">Package:</span> <b>${b.packageName||'—'}</b></div>
+          <div><span style="color:var(--grey3)">Duration:</span> <b>${b.duration||'—'}</b></div>
+          <div><span style="color:var(--grey3)">Pax:</span> <b>${b.pax||1}</b></div>
+        </div>
+        ${b.specialRequests?`<div style="margin-top:10px;padding:8px 12px;background:var(--gold-light);border-left:3px solid var(--gold);border-radius:6px;font-size:12px"><b>Special Requests:</b> ${b.specialRequests}</div>`:''}
+        ${ts?.agentNote?`<div style="margin-top:8px;padding:8px 12px;background:var(--teal-light);border-left:3px solid var(--teal);border-radius:6px;font-size:12px"><b>DMC Note:</b> ${ts.agentNote}</div>`:''}
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-sm btn-teal" onclick="spViewGuests('${b.id}')">👥 View Guests</button>
+          <button class="btn btn-sm btn-outline" onclick="spMessageAbout('${b.id}')">💬 Message DMC</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function spViewGuests(bookingId){
+  spNav('guests');
+  document.getElementById('sp-guest-booking').value=bookingId;
+  spRenderGuests();
+}
+
+// ─── GUESTS ───────────────────────────────────────────────────
+function spRenderGuestDropdown(){
+  const bkgs=spMyBookings().filter(b=>['Confirmed','In Progress'].includes(b.status));
+  const sel=document.getElementById('sp-guest-booking');
+  sel.innerHTML='<option value="">Select Booking</option>'+bkgs.map(b=>`<option value="${b.id}">${b.id} — ${b.customerName} (${b.travelDate||'—'})</option>`).join('');
+  spRenderGuests();
+}
+
+function spRenderGuests(){
+  const bkgId=document.getElementById('sp-guest-booking')?.value;
+  const el=document.getElementById('sp-guests-content');
+  if(!bkgId){el.innerHTML='<div class="card" style="text-align:center;padding:30px;color:var(--grey3)">Select a booking to view guest list.</div>';return;}
+  const bkg=spMyBookings().find(b=>b.id===bkgId);
+  if(!bkg){el.innerHTML='<div class="card" style="text-align:center;padding:30px;color:var(--grey3)">Booking not found.</div>';return;}
+  const supType=spCurrentSupplier?.type||'Hotel';
+  const serviceInstructions={
+    Hotel:`<div style="padding:12px 16px;background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;margin-bottom:14px;font-size:13px"><b>🏨 Hotel Brief:</b> Please prepare ${bkg.pax||1} room(s) for check-in on <b>${bkg.travelDate}</b>. Ensure early check-in if guests arrive before 12pm. Provide welcome drink and room with view if available. Report any issues to DMC immediately.</div>`,
+    Transport:`<div style="padding:12px 16px;background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;margin-bottom:14px;font-size:13px"><b>🚖 Transport Brief:</b> Please arrange vehicle(s) for <b>${bkg.pax||1} pax</b> on <b>${bkg.travelDate}</b>. Ensure vehicle is clean, fuel is full and driver has the route plan. Pickup point will be confirmed by DMC one day prior.</div>`,
+    Guide:`<div style="padding:12px 16px;background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;margin-bottom:14px;font-size:13px"><b>👤 Guide Brief:</b> Please meet the group of <b>${bkg.pax||1} pax</b> on <b>${bkg.travelDate}</b>. Carry group flag, itinerary and emergency contact list. Language: ${bkg.language||'English'}.</div>`
+  };
+  // Customers for this booking
+  const customers=JSON.parse(localStorage.getItem('ap_customers_all')||'[]').filter(c=>c.booking===bkgId);
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-hdr"><h3>Tour: ${bkgId} — ${bkg.packageName||'—'}</h3></div>
+      ${serviceInstructions[supType]||''}
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;margin-bottom:16px">
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">TRAVEL DATE</div><b>${bkg.travelDate||'—'}</b></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">TOTAL PAX</div><b>${bkg.pax||1}</b></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">PACKAGE</div><b>${bkg.packageName||'—'}</b></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">LEAD CONTACT</div><b>${bkg.customerName||'—'}</b></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">PHONE</div><b>${bkg.customerPhone||'—'}</b></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:700;margin-bottom:3px">EMAIL</div><b>${bkg.customerEmail||'—'}</b></div>
+      </div>
+      ${bkg.specialRequests||bkg.dietaryPreferences?`<div style="padding:10px 14px;background:#fff5f5;border-left:3px solid #e74c3c;border-radius:6px;margin-bottom:14px;font-size:12px"><b>⚠️ Special Requirements:</b><br>${[bkg.specialRequests,bkg.dietaryPreferences].filter(Boolean).join(' · ')}</div>`:''}
+      <div style="font-size:11px;font-weight:700;color:var(--grey4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">INDIVIDUAL GUESTS</div>
+      ${customers.length?customers.map(c=>`<div class="guest-row">
+        <div class="guest-icon">👤</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px">${c.name}</div>
+          <div style="font-size:11px;color:var(--grey3)">${c.phone||'—'} · ${c.email||'—'}</div>
+          ${c.idType?`<div style="font-size:10px;color:var(--grey4)">${c.idType}: ${c.idNo||'—'}</div>`:''}
+          ${c.notes?`<div style="font-size:10px;color:#e74c3c">Notes: ${c.notes}</div>`:''}
+        </div>
+      </div>`).join(''):`<div style="color:var(--grey3);font-size:12px;padding:14px;text-align:center;background:var(--grey1);border-radius:8px">Individual guest data not yet uploaded by agent. Contact DMC for full list.</div>`}
+    </div>`;
+}
+
+// ─── RATES ────────────────────────────────────────────────────
+function spRenderRates(){
+  const key='sp_rates_'+(spCurrentSupplier?.code||'anon');
+  const rates=SP_DB.get(key)||[];
+  const now=new Date().toISOString().slice(0,10);
+  const sc={Active:'#0a8a0a',Expired:'#999',Pending:'var(--gold)',Rejected:'#c0392b'};
+  document.getElementById('sp-rates-tbody').innerHTML=rates.length?rates.map(r=>{
+    const status=r.validTo&&r.validTo<now?'Expired':(r.status||'Active');
+    const gst=(+r.rate||0)*(+r.gst||0)/100;
+    return `<tr>
+      <td><b>${r.service}</b></td>
+      <td style="font-weight:700;color:var(--teal)">₹${fmt(r.rate)}</td>
+      <td>${r.unit||'per day'}</td>
+      <td>${r.gst||0}%</td>
+      <td>₹${fmt((+r.rate||0)+gst)}</td>
+      <td>${r.validFrom||'—'}</td>
+      <td>${r.validTo||'—'}</td>
+      <td><span class="badge" style="background:${sc[status]||'#999'};color:#fff">${status}</span></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--grey3)">No rates yet. Submit your rates to Coimbatour DMC.</td></tr>';
+}
+
+function openSpRateModal(){
+  document.getElementById('spr-from').value='';document.getElementById('spr-to').value='';
+  document.getElementById('spr-service').value='';document.getElementById('spr-rate').value='';
+  openSpModal('sp-rate-modal');
+}
+
+function spSaveRate(){
+  const svc=document.getElementById('spr-service').value.trim();
+  const rate=+document.getElementById('spr-rate').value||0;
+  const from=document.getElementById('spr-from').value;
+  const to=document.getElementById('spr-to').value;
+  if(!svc||!rate||!from||!to){spToast('Service, Rate and Validity are required','error');return;}
+  const key='sp_rates_'+(spCurrentSupplier?.code||'anon');
+  const rates=SP_DB.get(key)||[];
+  rates.push({id:'SPRATE-'+Date.now(),service:svc,rate,unit:document.getElementById('spr-unit').value,
+    gst:document.getElementById('spr-gst').value,validFrom:from,validTo:to,
+    minBooking:document.getElementById('spr-min').value.trim(),
+    cancelPolicy:document.getElementById('spr-cancel').value,
+    notes:document.getElementById('spr-notes').value.trim(),status:'Pending'});
+  SP_DB.set(key,rates);
+  closeSpModal('sp-rate-modal');spRenderRates();spToast('Rate submitted to DMC for approval!');
+}
+
+// ─── AVAILABILITY ─────────────────────────────────────────────
+function spRenderAvailability(){
+  const key='sp_avail_'+(spCurrentSupplier?.code||'anon');
+  const avails=SP_DB.get(key)||[];
+  const available=avails.filter(a=>a.status==='Available').length;
+  const booked=avails.filter(a=>a.status==='Fully Booked').length;
+  document.getElementById('sp-avail-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Available Periods</div><div class="kpi-value" style="color:#0a8a0a">${available}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Fully Booked</div><div class="kpi-value" style="color:#e74c3c">${booked}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Entries</div><div class="kpi-value">${avails.length}</div></div>`;
+  const sc={Available:'#0a8a0a','Fully Booked':'#c0392b','Partially Available':'var(--gold)',Maintenance:'#999'};
+  document.getElementById('sp-avail-tbody').innerHTML=avails.length?avails.map(a=>`<tr>
+    <td>${a.from} → ${a.to}</td>
+    <td>${a.service||'All Services'}</td>
+    <td style="text-align:center">${a.units||'—'}</td>
+    <td><span class="badge" style="background:${sc[a.status]||'#999'};color:#fff">${a.status}</span></td>
+    <td style="font-size:11px;color:var(--grey3)">${a.notes||'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--grey3)">No availability records. Update your availability so DMC can plan effectively.</td></tr>';
+}
+
+function openSpAvailModal(){openSpModal('sp-avail-modal')}
+function spSaveAvailability(){
+  const from=document.getElementById('spa-from').value;
+  const to=document.getElementById('spa-to').value;
+  if(!from||!to){spToast('From and To dates are required','error');return;}
+  const key='sp_avail_'+(spCurrentSupplier?.code||'anon');
+  const avails=SP_DB.get(key)||[];
+  avails.push({id:'AVAIL-'+Date.now(),service:document.getElementById('spa-service').value.trim(),
+    units:document.getElementById('spa-units').value,from,to,
+    status:document.getElementById('spa-status').value,
+    priority:document.getElementById('spa-priority').value,
+    notes:document.getElementById('spa-notes').value.trim()});
+  SP_DB.set(key,avails);closeSpModal('sp-avail-modal');spRenderAvailability();spToast('Availability updated!');
+}
+
+// ─── MESSAGES ─────────────────────────────────────────────────
+let spCurrentConvId=null;
+function spRenderMessages(){
+  const msgs=(SP_DB.get('messages')||[]).filter(m=>m.type==='supplier'&&(!m.supplierCode||m.supplierCode===spCurrentSupplier?.code));
+  const list=document.getElementById('sp-conv-list');
+  if(!msgs.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--grey3);font-size:12px">No conversations yet.</div>';return;}
+  list.innerHTML=msgs.map(m=>`<div class="conv-item${spCurrentConvId===m.id?' active':''}" onclick="spOpenConv('${m.id}')">
+    <div style="font-weight:600;font-size:13px">${m.subject}</div>
+    <div style="font-size:11px;color:var(--grey3)">${(m.replies?.length||0)+1} message(s)</div>
+    <div style="font-size:11px;color:var(--grey3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">${(m.message||'').substring(0,50)}…</div>
+  </div>`).join('');
+}
+
+function spOpenConv(id){
+  spCurrentConvId=id;
+  const msgs=SP_DB.get('messages')||[];
+  const conv=msgs.find(x=>x.id===id);if(!conv)return;
+  document.getElementById('sp-msg-header').innerHTML=`<b>${conv.subject}</b>${conv.bookingId?` <span style="font-size:11px;color:var(--grey3)">· Booking: ${conv.bookingId}</span>`:''}`;
+  const allMsgs=[{body:conv.message,fromType:'supplier',timestamp:conv.createdAt},...(conv.replies||[])];
+  const thread=document.getElementById('sp-msg-thread');
+  thread.innerHTML=allMsgs.map(m=>`<div class="msg-bubble ${m.fromType==='dmc'?'theirs':'mine'}">
+    <div class="msg-content">
+      <div class="msg-meta">${m.fromType==='dmc'?'Coimbatour DMC':'You'} · ${m.timestamp?new Date(m.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—'}</div>
+      ${m.body||''}
+    </div>
+  </div>`).join('');
+  thread.scrollTop=thread.scrollHeight;
+  spRenderMessages();
+}
+
+function spSendReply(){
+  if(!spCurrentConvId){spToast('Select a conversation first','error');return;}
+  const inp=document.getElementById('sp-reply-input');
+  const txt=inp.value.trim();if(!txt)return;
+  const msgs=SP_DB.get('messages')||[];
+  const i=msgs.findIndex(x=>x.id===spCurrentConvId);if(i<0)return;
+  if(!msgs[i].replies)msgs[i].replies=[];
+  msgs[i].replies.push({body:txt,fromType:'supplier',author:spCurrentSupplier?.name||'Supplier',timestamp:new Date().toISOString()});
+  SP_DB.set('messages',msgs);inp.value='';spOpenConv(spCurrentConvId);spToast('Reply sent!');
+}
+
+function openSpMsgModal(){openSpModal('sp-msg-modal')}
+function spMessageAbout(bookingId){
+  document.getElementById('spm-booking').value=bookingId;
+  document.getElementById('spm-subject').value='Re: Booking '+bookingId;
+  openSpModal('sp-msg-modal');
+}
+
+function spSendMsg(){
+  const subj=document.getElementById('spm-subject').value.trim();
+  const body=document.getElementById('spm-body').value.trim();
+  if(!subj||!body){spToast('Subject and message required','error');return;}
+  const msgs=SP_DB.get('messages')||[];
+  const obj={id:'MSG-'+Date.now(),type:'supplier',toName:'Coimbatour DMC',
+    subject:subj,priority:document.getElementById('spm-priority').value,
+    bookingId:document.getElementById('spm-booking').value.trim(),
+    message:body,supplierCode:spCurrentSupplier?.code,supplierName:spCurrentSupplier?.name,
+    createdAt:new Date().toISOString(),replies:[]};
+  msgs.push(obj);SP_DB.set('messages',msgs);
+  spCurrentConvId=obj.id;closeSpModal('sp-msg-modal');spRenderMessages();spOpenConv(obj.id);spToast('Message sent to DMC!');
+}
+
+// ─── PROFILE ──────────────────────────────────────────────────
+function spLoadProfile(){
+  const p=JSON.parse(localStorage.getItem('sp_profile_'+(spCurrentSupplier?.code||'anon'))||'{}');
+  document.getElementById('sp-prof-name').value=p.name||spCurrentSupplier?.name||'';
+  document.getElementById('sp-prof-type').value=p.type||spCurrentSupplier?.type||'Hotel';
+  document.getElementById('sp-prof-contact').value=p.contact||'';
+  document.getElementById('sp-prof-phone').value=p.phone||'';
+  document.getElementById('sp-prof-email').value=p.email||'';
+  document.getElementById('sp-prof-gstin').value=p.gstin||'';
+  document.getElementById('sp-prof-aadhaar').value=p.aadhaar||'';
+  document.getElementById('sp-prof-address').value=p.address||'';
+  document.getElementById('sp-prof-bank').value=p.bank||'';
+  document.getElementById('sp-prof-upi').value=p.upi||'';
+  document.getElementById('sp-prof-services').value=p.services||'';
+}
+
+function saveSpProfile(){
+  const p={name:document.getElementById('sp-prof-name').value,type:document.getElementById('sp-prof-type').value,
+    contact:document.getElementById('sp-prof-contact').value,phone:document.getElementById('sp-prof-phone').value,
+    email:document.getElementById('sp-prof-email').value,
+    gstin:document.getElementById('sp-prof-gstin').value.toUpperCase(),
+    aadhaar:document.getElementById('sp-prof-aadhaar').value,
+    address:document.getElementById('sp-prof-address').value,
+    bank:document.getElementById('sp-prof-bank').value,upi:document.getElementById('sp-prof-upi').value,
+    services:document.getElementById('sp-prof-services').value};
+  localStorage.setItem('sp_profile_'+(spCurrentSupplier?.code||'anon'),JSON.stringify(p));
+  const bkgs=spMyBookings();
+  document.getElementById('sp-perf-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total Tours Serviced</div><div class="kpi-value">${bkgs.filter(b=>b.status==='Completed').length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Upcoming</div><div class="kpi-value" style="color:var(--gold)">${bkgs.filter(b=>['Confirmed','In Progress'].includes(b.status)).length}</div></div>`;
+  spToast('Profile saved!');
+}
+
+function spChangePwd(){
+  const cur=document.getElementById('sp-pwd-cur').value;
+  const nw=document.getElementById('sp-pwd-new').value;
+  const cf=document.getElementById('sp-pwd-confirm').value;
+  if(!cur||!nw||!cf){spToast('All fields required','error');return;}
+  if(nw!==cf){spToast('Passwords do not match','error');return;}
+  if(nw.length<6){spToast('Min 6 characters','error');return;}
+  spToast('Password updated!');
+  ['sp-pwd-cur','sp-pwd-new','sp-pwd-confirm'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+(async()=>{
+  const sess=sessionStorage.getItem('sp_session');
+  if(sess){
+    spCurrentSupplier=JSON.parse(sess);
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('sp-sup-name').textContent=spCurrentSupplier.name;
+    document.getElementById('sp-sup-type').textContent=spCurrentSupplier.type+' · '+spCurrentSupplier.city;
+    document.getElementById('sp-today').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    await spFetchFromSupabase();
+    spNav('dashboard');spLoadProfile();
+  }
+  document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+})();
+</script>
+</body>
+</html>

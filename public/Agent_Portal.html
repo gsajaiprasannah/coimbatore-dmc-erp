@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coimbatour — Agent Portal</title>
+<style>
+  :root{
+    --teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
+    --gold:#C8963E;--gold-light:#FDF3E3;
+    --dark:#1A1A2E;--grey1:#F7F8FA;--grey2:#E8EAED;--grey3:#9AA0AB;--grey4:#6B7280;--grey5:#374151;
+    --white:#fff;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#F0F4F8;color:var(--dark);font-size:14px}
+
+  /* ── LOGIN ── */
+  #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--teal-dark) 0%,#003333 50%,var(--teal) 100%);display:flex;align-items:center;justify-content:center;z-index:999}
+  .login-card{background:#fff;border-radius:16px;padding:40px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+  .login-logo{font-size:42px;margin-bottom:8px}
+  .login-brand{font-size:22px;font-weight:800;color:var(--teal-dark);letter-spacing:.5px}
+  .login-sub{font-size:12px;color:var(--gold);letter-spacing:1px;margin-bottom:24px;text-transform:uppercase}
+  .login-badge{background:var(--teal-light);color:var(--teal-dark);font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;display:inline-block;margin-bottom:24px}
+  .login-card input{width:100%;border:1.5px solid var(--grey2);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}
+  .login-card input:focus{border-color:var(--teal)}
+  .login-card button{width:100%;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
+  .login-card button:hover{background:var(--teal-dark)}
+  .login-err{color:#e74c3c;font-size:12px;margin-top:6px;display:none}
+
+  /* ── LAYOUT ── */
+  #app{display:none;min-height:100vh}
+  .sidebar{width:230px;background:linear-gradient(180deg,var(--teal-dark),#003030);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+  .sb-logo{padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .sb-logo-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:.3px}
+  .sb-logo-sub{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase}
+  .sb-agent-info{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05)}
+  .sb-agent-name{font-size:13px;font-weight:700;color:#fff}
+  .sb-agent-code{font-size:10px;color:rgba(255,255,255,.5)}
+  .sb-nav{padding:10px 0;flex:1}
+  .sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+  .sb-nav a:hover,.sb-nav a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--gold)}
+  .sb-nav .icon{font-size:16px;width:20px;text-align:center}
+  .sb-footer{padding:14px 16px;font-size:10px;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.1)}
+  .sb-logout{color:rgba(255,255,255,.5);cursor:pointer;font-size:11px;display:block;margin-top:6px}
+  .sb-logout:hover{color:#fff}
+  .main{margin-left:230px;min-height:100vh}
+  .topbar{background:#fff;padding:14px 24px;border-bottom:1px solid var(--grey2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+  .page-title{font-size:18px;font-weight:700;color:var(--dark)}
+  .page-sub{font-size:12px;color:var(--grey3);margin-top:2px}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .content{padding:24px}
+  .module{display:none}
+  .module.active{display:block}
+
+  /* ── UI COMPONENTS ── */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+  .kpi-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border-top:3px solid var(--teal)}
+  .kpi-label{font-size:11px;color:var(--grey3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .kpi-value{font-size:22px;font-weight:800;color:var(--dark)}
+  .card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--grey2)}
+  .card-hdr h3{font-size:15px;font-weight:700;color:var(--dark)}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+  .btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal-dark)}
+  .btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}.btn-outline:hover{background:var(--teal-light)}
+  .btn-sm{padding:5px 10px;font-size:11px}
+  .btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#a07030}
+  .badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700}
+  .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--grey2)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead tr{background:var(--teal);color:#fff}
+  th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.3px}
+  td{padding:10px 12px;border-bottom:1px solid var(--grey2);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--grey1)}
+  .tbl-toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--grey2);background:var(--grey1);border-radius:var(--radius) var(--radius) 0 0}
+  .tbl-toolbar input,.tbl-toolbar select{border:1.5px solid var(--grey2);border-radius:6px;padding:7px 10px;font-size:12px;outline:none;background:#fff}
+  .tbl-toolbar input:focus,.tbl-toolbar select:focus{border-color:var(--teal)}
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-hdr h3{font-size:16px;font-weight:700;color:var(--dark)}
+  .section-hdr p{font-size:12px;color:var(--grey3);margin-top:3px}
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--grey2);margin-bottom:16px}
+  .tab-btn{padding:8px 16px;background:none;border:none;font-size:13px;font-weight:600;color:var(--grey4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+  .tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
+  .tab-pane{display:none}.tab-pane.active{display:block}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9000;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-lg{max-width:720px}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--grey2);background:var(--teal-light)}
+  .modal-hdr h3{font-size:16px;font-weight:700;color:var(--teal-dark)}
+  .modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--grey4)}
+  .modal-body{padding:22px}
+  .modal-footer{padding:16px 22px;border-top:1px solid var(--grey2);display:flex;justify-content:flex-end;gap:10px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-group label{font-size:11px;font-weight:700;color:var(--grey5);text-transform:uppercase;letter-spacing:.3px}
+  .form-group input,.form-group select,.form-group textarea{border:1.5px solid var(--grey2);border-radius:6px;padding:8px 11px;font-size:13px;outline:none;width:100%;transition:border .2s;background:#fff}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .form-full{grid-column:1/-1}
+
+  /* ── TOUR CARD ── */
+  .tour-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;border-left:4px solid var(--teal)}
+  .tour-card-hdr{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--grey2)}
+  .tour-card-body{padding:14px 18px}
+  .milestone-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}
+  .milestone{text-align:center;padding:8px 4px;border-radius:8px;font-size:10px;font-weight:600}
+  .milestone.done{background:#e8f7e8;color:#0a8a0a}
+  .milestone.pending{background:var(--grey1);color:var(--grey3)}
+  .milestone-icon{font-size:20px;display:block;margin-bottom:4px}
+
+  /* ── MESSAGE THREAD ── */
+  .conv-panel{display:grid;grid-template-columns:260px 1fr;border:1px solid var(--grey2);border-radius:var(--radius);overflow:hidden;min-height:380px}
+  .conv-list{background:var(--grey1);border-right:1px solid var(--grey2);overflow-y:auto}
+  .conv-item{padding:12px 14px;border-bottom:1px solid var(--grey2);cursor:pointer;transition:background .15s}
+  .conv-item:hover,.conv-item.active{background:var(--teal-light)}
+  .msg-thread{flex:1;padding:16px;overflow-y:auto;background:#f9f9f9;min-height:260px}
+  .msg-bubble{margin-bottom:12px;display:flex}
+  .msg-bubble.mine{justify-content:flex-end}
+  .msg-content{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13px}
+  .msg-bubble.mine .msg-content{background:var(--teal);color:#fff;border-radius:12px 12px 0 12px}
+  .msg-bubble.theirs .msg-content{background:#fff;color:var(--dark);border-radius:12px 12px 12px 0;border:1px solid var(--grey2)}
+  .msg-meta{font-size:10px;opacity:.6;margin-bottom:4px}
+
+  /* ── PACKAGE CARD ── */
+  .pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .pkg-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:transform .15s}
+  .pkg-card:hover{transform:translateY(-2px)}
+  .pkg-card-img{height:140px;background:linear-gradient(135deg,var(--teal-dark),var(--teal));display:flex;align-items:center;justify-content:center;font-size:52px}
+  .pkg-card-body{padding:14px 16px}
+  .pkg-card-name{font-size:15px;font-weight:700;margin-bottom:4px}
+  .pkg-card-meta{font-size:11px;color:var(--grey3);margin-bottom:8px}
+  .pkg-card-price{font-size:18px;font-weight:800;color:var(--teal)}
+  .pkg-card-footer{padding:10px 16px;border-top:1px solid var(--grey2);display:flex;justify-content:space-between;align-items:center}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-230px);transition:transform .3s}.sidebar.open{transform:translateX(0)}
+    .main{margin-left:0}
+    .milestone-grid{grid-template-columns:repeat(4,1fr)}
+    .form-grid{grid-template-columns:1fr}
+    .conv-panel{grid-template-columns:1fr}
+    .conv-list{display:none}
+  }
+
+  #toast{position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:8px}
+  .toast-msg{background:#1A1A2E;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;animation:fadeIn .3s;box-shadow:var(--shadow)}
+  .toast-msg.error{background:#c0392b}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🌿</div>
+    <div class="login-brand">Coimbatour DMC</div>
+    <div class="login-sub">Agent Portal</div>
+    <div class="login-badge">Travel Agent Login</div>
+    <input type="text" id="ap-code" placeholder="Agent Code (e.g. AGT-001)">
+    <input type="password" id="ap-pass" placeholder="Password" onkeydown="if(event.key==='Enter')apLogin()">
+    <button onclick="apLogin()">Sign In →</button>
+    <div class="login-err" id="ap-err">Invalid agent code or password.</div>
+    <div style="font-size:11px;color:var(--grey3);margin-top:16px">Demo: Code <b>AGT-001</b> / Pass <b>agent123</b></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar" id="ap-sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">🌿 Coimbatour</div>
+      <div class="sb-logo-sub">Agent Portal</div>
+    </div>
+    <div class="sb-agent-info">
+      <div class="sb-agent-name" id="ap-agent-name">—</div>
+      <div class="sb-agent-code" id="ap-agent-code">Agent Code: —</div>
+    </div>
+    <div class="sb-nav">
+      <a class="active" data-mod="dashboard" onclick="apNav('dashboard')"><span class="icon">📊</span>Dashboard</a>
+      <a data-mod="mytours" onclick="apNav('mytours')"><span class="icon">🎒</span>My Tours</a>
+      <a data-mod="tourstatus" onclick="apNav('tourstatus')"><span class="icon">📡</span>Live Tour Status</a>
+      <a data-mod="insurance" onclick="apNav('insurance')"><span class="icon">🛡️</span>Insurance</a>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 14px"></div>
+      <a data-mod="packages" onclick="apNav('packages')"><span class="icon">🗺️</span>Browse Packages</a>
+      <a data-mod="destinations" onclick="apNav('destinations')"><span class="icon">📍</span>Destinations</a>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 14px"></div>
+      <a data-mod="customers" onclick="apNav('customers')"><span class="icon">🧑‍🤝‍🧑</span>My Customers</a>
+      <a data-mod="accounts" onclick="apNav('accounts')"><span class="icon">💰</span>Accounts</a>
+      <a data-mod="messages" onclick="apNav('messages')"><span class="icon">💬</span>Message DMC</a>
+      <div style="border-top:1px solid rgba(255,255,255,.1);margin:6px 14px"></div>
+      <a data-mod="profile" onclick="apNav('profile')"><span class="icon">👤</span>My Profile</a>
+    </div>
+    <div class="sb-footer">
+      Coimbatour DMC · Agent Portal
+      <span class="sb-logout" onclick="apLogout()">⇠ Sign Out</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="ap-page-title">Dashboard</div>
+        <div class="page-sub" id="ap-page-sub">Welcome to Coimbatour Agent Portal</div>
+      </div>
+      <div class="topbar-right">
+        <span id="ap-today" style="font-size:12px;color:var(--grey3)"></span>
+        <span style="background:var(--teal-light);color:var(--teal-dark);font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px">🤝 Agent</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="module active" id="ap-mod-dashboard">
+        <div class="kpi-grid" id="ap-kpis"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-hdr"><h3>My Recent Tours</h3><button class="btn btn-outline btn-sm" onclick="apNav('mytours')">View All</button></div>
+            <div id="ap-recent-tours"></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><h3>Pending Actions</h3></div>
+            <div id="ap-pending-actions"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-hdr"><h3>Quick Message to DMC</h3></div>
+          <div style="display:flex;gap:10px">
+            <input id="ap-quick-msg" placeholder="Type a quick message to Coimbatour DMC…" style="flex:1;border:1.5px solid var(--grey2);border-radius:6px;padding:9px 12px;font-size:13px;outline:none">
+            <button class="btn btn-primary" onclick="apSendQuickMsg()">Send 📨</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY TOURS -->
+      <div class="module" id="ap-mod-mytours">
+        <div class="section-hdr">
+          <div><h3>My Tour Bookings</h3><p>All bookings placed by your agency with Coimbatour DMC</p></div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input type="text" id="ap-tour-search" placeholder="🔍 Search booking ID or customer…" oninput="apRenderTours()">
+            <select id="ap-tour-status" onchange="apRenderTours()"><option value="">All Status</option><option>Confirmed</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select>
+          </div>
+          <table>
+            <thead><tr><th>Booking ID</th><th>Customer</th><th>Package</th><th>Dates</th><th>Pax</th><th>Amount ₹</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="ap-tour-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LIVE TOUR STATUS -->
+      <div class="module" id="ap-mod-tourstatus">
+        <div class="section-hdr">
+          <div><h3>Live Tour Status</h3><p>Real-time milestone updates from your DMC</p></div>
+        </div>
+        <div id="ap-ts-cards"></div>
+      </div>
+
+      <!-- INSURANCE -->
+      <div class="module" id="ap-mod-insurance">
+        <div class="section-hdr">
+          <div><h3>Travel Insurance</h3><p>Insurance policies for your tour guests</p></div>
+          <button class="btn btn-primary" onclick="openApInsModal()">+ Request Insurance</button>
+        </div>
+        <div class="kpi-grid" id="ap-ins-kpis"></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Policy No.</th><th>Guest Name</th><th>Booking</th><th>Provider</th><th>Premium ₹</th><th>Coverage ₹</th><th>Valid Until</th><th>Status</th></tr></thead>
+            <tbody id="ap-ins-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BROWSE PACKAGES -->
+      <div class="module" id="ap-mod-packages">
+        <div class="section-hdr">
+          <div><h3>Browse Packages</h3><p>All available Coimbatour packages — select pax count for pricing</p></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <input type="text" id="ap-pkg-search" placeholder="🔍 Search packages…" oninput="apRenderPackages()" style="border:1.5px solid var(--grey2);border-radius:6px;padding:8px 12px;font-size:13px;flex:1;min-width:200px;outline:none">
+          <select id="ap-pkg-pax" onchange="apRenderPackages()" style="border:1.5px solid var(--grey2);border-radius:6px;padding:8px 12px;font-size:13px;outline:none">
+            <option value="">Select Pax Count</option>
+            <option value="2">2 Pax</option><option value="3">3 Pax</option><option value="4">4 Pax</option>
+            <option value="5">5 Pax</option><option value="6">6 Pax</option><option value="8">8 Pax</option>
+            <option value="10">10 Pax</option><option value="12">12 Pax</option><option value="15">15 Pax</option>
+            <option value="18">18 Pax</option><option value="20">20+ Pax</option>
+          </select>
+          <select id="ap-pkg-cat" onchange="apRenderPackages()" style="border:1.5px solid var(--grey2);border-radius:6px;padding:8px 12px;font-size:13px;outline:none">
+            <option value="">All Categories</option><option>Nature</option><option>Adventure</option><option>Heritage</option><option>Family</option><option>Honeymoon</option><option>Pilgrimage</option><option>Agri Tourism</option><option>Corporate</option>
+          </select>
+        </div>
+        <div class="pkg-grid" id="ap-pkg-grid"></div>
+      </div>
+
+      <!-- DESTINATIONS -->
+      <div class="module" id="ap-mod-destinations">
+        <div class="section-hdr">
+          <div><h3>Destination Info</h3><p>Key attractions and locations around Coimbatore</p></div>
+        </div>
+        <div id="ap-dest-grid"></div>
+      </div>
+
+      <!-- MY CUSTOMERS -->
+      <div class="module" id="ap-mod-customers">
+        <div class="section-hdr">
+          <div><h3>My Customer Data</h3><p>Customers traveling through your agency with Coimbatour DMC</p></div>
+          <button class="btn btn-primary" onclick="openApCustModal()">+ Add Customer</button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input type="text" id="ap-cust-search" placeholder="🔍 Search customers…" oninput="apRenderCustomers()">
+          </div>
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Booking</th><th>ID Proof</th><th>Notes</th></tr></thead>
+            <tbody id="ap-cust-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACCOUNTS -->
+      <div class="module" id="ap-mod-accounts">
+        <div class="section-hdr">
+          <div><h3>My Accounts</h3><p>Transactions between your agency and Coimbatour DMC</p></div>
+        </div>
+        <div class="kpi-grid" id="ap-accts-kpis"></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Description</th><th>Booking ID</th><th>Debit ₹</th><th>Credit ₹</th><th>Balance ₹</th><th>Status</th></tr></thead>
+            <tbody id="ap-accts-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="module" id="ap-mod-messages">
+        <div class="section-hdr">
+          <div><h3>Message Coimbatour DMC</h3><p>Communicate directly with your destination partner</p></div>
+          <button class="btn btn-primary" onclick="openApMsgModal()">+ New Message</button>
+        </div>
+        <div class="conv-panel">
+          <div class="conv-list">
+            <div style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--grey3);border-bottom:1px solid var(--grey2)">CONVERSATIONS</div>
+            <div id="ap-conv-list"></div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <div id="ap-msg-header" style="padding:12px 16px;border-bottom:1px solid var(--grey2);font-size:13px;font-weight:600;color:var(--grey4)">Select a conversation</div>
+            <div id="ap-msg-thread" class="msg-thread"></div>
+            <div id="ap-reply-box" style="padding:10px 14px;border-top:1px solid var(--grey2);display:flex;gap:8px;background:var(--white)">
+              <input id="ap-reply-input" placeholder="Type your message to DMC…" style="flex:1;border:1.5px solid var(--grey2);border-radius:6px;padding:8px 12px;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')apSendReply()">
+              <button class="btn btn-primary btn-sm" onclick="apSendReply()">Send →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="module" id="ap-mod-profile">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-hdr"><h3>Agency Profile</h3><button class="btn btn-outline btn-sm" onclick="saveApProfile()">💾 Save</button></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="form-group"><label>Agency Name</label><input id="ap-prof-name" placeholder="Your agency's full name"></div>
+              <div class="form-group"><label>Contact Person</label><input id="ap-prof-contact" placeholder="Primary contact name"></div>
+              <div class="form-group"><label>Phone</label><input id="ap-prof-phone" placeholder="+91 XXXXX XXXXX"></div>
+              <div class="form-group"><label>Email</label><input id="ap-prof-email" placeholder="agency@email.com"></div>
+              <div class="form-group"><label>GSTIN</label><input id="ap-prof-gstin" placeholder="33AAAAA0000A1Z5" style="text-transform:uppercase"></div>
+              <div class="form-group"><label>City / State</label><input id="ap-prof-city" placeholder="City, State"></div>
+              <div class="form-group"><label>Preferred Commission %</label><input type="number" id="ap-prof-commission" placeholder="0" min="0" max="30"></div>
+              <div class="form-group"><label>Notes</label><textarea id="ap-prof-notes" placeholder="Specialisations, preferred segments, etc."></textarea></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><h3>Change Password</h3></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="form-group"><label>Current Password</label><input type="password" id="ap-pwd-cur" placeholder="Current password"></div>
+              <div class="form-group"><label>New Password</label><input type="password" id="ap-pwd-new" placeholder="New password"></div>
+              <div class="form-group"><label>Confirm Password</label><input type="password" id="ap-pwd-confirm" placeholder="Confirm new password"></div>
+              <button class="btn btn-primary" onclick="apChangePwd()">Update Password</button>
+            </div>
+            <div class="card-hdr" style="margin-top:24px"><h3>Agent Statistics</h3></div>
+            <div class="kpi-grid" id="ap-stat-kpis" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="ap-ins-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3>Request Insurance for Guest</h3><button class="modal-close" onclick="closeApModal('ap-ins-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Guest Name *</label><input id="api-guest" placeholder="Full name of insured guest"></div>
+        <div class="form-group"><label>Booking ID</label><input id="api-booking" placeholder="e.g. BKG-001"></div>
+        <div class="form-group"><label>Insurance Provider</label><select id="api-provider"><option>New India Assurance</option><option>HDFC Ergo</option><option>Bajaj Allianz</option><option>Star Health</option><option>TATA AIG</option><option>ICICI Lombard</option></select></div>
+        <div class="form-group"><label>Type</label><select id="api-type"><option>Individual Travel</option><option>Group Travel</option><option>Senior Citizen Travel</option><option>Comprehensive Travel</option></select></div>
+        <div class="form-group"><label>Travel Date</label><input type="date" id="api-travel-date"></div>
+        <div class="form-group"><label>Return Date</label><input type="date" id="api-return-date"></div>
+        <div class="form-group form-full"><label>Special Medical Conditions</label><textarea id="api-medical" placeholder="Pre-existing conditions, medications, allergies…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeApModal('ap-ins-modal')">Cancel</button><button class="btn btn-primary" onclick="apRequestInsurance()">Submit Request</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ap-cust-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3>Add Customer</h3><button class="modal-close" onclick="closeApModal('ap-cust-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name *</label><input id="apc-name" placeholder="Customer full name"></div>
+        <div class="form-group"><label>Phone *</label><input id="apc-phone" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="form-group"><label>Email</label><input id="apc-email" placeholder="customer@email.com"></div>
+        <div class="form-group"><label>Linked Booking</label><input id="apc-booking" placeholder="e.g. BKG-001"></div>
+        <div class="form-group"><label>ID Proof Type</label><select id="apc-id-type"><option>Aadhaar</option><option>PAN</option><option>Passport</option><option>Driving License</option><option>Voter ID</option></select></div>
+        <div class="form-group"><label>ID Number</label><input id="apc-id-no" placeholder="ID document number"></div>
+        <div class="form-group form-full"><label>Notes</label><textarea id="apc-notes" placeholder="Dietary requirements, special needs, etc."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeApModal('ap-cust-modal')">Cancel</button><button class="btn btn-primary" onclick="apSaveCustomer()">Save Customer</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ap-msg-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>New Message to DMC</h3><button class="modal-close" onclick="closeApModal('ap-msg-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Subject *</label><input id="apm-subject" placeholder="Message subject"></div>
+        <div class="form-group"><label>Priority</label><select id="apm-priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+        <div class="form-group"><label>Linked Booking</label><input id="apm-booking" placeholder="Booking ID (optional)"></div>
+        <div class="form-group form-full"><label>Message *</label><textarea id="apm-body" rows="5" placeholder="Type your message…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeApModal('ap-msg-modal')">Cancel</button><button class="btn btn-primary" onclick="apSendMsg()">Send Message</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ap-pkg-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3 id="ap-pkg-modal-title">Package Details</h3><button class="modal-close" onclick="closeApModal('ap-pkg-modal')">✕</button></div>
+    <div class="modal-body" id="ap-pkg-modal-body"></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeApModal('ap-pkg-modal')">Close</button><button class="btn btn-gold" onclick="apEnquirePackage()">📩 Enquire / Book</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── SUPABASE CONFIG — shared with main ERP ───────────────────
+const AP_SUPABASE_URL='YOUR_SUPABASE_PROJECT_URL';
+const AP_SUPABASE_KEY='YOUR_SUPABASE_ANON_KEY';
+
+// ─── LOCAL STORAGE CACHE ──────────────────────────────────────
+const AP_CACHE={};
+const AP_DB={
+  get(k){return AP_CACHE[k]||JSON.parse(localStorage.getItem('ap_'+k)||'null')||[]},
+  set(k,v){AP_CACHE[k]=v;localStorage.setItem('ap_'+k,JSON.stringify(v))}
+};
+
+// ─── SUPABASE READ ────────────────────────────────────────────
+async function apFetchFromSupabase(){
+  if(AP_SUPABASE_URL==='YOUR_SUPABASE_PROJECT_URL')return;
+  const headers={'apikey':AP_SUPABASE_KEY,'Authorization':'Bearer '+AP_SUPABASE_KEY};
+  const tables=['bookings','packages','attractions','tourstatus','insurance','messages'];
+  await Promise.all(tables.map(async t=>{
+    try{
+      const r=await fetch(AP_SUPABASE_URL+'/rest/v1/'+t+'?select=*',{headers});
+      if(r.ok){const d=await r.json();AP_CACHE[t]=d;}
+    }catch(e){}
+  }));
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────
+let apCurrentAgent=null;
+const AP_AGENTS=[
+  {code:'AGT-001',password:'agent123',name:'Sunshine Travels',city:'Chennai'},
+  {code:'AGT-002',password:'travel456',name:'Dream Holidays',city:'Bangalore'},
+  {code:'AGT-003',password:'tours789',name:'Royal Voyages',city:'Hyderabad'}
+];
+
+function apLogin(){
+  const code=document.getElementById('ap-code').value.trim().toUpperCase();
+  const pass=document.getElementById('ap-pass').value;
+  const agent=AP_AGENTS.find(a=>a.code===code&&a.password===pass);
+  if(!agent){document.getElementById('ap-err').style.display='block';return;}
+  apCurrentAgent=agent;
+  sessionStorage.setItem('ap_session',JSON.stringify(agent));
+  document.getElementById('ap-err').style.display='none';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('ap-agent-name').textContent=agent.name;
+  document.getElementById('ap-agent-code').textContent='Code: '+agent.code+' · '+agent.city;
+  document.getElementById('ap-today').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  apNav('dashboard');
+  apLoadProfile();
+}
+
+function apLogout(){
+  sessionStorage.removeItem('ap_session');
+  apCurrentAgent=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────
+const AP_PAGE_META={
+  dashboard:{title:'Dashboard',sub:'Welcome to Coimbatour Agent Portal'},
+  mytours:{title:'My Tours',sub:'All bookings placed through your agency'},
+  tourstatus:{title:'Live Tour Status',sub:'Real-time milestone updates from your DMC'},
+  insurance:{title:'Travel Insurance',sub:'Guest insurance policies and claims'},
+  packages:{title:'Browse Packages',sub:'All available Coimbatour packages with pricing'},
+  destinations:{title:'Destination Info',sub:'Key attractions and locations around Coimbatore'},
+  customers:{title:'My Customers',sub:'Customer data for your DMC tours'},
+  accounts:{title:'Accounts',sub:'Financial transactions between your agency and Coimbatour DMC'},
+  messages:{title:'Message DMC',sub:'Direct communication with Coimbatour DMC'},
+  profile:{title:'My Profile',sub:'Agency profile and account settings'}
+};
+
+function apNav(m){
+  document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.sb-nav a').forEach(x=>x.classList.remove('active'));
+  document.getElementById('ap-mod-'+m).classList.add('active');
+  document.querySelector(`.sb-nav a[data-mod="${m}"]`)?.classList.add('active');
+  document.getElementById('ap-page-title').textContent=AP_PAGE_META[m]?.title||m;
+  document.getElementById('ap-page-sub').textContent=AP_PAGE_META[m]?.sub||'';
+  const renders={dashboard:apRenderDashboard,mytours:apRenderTours,tourstatus:apRenderTourStatus,
+    insurance:apRenderInsurance,packages:apRenderPackages,destinations:apRenderDestinations,
+    customers:apRenderCustomers,accounts:apRenderAccounts,messages:apRenderMessages};
+  if(renders[m])renders[m]();
+}
+
+// ─── UTILITY ──────────────────────────────────────────────────
+function fmt(n){return (+n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function apToast(msg,type=''){
+  const t=document.createElement('div');
+  t.className='toast-msg'+(type?' '+type:'');t.textContent=msg;
+  document.getElementById('toast').appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+function openApModal(id){document.getElementById(id).classList.add('open')}
+function closeApModal(id){document.getElementById(id).classList.remove('open')}
+
+// Filter bookings for current agent
+function apMyBookings(){
+  return (AP_DB.get('bookings')||[]).filter(b=>!apCurrentAgent||b.agentCode===apCurrentAgent.code||!b.agentCode);
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────
+function apRenderDashboard(){
+  const bkgs=apMyBookings();
+  const active=bkgs.filter(b=>['Confirmed','In Progress'].includes(b.status)).length;
+  const completed=bkgs.filter(b=>b.status==='Completed').length;
+  const pending=bkgs.filter(b=>b.status==='Pending').length;
+  const totalRevenue=bkgs.reduce((s,b)=>s+(+b.totalAmount||0),0);
+  document.getElementById('ap-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Active Tours</div><div class="kpi-value" style="color:var(--teal)">${active}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Completed Tours</div><div class="kpi-value" style="color:#0a8a0a">${completed}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Pending Confirmation</div><div class="kpi-value" style="color:var(--gold)">${pending}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Revenue (DMC)</div><div class="kpi-value" style="color:var(--dark)">₹${fmt(totalRevenue)}</div></div>`;
+  // Recent tours
+  const recent=bkgs.slice(-5).reverse();
+  document.getElementById('ap-recent-tours').innerHTML=recent.length?recent.map(b=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--grey2);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:600;font-size:13px">${b.id} — ${b.customerName||'—'}</div>
+        <div style="font-size:11px;color:var(--grey3)">${b.packageName||'—'} · ${b.travelDate||'—'}</div>
+      </div>
+      <span class="badge" style="background:${b.status==='Completed'?'#0a8a0a':b.status==='Confirmed'?'var(--teal)':b.status==='Cancelled'?'#c0392b':'var(--gold)'};color:#fff">${b.status}</span>
+    </div>`).join(''):'<div style="color:var(--grey3);padding:16px;text-align:center">No tours yet</div>';
+  // Pending actions
+  const actions=[];
+  bkgs.filter(b=>b.status==='Pending').forEach(b=>actions.push({icon:'⏳',text:'Awaiting confirmation: '+b.id+' — '+b.customerName}));
+  const ins=AP_DB.get('insurance').filter(i=>i.status==='Active'&&i.validTo&&i.validTo<new Date(Date.now()+7*86400000).toISOString().slice(0,10));
+  ins.forEach(i=>actions.push({icon:'⚠️',text:'Insurance expiring: '+i.guestName+' ('+i.validTo+')'}));
+  document.getElementById('ap-pending-actions').innerHTML=actions.length?actions.map(a=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--grey2);display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:18px">${a.icon}</span><span style="font-size:13px;color:var(--dark)">${a.text}</span>
+    </div>`).join(''):'<div style="color:var(--grey3);padding:16px;text-align:center">No pending actions 🎉</div>';
+}
+
+// ─── MY TOURS ─────────────────────────────────────────────────
+function apRenderTours(){
+  const q=(document.getElementById('ap-tour-search')?.value||'').toLowerCase();
+  const sf=document.getElementById('ap-tour-status')?.value||'';
+  const rows=apMyBookings().filter(b=>{
+    const txt=(b.id+' '+(b.customerName||'')+(b.packageName||'')).toLowerCase();
+    if(q&&!txt.includes(q))return false;
+    if(sf&&b.status!==sf)return false;
+    return true;
+  });
+  const sc={Confirmed:'var(--teal)','In Progress':'var(--gold)',Completed:'#0a8a0a',Cancelled:'#c0392b',Pending:'#999'};
+  const tb=document.getElementById('ap-tour-tbody');
+  tb.innerHTML=rows.length?rows.map(b=>`<tr>
+    <td><b>${b.id}</b></td>
+    <td>${b.customerName||'—'}</td>
+    <td>${b.packageName||'—'}</td>
+    <td>${b.travelDate||'—'}</td>
+    <td style="text-align:center">${b.pax||1}</td>
+    <td>₹${fmt(b.totalAmount)}</td>
+    <td><span class="badge" style="background:${sc[b.status]||'#999'};color:#fff">${b.status}</span></td>
+    <td><button class="btn btn-sm btn-outline" onclick="apViewTourStatus('${b.id}')">📡 Status</button></td>
+  </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--grey3)">No bookings found.</td></tr>';
+}
+
+// ─── LIVE TOUR STATUS ─────────────────────────────────────────
+function apRenderTourStatus(){
+  const all=AP_DB.get('tourstatus');
+  const myBkgIds=apMyBookings().map(b=>b.id);
+  const mine=all.filter(ts=>myBkgIds.includes(ts.bookingId));
+  const el=document.getElementById('ap-ts-cards');
+  if(!mine.length){el.innerHTML='<div class="card" style="text-align:center;padding:40px;color:var(--grey3)">No live status updates yet. Your DMC will update milestones as your tours progress.</div>';return;}
+  const ms=[
+    {key:'booking',icon:'✅',label:'Booking'},
+    {key:'hotel',icon:'🏨',label:'Hotel'},
+    {key:'transport',icon:'🚖',label:'Transport'},
+    {key:'tickets',icon:'🎟️',label:'Tickets'},
+    {key:'food',icon:'🍽️',label:'Food'},
+    {key:'goodies',icon:'🎁',label:'Goodies'},
+    {key:'guide',icon:'👤',label:'Guide'}
+  ];
+  const bkgs=AP_DB.get('bookings');
+  el.innerHTML=mine.map(ts=>{
+    const bkg=bkgs.find(b=>b.id===ts.bookingId);
+    const done=ms.filter(m=>ts.milestones?.[m.key]).length;
+    const pct=Math.round(done/ms.length*100);
+    const sc={'In Progress':'var(--gold)',Completed:'#0a8a0a',Cancelled:'#c0392b'};
+    return `<div class="tour-card">
+      <div class="tour-card-hdr">
+        <div>
+          <div style="font-size:16px;font-weight:700">${ts.bookingId} — ${bkg?.customerName||'—'}</div>
+          <div style="font-size:12px;color:var(--grey3)">${bkg?.packageName||''} · ${bkg?.travelDate||''}</div>
+        </div>
+        <div style="text-align:right">
+          <span class="badge" style="background:${sc[ts.overallStatus]||'#999'};color:#fff;font-size:12px">${ts.overallStatus}</span>
+          <div style="font-size:12px;color:var(--grey3);margin-top:4px">${done}/${ms.length} milestones</div>
+        </div>
+      </div>
+      <div class="tour-card-body">
+        <div style="height:6px;background:var(--grey2);border-radius:99px;margin-bottom:14px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--teal);border-radius:99px;transition:width .5s"></div>
+        </div>
+        <div class="milestone-grid">
+          ${ms.map(m=>{
+            const done=ts.milestones?.[m.key];
+            const note=ts.milestones?.[m.key+'Note']||'';
+            return `<div class="milestone ${done?'done':'pending'}" title="${note||m.label}">
+              <span class="milestone-icon">${m.icon}</span>${m.label}
+            </div>`;
+          }).join('')}
+        </div>
+        ${ts.agentNote?`<div style="margin-top:12px;padding:10px 14px;background:var(--gold-light);border-left:3px solid var(--gold);border-radius:6px;font-size:12px"><b>📝 Note from DMC:</b> ${ts.agentNote}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function apViewTourStatus(bookingId){
+  apNav('tourstatus');
+}
+
+// ─── INSURANCE ────────────────────────────────────────────────
+function apRenderInsurance(){
+  const all=AP_DB.get('insurance');
+  const myBkgIds=apMyBookings().map(b=>b.id);
+  const mine=all.filter(p=>myBkgIds.includes(p.bookingId)||!p.bookingId);
+  const active=mine.filter(p=>p.status==='Active').length;
+  const totalPrem=mine.reduce((s,p)=>s+(+p.premium||0),0);
+  document.getElementById('ap-ins-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Active Policies</div><div class="kpi-value" style="color:var(--teal)">${active}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Premium</div><div class="kpi-value" style="color:var(--gold)">₹${fmt(totalPrem)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">All Policies</div><div class="kpi-value">${mine.length}</div></div>`;
+  const sc={Active:'#0a8a0a',Expired:'#999',Claimed:'var(--gold)',Cancelled:'#c0392b'};
+  document.getElementById('ap-ins-tbody').innerHTML=mine.length?mine.map(p=>`<tr>
+    <td><b>${p.policyNo}</b></td>
+    <td>${p.guestName}</td>
+    <td>${p.bookingId||'—'}</td>
+    <td>${p.provider}</td>
+    <td>₹${fmt(p.premium)}</td>
+    <td>₹${fmt(p.coverage)}</td>
+    <td>${p.validTo||'—'}</td>
+    <td><span class="badge" style="background:${sc[p.status]||'#999'};color:#fff">${p.status}</span></td>
+  </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--grey3)">No insurance records found.</td></tr>';
+}
+
+function openApInsModal(){openApModal('ap-ins-modal')}
+function apRequestInsurance(){
+  const guest=document.getElementById('api-guest').value.trim();
+  if(!guest){apToast('Guest name is required','error');return;}
+  // In a real implementation this sends to the DMC for processing
+  const req={id:'INSREQ-'+Date.now(),guestName:guest,bookingId:document.getElementById('api-booking').value.trim(),
+    provider:document.getElementById('api-provider').value,type:document.getElementById('api-type').value,
+    travelDate:document.getElementById('api-travel-date').value,returnDate:document.getElementById('api-return-date').value,
+    medical:document.getElementById('api-medical').value.trim(),agentCode:apCurrentAgent.code,status:'Requested'};
+  const reqs=AP_DB.get('insurance_requests');
+  reqs.push(req);AP_DB.set('insurance_requests',reqs);
+  closeApModal('ap-ins-modal');
+  apToast('Insurance request submitted to DMC!');
+}
+
+// ─── PACKAGES ─────────────────────────────────────────────────
+function apRenderPackages(){
+  const pkgs=AP_DB.get('packages')||[];
+  const q=(document.getElementById('ap-pkg-search')?.value||'').toLowerCase();
+  const pax=+document.getElementById('ap-pkg-pax')?.value||0;
+  const cat=document.getElementById('ap-pkg-cat')?.value||'';
+  const rows=pkgs.filter(p=>{
+    if(!p.active&&p.active!==undefined)return false;
+    const txt=((p.name||'')+(p.description||'')+(p.category||'')).toLowerCase();
+    if(q&&!txt.includes(q))return false;
+    if(cat&&p.category!==cat)return false;
+    return true;
+  });
+  function getPaxPrice(p,pax){
+    if(!pax)return p.price||0;
+    if(pax<=4&&p['price_2_4'])return p['price_2_4'];
+    if(pax<=8&&p['price_5_8'])return p['price_5_8'];
+    if(pax<=12&&p['price_9_12'])return p['price_9_12'];
+    if(pax<=18&&p['price_13_18'])return p['price_13_18'];
+    if(pax>=20&&p['price_20plus'])return p['price_20plus'];
+    return p.price||0;
+  }
+  const grid=document.getElementById('ap-pkg-grid');
+  grid.innerHTML=rows.length?rows.map(p=>{
+    const price=getPaxPrice(p,pax);
+    const totalPrice=pax?price*pax:price;
+    return `<div class="pkg-card">
+      <div class="pkg-card-img">${p.emoji||'🌿'}</div>
+      <div class="pkg-card-body">
+        <div class="pkg-card-name">${p.name}</div>
+        <div class="pkg-card-meta">${p.duration||''} · ${p.category||''} · ${p.capacity?'Max '+p.capacity+' pax':''}</div>
+        <div style="font-size:11px;color:var(--grey3);margin-bottom:8px;line-height:1.4">${(p.description||'').substring(0,80)}${p.description?.length>80?'…':''}</div>
+        <div class="pkg-card-price">₹${fmt(price)}<span style="font-size:12px;color:var(--grey3);font-weight:400">/person</span></div>
+        ${pax?`<div style="font-size:12px;color:var(--grey4);margin-top:4px">Total for ${pax} pax: ₹${fmt(totalPrice)}</div>`:''}
+      </div>
+      <div class="pkg-card-footer">
+        <span style="font-size:11px;color:var(--grey3)">${p.inclusions?.substring(0,40)||''}…</span>
+        <button class="btn btn-primary btn-sm" onclick="apViewPackage('${p.id}')">View →</button>
+      </div>
+    </div>`;
+  }).join(''):'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--grey3)">No packages found.</div>';
+}
+
+function apViewPackage(id){
+  const p=(AP_DB.get('packages')||[]).find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('ap-pkg-modal-title').textContent=p.name;
+  document.getElementById('ap-pkg-modal-body').innerHTML=`
+    <div style="background:linear-gradient(135deg,var(--teal-dark),var(--teal));border-radius:10px;padding:20px;text-align:center;color:#fff;font-size:52px;margin-bottom:16px">${p.emoji||'🌿'}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">CATEGORY</div><div>${p.category||'—'}</div></div>
+      <div><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">DURATION</div><div>${p.duration||'—'}</div></div>
+      <div><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">CAPACITY</div><div>${p.capacity||'—'} pax</div></div>
+      <div><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">BASE PRICE</div><div style="font-size:18px;font-weight:800;color:var(--teal)">₹${fmt(p.price)}/person</div></div>
+    </div>
+    ${p['price_2_4']||p['price_5_8']?`<div style="background:var(--teal-light);border-radius:8px;padding:12px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--teal-dark);margin-bottom:8px">PAX-TIER PRICING</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;font-size:12px;text-align:center">
+        ${p['price_2_4']?`<div><div style="color:var(--grey3)">2–4 Pax</div><b>₹${fmt(p['price_2_4'])}</b></div>`:''}
+        ${p['price_5_8']?`<div><div style="color:var(--grey3)">5–8 Pax</div><b>₹${fmt(p['price_5_8'])}</b></div>`:''}
+        ${p['price_9_12']?`<div><div style="color:var(--grey3)">9–12 Pax</div><b>₹${fmt(p['price_9_12'])}</b></div>`:''}
+        ${p['price_13_18']?`<div><div style="color:var(--grey3)">13–18 Pax</div><b>₹${fmt(p['price_13_18'])}</b></div>`:''}
+        ${p['price_20plus']?`<div><div style="color:var(--grey3)">20+ Pax</div><b>₹${fmt(p['price_20plus'])}</b></div>`:''}
+      </div>
+    </div>`:''}
+    <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">DESCRIPTION</div><p style="font-size:13px;line-height:1.6">${p.description||'—'}</p></div>
+    ${p.inclusions?`<div style="margin-bottom:12px"><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">INCLUSIONS</div><p style="font-size:13px;color:#0a8a0a">${p.inclusions}</p></div>`:''}
+    ${p.exclusions?`<div style="margin-bottom:12px"><div style="font-size:11px;color:var(--grey3);font-weight:700;margin-bottom:4px">EXCLUSIONS</div><p style="font-size:13px;color:#c0392b">${p.exclusions}</p></div>`:''}`;
+  openApModal('ap-pkg-modal');
+}
+
+function apEnquirePackage(){
+  apToast('Enquiry sent to Coimbatour DMC!');closeApModal('ap-pkg-modal');
+}
+
+// ─── DESTINATIONS ─────────────────────────────────────────────
+const DESTINATIONS=[
+  {name:'Ooty (Udhagamandalam)',emoji:'🌿',km:'86 km from Coimbatore',desc:'Queen of hill stations — tea gardens, Nilgiri Mountain Railway, Botanical Garden, Ooty Lake, Rose Garden, Doddabetta Peak.',highlights:['Ooty Lake','Botanical Garden','Doddabetta Peak','Tea Factory','Nilgiri Mountain Railway']},
+  {name:'Kodaikanal',emoji:'🌸',km:'170 km from Coimbatore',desc:'The Princess of Hill Stations — Kodai Lake, Coaker\'s Walk, Pillar Rocks, Silver Cascade Falls, Pine Forests.',highlights:['Kodai Lake','Coaker\'s Walk','Pillar Rocks','Bryant Park','Silver Cascade']},
+  {name:'Valparai',emoji:'☕',km:'101 km from Coimbatore',desc:'Premium tea & coffee plantation destination with Rajamalai wildlife sanctuary, waterfalls, and pristine greenery.',highlights:['Rajamalai Wildlife','Tea Plantations','Monkey Falls','Sholayar Dam','Balaji Temple']},
+  {name:'Anamalai Tiger Reserve',emoji:'🐯',km:'60 km from Coimbatore',desc:'Top Tiger Reserve in South India — safari, elephant camp, tribal villages, dense rainforest.',highlights:['Elephant Safari','Tiger Reserve','Top Slip','Tribal Villages','Jungle Stay']},
+  {name:'Coimbatore City',emoji:'🏙️',km:'City Centre',desc:'Manchester of South India — temples, textile markets, GRB Restaurant, Isha Yoga Center, Dhyanalinga.',highlights:['Isha Yoga Center','Perur Temple','Brookefields Mall','VOC Park','Dhyanalinga']},
+  {name:'Palani Hills',emoji:'🛕',km:'120 km',desc:'Famous pilgrimage destination — Murugan Temple atop a hill, natural springs, herbal medicines.',highlights:['Murugan Temple','Hill Ropeway','Herbal Market','Thipparapuram','Boat Rides']}
+];
+
+function apRenderDestinations(){
+  document.getElementById('ap-dest-grid').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+    ${DESTINATIONS.map(d=>`<div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:36px">${d.emoji}</div>
+        <div>
+          <div style="font-size:15px;font-weight:700">${d.name}</div>
+          <div style="font-size:11px;color:var(--grey3)">📍 ${d.km}</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--grey4);line-height:1.5;margin-bottom:10px">${d.desc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${d.highlights.map(h=>`<span style="background:var(--teal-light);color:var(--teal-dark);padding:3px 8px;border-radius:99px;font-size:10px;font-weight:600">${h}</span>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─── CUSTOMERS ────────────────────────────────────────────────
+const AP_CUSTOMERS_KEY='ap_customers_'+( ()=>apCurrentAgent?.code||'anon')();
+function apRenderCustomers(){
+  const all=JSON.parse(localStorage.getItem('ap_customers_'+(apCurrentAgent?.code||'anon'))||'[]');
+  const q=(document.getElementById('ap-cust-search')?.value||'').toLowerCase();
+  const rows=all.filter(c=>(c.name+' '+c.phone+' '+(c.booking||'')).toLowerCase().includes(q));
+  document.getElementById('ap-cust-tbody').innerHTML=rows.length?rows.map(c=>`<tr>
+    <td><b>${c.name}</b></td>
+    <td>${c.phone||'—'}</td>
+    <td>${c.email||'—'}</td>
+    <td>${c.booking||'—'}</td>
+    <td>${c.idType||'—'}: ${c.idNo||'—'}</td>
+    <td style="font-size:11px;color:var(--grey3)">${c.notes||'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--grey3)">No customers yet. Add customer data for your bookings.</td></tr>';
+}
+
+function openApCustModal(){openApModal('ap-cust-modal')}
+function apSaveCustomer(){
+  const name=document.getElementById('apc-name').value.trim();
+  const phone=document.getElementById('apc-phone').value.trim();
+  if(!name||!phone){apToast('Name and phone are required','error');return;}
+  const key='ap_customers_'+(apCurrentAgent?.code||'anon');
+  const all=JSON.parse(localStorage.getItem(key)||'[]');
+  all.push({id:'CUST-'+Date.now(),name,phone,email:document.getElementById('apc-email').value.trim(),
+    booking:document.getElementById('apc-booking').value.trim(),
+    idType:document.getElementById('apc-id-type').value,idNo:document.getElementById('apc-id-no').value.trim(),
+    notes:document.getElementById('apc-notes').value.trim()});
+  localStorage.setItem(key,JSON.stringify(all));
+  closeApModal('ap-cust-modal');apRenderCustomers();apToast('Customer added!');
+}
+
+// ─── ACCOUNTS ─────────────────────────────────────────────────
+function apRenderAccounts(){
+  const invoices=apMyBookings().map(b=>({
+    date:b.travelDate||b.createdAt||'—',desc:'Tour Package: '+b.packageName,
+    bookingId:b.id,debit:b.totalAmount||0,credit:0,
+    status:b.paymentStatus||'Pending'
+  }));
+  const total=invoices.reduce((s,i)=>s+i.debit,0);
+  const paid=invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.debit,0);
+  document.getElementById('ap-accts-kpis').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total Billed</div><div class="kpi-value" style="color:var(--dark)">₹${fmt(total)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Paid</div><div class="kpi-value" style="color:#0a8a0a">₹${fmt(paid)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Outstanding</div><div class="kpi-value" style="color:#e74c3c">₹${fmt(total-paid)}</div></div>`;
+  let running=0;
+  document.getElementById('ap-accts-tbody').innerHTML=invoices.length?invoices.map(r=>{
+    running+=r.debit-r.credit;
+    const sc={Paid:'#0a8a0a',Pending:'var(--gold)',Partial:'#2980b9'};
+    return `<tr>
+      <td>${r.date}</td>
+      <td>${r.desc}</td>
+      <td>${r.bookingId}</td>
+      <td style="color:#c0392b">${r.debit?'₹'+fmt(r.debit):''}</td>
+      <td style="color:#0a8a0a">${r.credit?'₹'+fmt(r.credit):''}</td>
+      <td style="font-weight:700">₹${fmt(running)}</td>
+      <td><span class="badge" style="background:${sc[r.status]||'#999'};color:#fff">${r.status}</span></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--grey3)">No transactions yet.</td></tr>';
+}
+
+// ─── MESSAGES ─────────────────────────────────────────────────
+let apCurrentConvId=null;
+function apRenderMessages(){
+  const msgs=(AP_DB.get('messages')||[]).filter(m=>m.type==='agent'&&(!m.agentCode||m.agentCode===apCurrentAgent?.code));
+  const list=document.getElementById('ap-conv-list');
+  if(!msgs.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--grey3);font-size:12px">No conversations yet.</div>';return;}
+  list.innerHTML=msgs.map(m=>`<div class="conv-item${apCurrentConvId===m.id?' active':''}" onclick="apOpenConv('${m.id}')">
+    <div style="font-weight:600;font-size:13px">${m.subject}</div>
+    <div style="font-size:11px;color:var(--grey3);margin-top:2px">${(m.replies?.length||0)+1} message(s) · ${m.priority}</div>
+    <div style="font-size:11px;color:var(--grey3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">${(m.message||'').substring(0,50)}…</div>
+  </div>`).join('');
+}
+
+function apOpenConv(id){
+  apCurrentConvId=id;
+  const msgs=AP_DB.get('messages')||[];
+  const conv=msgs.find(x=>x.id===id);if(!conv)return;
+  document.getElementById('ap-msg-header').innerHTML=`<b>${conv.subject}</b> <span style="font-size:11px;color:var(--grey3)">· Priority: ${conv.priority}${conv.bookingId?' · Booking: '+conv.bookingId:''}</span>`;
+  const allMsgs=[{body:conv.message,fromType:'agent',timestamp:conv.createdAt}, ...(conv.replies||[])];
+  const thread=document.getElementById('ap-msg-thread');
+  thread.innerHTML=allMsgs.map(m=>`<div class="msg-bubble ${m.fromType==='dmc'?'theirs':'mine'}">
+    <div class="msg-content">
+      <div class="msg-meta">${m.fromType==='dmc'?'Coimbatour DMC':'You'} · ${m.timestamp?new Date(m.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—'}</div>
+      ${m.body||''}
+    </div>
+  </div>`).join('');
+  thread.scrollTop=thread.scrollHeight;
+  apRenderMessages();
+}
+
+function apSendReply(){
+  if(!apCurrentConvId){apToast('Select a conversation first','error');return;}
+  const inp=document.getElementById('ap-reply-input');
+  const txt=inp.value.trim();if(!txt)return;
+  const msgs=AP_DB.get('messages')||[];
+  const i=msgs.findIndex(x=>x.id===apCurrentConvId);if(i<0)return;
+  if(!msgs[i].replies)msgs[i].replies=[];
+  msgs[i].replies.push({body:txt,fromType:'agent',author:apCurrentAgent?.name||'Agent',timestamp:new Date().toISOString()});
+  AP_DB.set('messages',msgs);inp.value='';apOpenConv(apCurrentConvId);apToast('Reply sent!');
+}
+
+function openApMsgModal(){openApModal('ap-msg-modal')}
+function apSendMsg(){
+  const subj=document.getElementById('apm-subject').value.trim();
+  const body=document.getElementById('apm-body').value.trim();
+  if(!subj||!body){apToast('Subject and message are required','error');return;}
+  const msgs=AP_DB.get('messages')||[];
+  const obj={id:'MSG-'+Date.now(),type:'agent',toName:'Coimbatour DMC',
+    subject:subj,priority:document.getElementById('apm-priority').value,
+    bookingId:document.getElementById('apm-booking').value.trim(),
+    message:body,agentCode:apCurrentAgent?.code,agentName:apCurrentAgent?.name,
+    createdAt:new Date().toISOString(),replies:[]};
+  msgs.push(obj);AP_DB.set('messages',msgs);
+  apCurrentConvId=obj.id;closeApModal('ap-msg-modal');apRenderMessages();apOpenConv(obj.id);apToast('Message sent to DMC!');
+}
+
+function apSendQuickMsg(){
+  const txt=document.getElementById('ap-quick-msg').value.trim();
+  if(!txt){apToast('Type a message first','error');return;}
+  const msgs=AP_DB.get('messages')||[];
+  msgs.push({id:'MSG-'+Date.now(),type:'agent',toName:'Coimbatour DMC',
+    subject:'Quick Message from '+apCurrentAgent?.name,priority:'Normal',
+    message:txt,agentCode:apCurrentAgent?.code,agentName:apCurrentAgent?.name,
+    createdAt:new Date().toISOString(),replies:[]});
+  AP_DB.set('messages',msgs);
+  document.getElementById('ap-quick-msg').value='';
+  apToast('Message sent to DMC!');
+}
+
+// ─── PROFILE ──────────────────────────────────────────────────
+function apLoadProfile(){
+  const p=JSON.parse(localStorage.getItem('ap_profile_'+(apCurrentAgent?.code||'anon'))||'{}');
+  document.getElementById('ap-prof-name').value=p.name||apCurrentAgent?.name||'';
+  document.getElementById('ap-prof-contact').value=p.contact||'';
+  document.getElementById('ap-prof-phone').value=p.phone||'';
+  document.getElementById('ap-prof-email').value=p.email||'';
+  document.getElementById('ap-prof-gstin').value=p.gstin||'';
+  document.getElementById('ap-prof-city').value=p.city||apCurrentAgent?.city||'';
+  document.getElementById('ap-prof-commission').value=p.commission||'';
+  document.getElementById('ap-prof-notes').value=p.notes||'';
+}
+
+function saveApProfile(){
+  const p={name:document.getElementById('ap-prof-name').value,contact:document.getElementById('ap-prof-contact').value,
+    phone:document.getElementById('ap-prof-phone').value,email:document.getElementById('ap-prof-email').value,
+    gstin:document.getElementById('ap-prof-gstin').value.toUpperCase(),city:document.getElementById('ap-prof-city').value,
+    commission:document.getElementById('ap-prof-commission').value,notes:document.getElementById('ap-prof-notes').value};
+  localStorage.setItem('ap_profile_'+(apCurrentAgent?.code||'anon'),JSON.stringify(p));
+  const kpis=document.getElementById('ap-stat-kpis');
+  const bkgs=apMyBookings();
+  kpis.innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total Bookings</div><div class="kpi-value">${bkgs.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Completed</div><div class="kpi-value" style="color:#0a8a0a">${bkgs.filter(b=>b.status==='Completed').length}</div></div>`;
+  apToast('Profile saved!');
+}
+
+function apChangePwd(){
+  const cur=document.getElementById('ap-pwd-cur').value;
+  const nw=document.getElementById('ap-pwd-new').value;
+  const cf=document.getElementById('ap-pwd-confirm').value;
+  if(!cur||!nw||!cf){apToast('All fields required','error');return;}
+  if(nw!==cf){apToast('Passwords do not match','error');return;}
+  if(nw.length<6){apToast('Password must be at least 6 characters','error');return;}
+  // In production this would call the API
+  apToast('Password updated successfully!');
+  document.getElementById('ap-pwd-cur').value='';document.getElementById('ap-pwd-new').value='';document.getElementById('ap-pwd-confirm').value='';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+(async()=>{
+  const sess=sessionStorage.getItem('ap_session');
+  if(sess){
+    apCurrentAgent=JSON.parse(sess);
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('ap-agent-name').textContent=apCurrentAgent.name;
+    document.getElementById('ap-agent-code').textContent='Code: '+apCurrentAgent.code+' · '+apCurrentAgent.city;
+    document.getElementById('ap-today').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    await apFetchFromSupabase();
+    apNav('dashboard');
+    apLoadProfile();
+  }
+  document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+})();
+</script>
+</body>
+</html>
