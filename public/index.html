@@ -3148,8 +3148,8 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
 // below with your Project URL and anon public key.
 // Find them at: supabase.com → Your Project → Settings → API
 // ═══════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';   // e.g. https://abcxyz.supabase.co
-const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';      // starts with eyJ...
+const SUPABASE_URL = 'https://isszqzwkjznilqwnfpyc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
 
 // ═══════════════════════════════════════════════════════════════
 // DATA LAYER — Supabase-backed with in-memory cache
@@ -3182,10 +3182,10 @@ function _sbFetch(path, opts = {}) {
 
 async function _loadFromSupabase() {
   try {
-    const res = await _sbFetch('app_data?select=key,value');
+    const res = await _sbFetch('app_data?select=data_key,value');
     if (!res || !res.ok) throw new Error('offline');
     const rows = await res.json();
-    rows.forEach(row => { CACHE[row.key] = row.value; });
+    rows.forEach(row => { CACHE[row.data_key] = row.value; });
     _DB_ONLINE = true;
     console.log('✅ Supabase connected — ' + rows.length + ' records loaded');
   } catch (e) {
@@ -3199,7 +3199,7 @@ function _syncToSupabase(k, v) {
   _sbFetch('app_data', {
     method: 'POST',
     prefer: 'resolution=merge-duplicates,return=minimal',
-    body: JSON.stringify({ key: k, value: v, updated_at: new Date().toISOString() })
+    body: JSON.stringify({ data_key: k, value: v, updated_at: new Date().toISOString() })
   }).catch(e => console.warn('Supabase sync error for key "' + k + '":', e.message));
 }
 
@@ -3587,6 +3587,9 @@ function deleteAttr(id){
 
 // ── SAMPLE DATA ──────────────────────────────────────────────
 function initData(){
+  // If Supabase is online, it manages its own state — never seed demo data
+  if(_DB_ONLINE)return;
+  // localStorage fallback: seed only on first-ever load
   if(localStorage.getItem('dmc_v1'))return;
   DB.set('packages',[
     {id:'PKG-001',name:'Coimbatore City Heritage Walk',category:'Cultural',duration:1,destinations:'Marudamalai Temple, Patanjali Yogpeeth, VOC Park, local markets',inclusions:'City transfers, guide, lunch',status:'Active',basePrice:1500,pricePerPax:1500,minPax:2,maxPax:30,season:'Year-round',remarks:''},
