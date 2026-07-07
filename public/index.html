@@ -3188,37 +3188,79 @@ async function _loadFromSupabase() {
     rows.forEach(row => { CACHE[row.data_key] = row.value; });
     _DB_ONLINE = true;
     console.log('✅ Supabase connected — ' + rows.length + ' records loaded');
+
+    // ── MIGRATION: if Supabase is empty but localStorage has real data, push it up ──
+    if (rows.length === 0) {
+      const lsKeys = Object.keys(localStorage)
+        .filter(k => k.startsWith('dmc_') && k !== 'dmc_v1' && k !== 'dmc_session');
+      if (lsKeys.length > 0) {
+        console.log('📤 Migrating ' + lsKeys.length + ' localStorage keys to Supabase…');
+        for (const lk of lsKeys) {
+          try {
+            const dataKey = lk.replace('dmc_', '');
+            const val = JSON.parse(localStorage.getItem(lk) || '[]');
+            // Only migrate non-demo, non-empty arrays
+            if (Array.isArray(val) && val.length > 0) {
+              CACHE[dataKey] = val;
+              await _sbFetch('app_data', {
+                method: 'POST',
+                prefer: 'resolution=merge-duplicates,return=minimal',
+                body: JSON.stringify({ data_key: dataKey, value: val, updated_at: new Date().toISOString() })
+              });
+            }
+          } catch(me) { console.warn('Migration error for ' + lk, me); }
+        }
+        console.log('✅ Migration complete');
+      }
+    }
   } catch (e) {
     console.warn('⚠️ Supabase unavailable, using localStorage fallback:', e.message);
     _DB_ONLINE = false;
   }
 }
 
+let _syncErrShown = false;
 function _syncToSupabase(k, v) {
   if (!_DB_ONLINE) return;
   _sbFetch('app_data', {
     method: 'POST',
     prefer: 'resolution=merge-duplicates,return=minimal',
     body: JSON.stringify({ data_key: k, value: v, updated_at: new Date().toISOString() })
-  }).catch(e => console.warn('Supabase sync error for key "' + k + '":', e.message));
+  }).then(res => {
+    if (res && !res.ok) {
+      res.text().then(txt => {
+        console.error('❌ Supabase write failed for "' + k + '" (' + res.status + '):', txt);
+        if (!_syncErrShown && typeof toast === 'function') {
+          _syncErrShown = true;
+          toast('⚠️ Cloud save failed (' + res.status + ') — data is local only. Reload and retry.', 'error', 8000);
+          setTimeout(() => { _syncErrShown = false; }, 15000);
+        }
+      });
+    }
+  }).catch(e => {
+    console.warn('Supabase sync error for key "' + k + '":', e.message);
+  });
 }
 
 const DB = {
   get(k) {
-    // 1. Try Supabase cache
+    // 1. Supabase cache — authoritative when online
     if (CACHE[k] !== undefined) {
       const v = CACHE[k];
       return Array.isArray(v) ? [...v] : v;
     }
-    // 2. Fallback to localStorage
+    // 2. When Supabase is online, never fall back to stale localStorage
+    //    (prevents old demo data leaking through into a live DB session)
+    if (_DB_ONLINE) return [];
+    // 3. Offline-only fallback
     try { return JSON.parse(localStorage.getItem('dmc_' + k) || '[]'); } catch { return []; }
   },
   set(k, v) {
     // Write to cache immediately (UI stays fast)
     CACHE[k] = v;
-    // Write to Supabase in background
+    // Write to Supabase in background (primary store)
     _syncToSupabase(k, v);
-    // Also mirror to localStorage as backup
+    // Mirror to localStorage as offline backup
     try { localStorage.setItem('dmc_' + k, JSON.stringify(v)); } catch {}
   },
   nextId(k) {
