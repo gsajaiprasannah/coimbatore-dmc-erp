@@ -376,6 +376,7 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     <div class="sb-group" onclick="sbToggle(this)">Communications<span class="sb-arrow">▾</span></div>
     <a data-mod="messages" onclick="nav('messages')"><span class="icon">💬</span>Messages</a>
     <a data-mod="mail" onclick="nav('mail')"><span class="icon">📧</span>Mail</a>
+    <a data-mod="support" onclick="nav('support')"><span class="icon">🎫</span>Support Tickets <span id="support-badge" style="display:none;background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:9px;font-weight:700;margin-left:4px">0</span></a>
 
     <div class="sb-group" onclick="sbToggle(this)">Finance<span class="sb-arrow">▾</span></div>
     <a data-mod="finance" onclick="nav('finance')"><span class="icon">💰</span>Finance &amp; GST</a>
@@ -939,6 +940,54 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         </table>
       </div>
     </div>
+    <!-- ─ SUPPORT TICKETS MODULE ─ -->
+    <div class="module" id="mod-support">
+      <!-- KPIs -->
+      <div class="kpi-grid" id="support-kpi"></div>
+      <!-- Toolbar -->
+      <div class="section-hdr" style="margin-top:16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="text" id="support-search" placeholder="🔍 Search name, email, subject, ID…" style="flex:1;min-width:160px;max-width:280px" oninput="renderSupport()">
+          <select id="support-filter-status" onchange="renderSupport()" style="border:1px solid var(--grey2);border-radius:6px;padding:6px 10px;font-size:12px">
+            <option value="">All Statuses</option>
+            <option value="new">🆕 New</option>
+            <option value="in_progress">🔄 In Progress</option>
+            <option value="waiting">⏳ Waiting on Client</option>
+            <option value="resolved">✅ Resolved</option>
+            <option value="closed">🔒 Closed</option>
+          </select>
+          <select id="support-filter-priority" onchange="renderSupport()" style="border:1px solid var(--grey2);border-radius:6px;padding:6px 10px;font-size:12px">
+            <option value="">All Priorities</option>
+            <option value="urgent">🔴 Urgent</option>
+            <option value="high">🟠 High</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <a href="support.html" target="_blank" class="btn btn-outline btn-sm">🔗 Client Form</a>
+          <button class="btn btn-sm" onclick="renderSupport()" style="background:var(--grey2);color:var(--grey4);border:none">🔄 Refresh</button>
+        </div>
+      </div>
+      <!-- Ticket table -->
+      <div class="tbl-wrap" style="margin-top:12px">
+        <table>
+          <thead><tr>
+            <th>Ticket ID</th>
+            <th>Submitted</th>
+            <th>Client</th>
+            <th>Category</th>
+            <th>Subject</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Actions</th>
+          </tr></thead>
+          <tbody id="support-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ─ CABS MODULE ─ -->
     <div class="module" id="mod-cabs">
   <div class="kpi-grid" id="cabs-kpi"></div>
@@ -2065,6 +2114,81 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
       <div style="font-size:12px;color:var(--grey4);flex:1" id="restore-apply-note">Select which changes to apply, then click Apply.</div>
       <button class="btn btn-outline" onclick="closeModal('restore-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="applyRestore()" id="restore-apply-btn">✅ Apply Selected Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT TICKET DETAIL MODAL -->
+<div class="modal-overlay" id="support-ticket-modal">
+  <div class="modal modal-lg" style="max-width:720px;max-height:90vh">
+    <div class="modal-hdr">
+      <h3 id="stm-title">Ticket Details</h3>
+      <button class="modal-close" onclick="closeModal('support-ticket-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;max-height:70vh;padding:20px 24px">
+      <!-- Status & assignment bar -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;padding:12px 16px;background:var(--grey1);border-radius:8px">
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:11px;font-weight:600;color:var(--grey4);display:block;margin-bottom:4px">STATUS</label>
+          <select id="stm-status" style="border:1px solid var(--grey2);border-radius:6px;padding:6px 10px;font-size:12px;width:100%">
+            <option value="new">🆕 New</option>
+            <option value="in_progress">🔄 In Progress</option>
+            <option value="waiting">⏳ Waiting on Client</option>
+            <option value="resolved">✅ Resolved</option>
+            <option value="closed">🔒 Closed</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:11px;font-weight:600;color:var(--grey4);display:block;margin-bottom:4px">PRIORITY</label>
+          <select id="stm-priority" style="border:1px solid var(--grey2);border-radius:6px;padding:6px 10px;font-size:12px;width:100%">
+            <option value="low">🟢 Low</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="high">🟠 High</option>
+            <option value="urgent">🔴 Urgent</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:11px;font-weight:600;color:var(--grey4);display:block;margin-bottom:4px">ASSIGNED TO</label>
+          <select id="stm-assigned" style="border:1px solid var(--grey2);border-radius:6px;padding:6px 10px;font-size:12px;width:100%">
+            <option value="">— Unassigned —</option>
+          </select>
+        </div>
+        <div style="padding-top:18px">
+          <button class="btn btn-primary btn-sm" onclick="saveTicketChanges()">Save</button>
+        </div>
+      </div>
+      <!-- Client info -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px">
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Client Name</div><div id="stm-name" style="font-size:13px;font-weight:600"></div></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Email</div><div id="stm-email" style="font-size:12px;color:var(--blue)"></div></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Phone</div><div id="stm-phone" style="font-size:12px"></div></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Booking Ref</div><div id="stm-ref" style="font-size:12px"></div></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Category</div><div id="stm-category" style="font-size:12px"></div></div>
+        <div><div style="font-size:10px;color:var(--grey3);font-weight:600;text-transform:uppercase;margin-bottom:2px">Submitted At</div><div id="stm-date" style="font-size:11px;color:var(--grey4)"></div></div>
+      </div>
+      <!-- Subject & message -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--grey4);text-transform:uppercase;margin-bottom:4px">Subject</div>
+        <div id="stm-subject" style="font-size:14px;font-weight:600;color:var(--teal-dark)"></div>
+      </div>
+      <div style="background:var(--grey1);border-radius:8px;padding:14px;margin-bottom:18px">
+        <div style="font-size:11px;font-weight:600;color:var(--grey4);text-transform:uppercase;margin-bottom:6px">Client Message</div>
+        <div id="stm-message" style="font-size:13px;line-height:1.6;white-space:pre-wrap"></div>
+      </div>
+      <!-- Internal notes thread -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--teal-dark);margin-bottom:10px">💬 Internal Notes &amp; Responses</div>
+        <div id="stm-notes-thread" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:200px;overflow-y:auto"></div>
+        <!-- Add note -->
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <textarea id="stm-new-note" rows="2" placeholder="Add a note, response, or update…" style="flex:1;border:1px solid var(--grey2);border-radius:8px;padding:9px 12px;font-size:12px;resize:vertical"></textarea>
+          <button class="btn btn-primary btn-sm" onclick="addTicketNote()" style="white-space:nowrap">+ Add Note</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('support-ticket-modal')">Close</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteTicket()" style="margin-left:auto">🗑 Delete Ticket</button>
     </div>
   </div>
 </div>
@@ -3796,6 +3920,13 @@ function initAllModules(){
   if(!DB.get('insurance'))DB.set('insurance',[]);
   if(!DB.get('claims'))DB.set('claims',[]);
   if(!DB.get('contracted'))DB.set('contracted',[]);
+  if(!DB.get('support_tickets'))DB.set('support_tickets',[]);
+  // Update support badge count on load
+  setTimeout(()=>{
+    const newCount = DB.get('support_tickets').filter(t=>t.status==='new').length;
+    const badge = document.getElementById('support-badge');
+    if(badge){ badge.textContent=newCount||''; badge.style.display=newCount>0?'inline':'none'; }
+  }, 500);
   if(!DB.get('messages'))DB.set('messages',[]);
   if(!DB.get('gst_purchases'))DB.set('gst_purchases',[]);
   if(!DB.get('ts_custom_items'))DB.set('ts_custom_items',[]);
@@ -3834,7 +3965,8 @@ const pageMeta={
   insurance:{title:'Insurance Register',sub:'Guest travel insurance policies and claim management'},
   contracted:{title:'Contracted Rates',sub:'Hotel, cab and ticket rates contracted for stipulated periods'},
   messages:{title:'Messages',sub:'Agent and supplier communication panels'},
-  tourterms:{title:'Tour Terms Master',sub:'Manage reusable T&C, Inclusions, Exclusions & Special Notes templates'}
+  tourterms:{title:'Tour Terms Master',sub:'Manage reusable T&C, Inclusions, Exclusions & Special Notes templates'},
+  support:{title:'Support Tickets',sub:'Client queries, complaints and requests from customers & agents'}
 };
 let currentModule='dashboard';
 function nav(m){
@@ -3845,7 +3977,7 @@ function nav(m){
   document.getElementById('page-title').textContent=pageMeta[m]?.title||m;
   document.getElementById('page-sub').textContent=pageMeta[m]?.sub||'';
   currentModule=m;
-  const renders={dashboard:renderDashboard,packages:renderPackages,bookings:renderBookings,customers:renderCustomers,crm:renderCRM,finance:renderFinance,suppliers:renderSuppliers,itinerary:renderItinerary,attractions:renderAttrCards,cabs:renderCabs,hotels:renderHotels,tickets:renderTickets,tourstatus:renderTourStatus,livetrack:renderLiveTrack,insurance:renderInsurance,contracted:renderContracted,messages:renderMessages,special:renderSpecial,mail:renderMail,tourterms:renderTourTerms};
+  const renders={dashboard:renderDashboard,packages:renderPackages,bookings:renderBookings,customers:renderCustomers,crm:renderCRM,finance:renderFinance,suppliers:renderSuppliers,itinerary:renderItinerary,attractions:renderAttrCards,cabs:renderCabs,hotels:renderHotels,tickets:renderTickets,tourstatus:renderTourStatus,livetrack:renderLiveTrack,insurance:renderInsurance,contracted:renderContracted,messages:renderMessages,special:renderSpecial,mail:renderMail,tourterms:renderTourTerms,support:renderSupport};
   if(renders[m])renders[m]();
 }
 
@@ -6827,7 +6959,8 @@ const BACKUP_ALL_KEYS = [
   'tourstatus','livetrack','special_items','special_bookings','mail_accounts','mail_drafts',
   'mail_messages','quick_messages','insurance','claims','contracted','messages',
   'gst_purchases','ts_custom_items','debit_notes','credit_notes','receipts','expenses',
-  'tour_terms','cab_bookings','hotel_master','hotel_bookings','attractions','activity_log'
+  'tour_terms','cab_bookings','hotel_master','hotel_bookings','attractions','activity_log',
+  'support_tickets'
 ];
 
 const BACKUP_KEY_LABELS = {
@@ -7112,6 +7245,218 @@ function checkBackupReminder(){
     document.getElementById('backup-overdue-msg').textContent = 'Last backup was '+days+' day'+(days===1?'':'s')+' ago';
     banner.style.display='flex';
   }
+}
+
+// ── SUPPORT TICKETS ───────────────────────────────────────────
+let _currentTicketId = null;
+
+const SUPPORT_CAT_LABELS = {
+  booking:'🗓️ Booking Query', payment:'💳 Payment / Invoice',
+  itinerary:'🗺️ Itinerary Change', transport:'🚗 Transport / Cab',
+  hotel:'🏨 Hotel / Accommodation', emergency:'🚨 Travel Emergency',
+  complaint:'📢 Complaint / Feedback', other:'💬 Other'
+};
+const SUPPORT_PRIORITY_META = {
+  low:{label:'🟢 Low',color:'var(--green)',bg:'#f0fff4'},
+  medium:{label:'🟡 Medium',color:'var(--gold)',bg:' var(--gold-light)'},
+  high:{label:'🟠 High',color:'#e67e22',bg:'#fff8f0'},
+  urgent:{label:'🔴 Urgent',color:'var(--red)',bg:'#fff5f5'}
+};
+const SUPPORT_STATUS_META = {
+  new:{label:'🆕 New',color:'var(--blue)',bg:'#eaf4fb'},
+  in_progress:{label:'🔄 In Progress',color:'var(--gold)',bg:' var(--gold-light)'},
+  waiting:{label:'⏳ Waiting',color:'var(--purple)',bg:'#f5eaff'},
+  resolved:{label:'✅ Resolved',color:'var(--green)',bg:'#f0fff4'},
+  closed:{label:'🔒 Closed',color:'var(--grey3)',bg:'var(--grey1)'}
+};
+
+function renderSupport(){
+  const tickets = DB.get('support_tickets');
+  const q = (document.getElementById('support-search')?.value||'').toLowerCase();
+  const fs = document.getElementById('support-filter-status')?.value||'';
+  const fp = document.getElementById('support-filter-priority')?.value||'';
+
+  let filtered = tickets;
+  if(q) filtered = filtered.filter(t =>
+    (t.name+t.email+t.subject+t.id+t.ref).toLowerCase().includes(q)
+  );
+  if(fs) filtered = filtered.filter(t => t.status === fs);
+  if(fp) filtered = filtered.filter(t => t.priority === fp);
+
+  // KPIs
+  const newCount    = tickets.filter(t=>t.status==='new').length;
+  const inProgCount = tickets.filter(t=>t.status==='in_progress').length;
+  const urgentCount = tickets.filter(t=>t.priority==='urgent'&&t.status!=='resolved'&&t.status!=='closed').length;
+  const resolvedToday = tickets.filter(t=>t.status==='resolved'&&t.last_updated?.startsWith(new Date().toISOString().slice(0,10))).length;
+
+  document.getElementById('support-kpi').innerHTML = `
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--blue)">${newCount}</div><div class="kpi-lbl">New / Unread</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--gold)">${inProgCount}</div><div class="kpi-lbl">In Progress</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--red)">${urgentCount}</div><div class="kpi-lbl">Urgent Open</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--green)">${resolvedToday}</div><div class="kpi-lbl">Resolved Today</div></div>
+    <div class="kpi-card"><div class="kpi-val">${tickets.length}</div><div class="kpi-lbl">Total Tickets</div></div>
+  `;
+
+  // Update sidebar badge
+  const badge = document.getElementById('support-badge');
+  if(badge){
+    badge.textContent = newCount || '';
+    badge.style.display = newCount > 0 ? 'inline' : 'none';
+  }
+
+  // Table
+  const tbody = document.getElementById('support-tbody');
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="9" class="tbl-empty">No support tickets found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(t => {
+    const pm = SUPPORT_PRIORITY_META[t.priority]||{label:t.priority,color:'var(--grey3)',bg:'var(--grey1)'};
+    const sm = SUPPORT_STATUS_META[t.status]||{label:t.status,color:'var(--grey3)',bg:'var(--grey1)'};
+    const dt = t.submitted_at ? new Date(t.submitted_at).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    const catLabel = SUPPORT_CAT_LABELS[t.category]||t.category||'—';
+    const notesCount = (t.notes||[]).length;
+    return `<tr>
+      <td><b style="font-size:11px;color:var(--teal)">${t.id}</b></td>
+      <td style="font-size:11px;white-space:nowrap;color:var(--grey4)">${dt}</td>
+      <td>
+        <div style="font-weight:600;font-size:12px">${escHtml(t.name||'—')}</div>
+        <div style="font-size:10px;color:var(--grey3)">${escHtml(t.email||'')}</div>
+      </td>
+      <td style="font-size:11px">${catLabel}</td>
+      <td style="max-width:200px">
+        <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(t.subject||'')}</div>
+        ${t.ref?`<div style="font-size:10px;color:var(--grey3)">Ref: ${escHtml(t.ref)}</div>`:''}
+        ${notesCount?`<div style="font-size:10px;color:var(--teal)">💬 ${notesCount} note${notesCount>1?'s':''}</div>`:''}
+      </td>
+      <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;background:${pm.bg};color:${pm.color}">${pm.label}</span></td>
+      <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;background:${sm.bg};color:${sm.color}">${sm.label}</span></td>
+      <td style="font-size:11px;color:var(--grey4)">${escHtml(t.assigned_to||'—')}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline" onclick="openTicketDetail('${t.id}')">📂 Open</button>
+          <button class="btn btn-sm" onclick="quickResolve('${t.id}')" style="background:#f0fff4;color:var(--green);border:1px solid #b2dfdb;font-size:11px" title="Mark resolved">✅</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openTicketDetail(id){
+  const tickets = DB.get('support_tickets');
+  const t = tickets.find(x=>x.id===id);
+  if(!t) return;
+  _currentTicketId = id;
+
+  document.getElementById('stm-title').textContent = 'Ticket ' + t.id;
+  document.getElementById('stm-status').value = t.status||'new';
+  document.getElementById('stm-priority').value = t.priority||'medium';
+  document.getElementById('stm-name').textContent = t.name||'—';
+  document.getElementById('stm-email').textContent = t.email||'—';
+  document.getElementById('stm-phone').textContent = t.phone||'—';
+  document.getElementById('stm-ref').textContent = t.ref||'—';
+  document.getElementById('stm-category').textContent = SUPPORT_CAT_LABELS[t.category]||t.category||'—';
+  document.getElementById('stm-date').textContent = t.submitted_at ? new Date(t.submitted_at).toLocaleString('en-IN') : '—';
+  document.getElementById('stm-subject').textContent = t.subject||'';
+  document.getElementById('stm-message').textContent = t.message||'';
+  document.getElementById('stm-new-note').value = '';
+
+  // Populate assigned-to dropdown
+  const assignedSel = document.getElementById('stm-assigned');
+  const users = DB.get('users');
+  assignedSel.innerHTML = '<option value="">— Unassigned —</option>' +
+    users.filter(u=>u.status==='active').map(u=>`<option value="${escHtml(u.name)}">${escHtml(u.name)}</option>`).join('');
+  assignedSel.value = t.assigned_to||'';
+
+  // Render notes thread
+  renderNotesThread(t.notes||[]);
+
+  // Mark as in_progress if new
+  if(t.status==='new'){
+    document.getElementById('stm-status').value = 'in_progress';
+    saveTicketChanges(true); // silent save
+  }
+
+  openModal('support-ticket-modal');
+}
+
+function renderNotesThread(notes){
+  const el = document.getElementById('stm-notes-thread');
+  if(!notes.length){
+    el.innerHTML = '<div style="font-size:12px;color:var(--grey3);text-align:center;padding:8px">No notes yet — add one below</div>';
+    return;
+  }
+  el.innerHTML = notes.map(n => {
+    const isStaff = n.author !== 'Client';
+    return `<div style="padding:10px 14px;border-radius:8px;background:${isStaff?'var(--teal-light)':'var(--gold-light)'};align-self:${isStaff?'flex-start':'flex-end'};max-width:90%">
+      <div style="font-size:10px;font-weight:600;color:${isStaff?'var(--teal)':'var(--gold)'};margin-bottom:4px">${escHtml(n.author||'Staff')} · ${n.at ? new Date(n.at).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}</div>
+      <div style="font-size:12px;line-height:1.5;white-space:pre-wrap">${escHtml(n.text||'')}</div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function saveTicketChanges(silent=false){
+  if(!_currentTicketId) return;
+  const tickets = DB.get('support_tickets');
+  const idx = tickets.findIndex(x=>x.id===_currentTicketId);
+  if(idx<0) return;
+  tickets[idx].status    = document.getElementById('stm-status').value;
+  tickets[idx].priority  = document.getElementById('stm-priority').value;
+  tickets[idx].assigned_to = document.getElementById('stm-assigned').value;
+  tickets[idx].last_updated = new Date().toISOString();
+  DB.set('support_tickets', tickets);
+  if(!silent){
+    toast('Ticket updated!');
+    logActivity('Updated','Support',_currentTicketId,'Ticket status: '+tickets[idx].status+', assigned to: '+(tickets[idx].assigned_to||'unassigned'));
+    renderSupport();
+  }
+}
+
+function addTicketNote(){
+  if(!_currentTicketId) return;
+  const text = document.getElementById('stm-new-note').value.trim();
+  if(!text){ toast('Please type a note first','error'); return; }
+  const tickets = DB.get('support_tickets');
+  const idx = tickets.findIndex(x=>x.id===_currentTicketId);
+  if(idx<0) return;
+  if(!tickets[idx].notes) tickets[idx].notes = [];
+  tickets[idx].notes.push({
+    at: new Date().toISOString(),
+    author: currentUser?.name||'Staff',
+    text
+  });
+  tickets[idx].last_updated = new Date().toISOString();
+  DB.set('support_tickets', tickets);
+  document.getElementById('stm-new-note').value = '';
+  renderNotesThread(tickets[idx].notes);
+  toast('Note added!');
+  renderSupport();
+}
+
+function quickResolve(id){
+  const tickets = DB.get('support_tickets');
+  const idx = tickets.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  tickets[idx].status = 'resolved';
+  tickets[idx].last_updated = new Date().toISOString();
+  DB.set('support_tickets', tickets);
+  logActivity('Updated','Support',id,'Ticket marked resolved');
+  renderSupport();
+  toast('Ticket marked resolved ✅');
+}
+
+function deleteTicket(){
+  if(!_currentTicketId) return;
+  if(!confirm('Delete this support ticket? This cannot be undone.')) return;
+  const tickets = DB.get('support_tickets').filter(x=>x.id!==_currentTicketId);
+  DB.set('support_tickets', tickets);
+  logActivity('Deleted','Support',_currentTicketId,'Support ticket deleted');
+  closeModal('support-ticket-modal');
+  _currentTicketId = null;
+  renderSupport();
+  toast('Ticket deleted');
 }
 
 // ── WRAP SAVE/DELETE FUNCTIONS WITH ACTIVITY LOGGING ─────────

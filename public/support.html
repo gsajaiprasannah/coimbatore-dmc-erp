@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Request — Coimbatour DMC</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;--gold:#C8963E;--gold-light:#FDF3E3;--green:#27AE60;--red:#C0392B;--grey1:#f5f5f5;--grey2:#e0e0e0;--grey3:#999;--grey4:#555;--white:#fff}
+body{font-family:Arial,sans-serif;background:var(--grey1);color:#1a1a1a;min-height:100vh;display:flex;flex-direction:column}
+/* Header */
+.header{background:var(--teal-dark);padding:18px 24px;display:flex;align-items:center;gap:14px}
+.header-logo{width:44px;height:44px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:var(--teal-dark);letter-spacing:-1px}
+.header-text h1{color:#fff;font-size:18px;font-weight:700}
+.header-text p{color:rgba(255,255,255,.65);font-size:11px;margin-top:1px}
+/* Container */
+.container{max-width:680px;margin:32px auto;padding:0 16px;width:100%}
+/* Card */
+.card{background:var(--white);border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px}
+.card-hdr{background:linear-gradient(135deg,var(--teal),var(--teal-dark));padding:22px 28px;color:#fff}
+.card-hdr h2{font-size:17px;margin-bottom:4px}
+.card-hdr p{font-size:12px;opacity:.8;line-height:1.5}
+.card-body{padding:28px}
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;font-weight:600;color:var(--grey4)}
+label .req{color:var(--red)}
+input,select,textarea{border:1.5px solid var(--grey2);border-radius:8px;padding:9px 12px;font-size:13px;font-family:Arial,sans-serif;transition:.2s;background:#fff;color:#1a1a1a;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,107,107,.1)}
+textarea{resize:vertical;min-height:100px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+/* Priority selector */
+.priority-group{display:flex;gap:8px;flex-wrap:wrap}
+.priority-btn{flex:1;min-width:80px;padding:8px 10px;border:2px solid var(--grey2);border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;text-align:center;transition:.2s}
+.priority-btn:hover{border-color:var(--teal)}
+.priority-btn.active-low{border-color:#27ae60;background:#f0fff4;color:#27ae60}
+.priority-btn.active-medium{border-color:var(--gold);background:var(--gold-light);color:var(--gold)}
+.priority-btn.active-high{border-color:#e67e22;background:#fff8f0;color:#e67e22}
+.priority-btn.active-urgent{border-color:var(--red);background:#fff5f5;color:var(--red)}
+/* Submit btn */
+.btn-submit{width:100%;padding:13px;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{background:var(--teal-dark)}
+.btn-submit:disabled{background:var(--grey3);cursor:not-allowed}
+/* Success state */
+.success-state{display:none;text-align:center;padding:40px 28px}
+.success-icon{font-size:56px;margin-bottom:16px}
+.success-state h2{font-size:20px;color:var(--green);margin-bottom:8px}
+.success-state p{color:var(--grey4);font-size:13px;line-height:1.6;margin-bottom:20px}
+.ticket-ref{background:var(--teal-light);border:2px solid var(--teal);border-radius:10px;padding:12px 20px;display:inline-block;margin:8px 0}
+.ticket-ref span{font-size:20px;font-weight:700;color:var(--teal);letter-spacing:1px}
+.ticket-ref small{display:block;font-size:11px;color:var(--grey4);margin-top:2px}
+/* Error */
+.form-error{background:#fff5f5;border:1px solid var(--red);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:16px;display:none}
+/* Info boxes */
+.info-box{background:var(--teal-light);border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:12px 16px;font-size:12px;color:var(--teal-dark);margin-bottom:20px;line-height:1.5}
+/* Categories */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.cat-btn{padding:9px 12px;border:2px solid var(--grey2);border-radius:8px;background:#fff;cursor:pointer;font-size:12px;text-align:left;transition:.2s;display:flex;align-items:center;gap:6px}
+.cat-btn:hover{border-color:var(--teal);background:var(--teal-light)}
+.cat-btn.active{border-color:var(--teal);background:var(--teal-light);color:var(--teal);font-weight:600}
+/* Footer */
+footer{text-align:center;padding:20px;font-size:11px;color:var(--grey3);margin-top:auto}
+footer a{color:var(--teal);text-decoration:none}
+/* Loader */
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Responsive */
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}.cat-grid{grid-template-columns:1fr}.priority-group{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">C</div>
+  <div class="header-text">
+    <h1>Coimbatour DMC</h1>
+    <p>Customer Support Portal</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-hdr">
+      <h2>🎫 Submit a Support Request</h2>
+      <p>Our team typically responds within 2–4 hours on business days. Urgent travel emergencies are handled immediately.</p>
+    </div>
+    <div class="card-body">
+
+      <!-- Success state -->
+      <div class="success-state" id="success-view">
+        <div class="success-icon">✅</div>
+        <h2>Request Submitted!</h2>
+        <p>Your support request has been received. Our team will get back to you shortly at the email address you provided.</p>
+        <div class="ticket-ref">
+          <span id="success-ticket-id">TKT-000000</span>
+          <small>Your Ticket Reference Number</small>
+        </div>
+        <p style="margin-top:16px;font-size:12px;color:var(--grey3)">Please save this reference number. You may need it for follow-ups.</p>
+        <button onclick="resetForm()" style="margin-top:20px;padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">Submit Another Request</button>
+      </div>
+
+      <!-- Form -->
+      <div id="form-view">
+        <div class="info-box">
+          📞 For urgent travel emergencies, call us directly at <b>+91 XXXXX XXXXX</b> or WhatsApp. Use this form for non-urgent queries, feedback, and booking questions.
+        </div>
+
+        <div id="form-error" class="form-error"></div>
+
+        <div class="form-grid">
+          <!-- Contact Info -->
+          <div class="form-group">
+            <label>Full Name <span class="req">*</span></label>
+            <input id="f-name" type="text" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label>Email Address <span class="req">*</span></label>
+            <input id="f-email" type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input id="f-phone" type="tel" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="form-group">
+            <label>Booking / Enquiry Reference</label>
+            <input id="f-ref" type="text" placeholder="e.g. BK-001 or ENQ-004 (if known)">
+          </div>
+
+          <!-- Category -->
+          <div class="form-full form-group">
+            <label>Category <span class="req">*</span></label>
+            <div class="cat-grid" id="cat-grid">
+              <button class="cat-btn" onclick="selectCat(this,'booking')">🗓️ Booking Query</button>
+              <button class="cat-btn" onclick="selectCat(this,'payment')">💳 Payment / Invoice</button>
+              <button class="cat-btn" onclick="selectCat(this,'itinerary')">🗺️ Itinerary Change</button>
+              <button class="cat-btn" onclick="selectCat(this,'transport')">🚗 Transport / Cab</button>
+              <button class="cat-btn" onclick="selectCat(this,'hotel')">🏨 Hotel / Accommodation</button>
+              <button class="cat-btn" onclick="selectCat(this,'emergency')">🚨 Travel Emergency</button>
+              <button class="cat-btn" onclick="selectCat(this,'complaint')">📢 Complaint / Feedback</button>
+              <button class="cat-btn" onclick="selectCat(this,'other')">💬 Other</button>
+            </div>
+            <input type="hidden" id="f-category">
+          </div>
+
+          <!-- Priority -->
+          <div class="form-full form-group">
+            <label>Urgency <span class="req">*</span></label>
+            <div class="priority-group">
+              <button class="priority-btn" onclick="selectPriority(this,'low')">🟢 Low<br><span style="font-size:10px;font-weight:400">General query</span></button>
+              <button class="priority-btn" onclick="selectPriority(this,'medium')">🟡 Medium<br><span style="font-size:10px;font-weight:400">Needs attention</span></button>
+              <button class="priority-btn" onclick="selectPriority(this,'high')">🟠 High<br><span style="font-size:10px;font-weight:400">Trip affected</span></button>
+              <button class="priority-btn" onclick="selectPriority(this,'urgent')">🔴 Urgent<br><span style="font-size:10px;font-weight:400">Emergency now</span></button>
+            </div>
+            <input type="hidden" id="f-priority">
+          </div>
+
+          <!-- Subject + Message -->
+          <div class="form-full form-group">
+            <label>Subject <span class="req">*</span></label>
+            <input id="f-subject" type="text" placeholder="Brief description of your issue">
+          </div>
+          <div class="form-full form-group">
+            <label>Message <span class="req">*</span></label>
+            <textarea id="f-message" placeholder="Please describe your issue in detail — include dates, names, and any relevant information that will help us assist you faster."></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div class="form-full">
+            <button class="btn-submit" id="submit-btn" onclick="submitTicket()">
+              <span id="submit-label">Submit Support Request</span>
+              <div id="submit-spinner" class="spinner" style="display:none"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact info card -->
+  <div class="card">
+    <div class="card-body" style="padding:20px 28px">
+      <h3 style="font-size:14px;margin-bottom:14px;color:var(--teal-dark)">📬 Other Ways to Reach Us</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+        <div style="text-align:center;padding:12px;background:var(--grey1);border-radius:8px">
+          <div style="font-size:22px">📞</div>
+          <div style="font-size:11px;font-weight:600;margin-top:4px">Phone</div>
+          <div style="font-size:11px;color:var(--grey4)">+91 XXXXX XXXXX</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:var(--grey1);border-radius:8px">
+          <div style="font-size:22px">💬</div>
+          <div style="font-size:11px;font-weight:600;margin-top:4px">WhatsApp</div>
+          <div style="font-size:11px;color:var(--grey4)">+91 XXXXX XXXXX</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:var(--grey1);border-radius:8px">
+          <div style="font-size:22px">✉️</div>
+          <div style="font-size:11px;font-weight:600;margin-top:4px">Email</div>
+          <div style="font-size:11px;color:var(--grey4)">support@coimbatourindia.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  &copy; 2026 Coimbatour DMC &nbsp;·&nbsp;
+  <a href="https://gsajaiprasannah.github.io/coimbatore-dmc-erp/public/?v=4">Staff Login</a>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://isszqzwkjznilqwnfpyc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
+
+let _selectedCategory = '';
+let _selectedPriority = '';
+
+function selectCat(btn, val){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _selectedCategory = val;
+  document.getElementById('f-category').value = val;
+}
+
+function selectPriority(btn, val){
+  document.querySelectorAll('.priority-btn').forEach(b=>{
+    b.className = 'priority-btn';
+  });
+  btn.classList.add('active-'+val);
+  _selectedPriority = val;
+  document.getElementById('f-priority').value = val;
+}
+
+function showError(msg){
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function hideError(){
+  document.getElementById('form-error').style.display = 'none';
+}
+
+async function sbFetch(endpoint, opts={}){
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json'
+  };
+  if(opts.prefer) headers['Prefer'] = opts.prefer;
+  return fetch(SUPABASE_URL + '/rest/v1/' + endpoint, {
+    method: opts.method || 'GET',
+    headers,
+    body: opts.body
+  });
+}
+
+async function submitTicket(){
+  hideError();
+
+  const name    = document.getElementById('f-name').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const ref     = document.getElementById('f-ref').value.trim();
+  const subject = document.getElementById('f-subject').value.trim();
+  const message = document.getElementById('f-message').value.trim();
+
+  if(!name)       { showError('Please enter your full name.'); return; }
+  if(!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+  if(!_selectedCategory) { showError('Please select a category for your request.'); return; }
+  if(!_selectedPriority) { showError('Please select the urgency level.'); return; }
+  if(!subject)    { showError('Please enter a subject for your request.'); return; }
+  if(!message || message.length < 10) { showError('Please describe your issue in more detail (at least 10 characters).'); return; }
+
+  // Show spinner
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  document.getElementById('submit-label').textContent = 'Submitting…';
+  document.getElementById('submit-spinner').style.display = 'block';
+
+  try {
+    // Read existing tickets
+    const r = await sbFetch('app_data?select=value&data_key=eq.support_tickets');
+    if(!r.ok) throw new Error('Could not connect to server ('+r.status+')');
+    const rows = await r.json();
+    const existing = (rows.length && Array.isArray(rows[0].value)) ? rows[0].value : [];
+
+    // Generate ticket ID
+    const maxNum = existing.length
+      ? Math.max(...existing.map(t => parseInt(t.id?.replace('TKT-','') || 0)))
+      : 0;
+    const ticketId = 'TKT-' + String(maxNum + 1).padStart(6, '0');
+
+    const ticket = {
+      id: ticketId,
+      submitted_at: new Date().toISOString(),
+      name, email, phone, ref,
+      category: _selectedCategory,
+      priority: _selectedPriority,
+      subject, message,
+      status: 'new',
+      assigned_to: '',
+      notes: [],
+      last_updated: new Date().toISOString()
+    };
+
+    existing.unshift(ticket); // newest first
+
+    // Write back
+    const w = await sbFetch('app_data', {
+      method: 'POST',
+      prefer: 'resolution=merge-duplicates,return=minimal',
+      body: JSON.stringify({ data_key: 'support_tickets', value: existing, updated_at: new Date().toISOString() })
+    });
+    if(!w.ok) throw new Error('Failed to save ticket ('+w.status+')');
+
+    // Show success
+    document.getElementById('success-ticket-id').textContent = ticketId;
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+
+  } catch(e) {
+    showError('Could not submit your request: ' + e.message + '. Please try again or contact us by phone.');
+    btn.disabled = false;
+    document.getElementById('submit-label').textContent = 'Submit Support Request';
+    document.getElementById('submit-spinner').style.display = 'none';
+  }
+}
+
+function resetForm(){
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+  ['f-name','f-email','f-phone','f-ref','f-subject','f-message'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.priority-btn').forEach(b => { b.className = 'priority-btn'; });
+  _selectedCategory = '';
+  _selectedPriority = '';
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = false;
+  document.getElementById('submit-label').textContent = 'Submit Support Request';
+  document.getElementById('submit-spinner').style.display = 'none';
+  hideError();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
