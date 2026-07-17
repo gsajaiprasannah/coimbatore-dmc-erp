@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Destinations â Coimbatour DMC</title>
+<title>Destinations — Coimbatour DMC</title>
 <meta name="description" content="Discover Ooty, Valparai, Anamalai Tiger Reserve, Siruvani and more destinations around Coimbatore. Your guide to the Western Ghats.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@ html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
 #nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.1)}
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.nav-logo-icon{width:42px;height:42px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
+.nav-logo-icon{width:42px;height:42px;background:#29ABE2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
 .nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--teal-dark);line-height:1.1}
 .nav-logo-text small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;opacity:.7;color:var(--text)}
 .nav-links{display:flex;align-items:center;gap:4px}
@@ -48,7 +48,6 @@ body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);li
 .dest-row.reverse{direction:rtl}
 .dest-row.reverse>*{direction:ltr}
 .dest-img-wrap{position:relative}
-.dest-main-img{width:100%;height:400px;object-fit:cover;border-radius:16px;box-shadow:var(--shadow)}
 .dest-main-img-div{width:100%;height:400px;background-size:cover;background-position:center;border-radius:16px;box-shadow:var(--shadow)}
 .dest-thumb-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .dest-thumb{height:120px;background-size:cover;background-position:center;border-radius:10px}
@@ -123,25 +122,24 @@ footer a:hover{color:var(--gold)}
 
 <nav id="nav">
   <a href="index.html" class="nav-logo">
-    <div class="nav-logo-icon">C</div>
-    <div class="nav-logo-text">COIMBATOUR DMC<small>Your Friendly DMC for Coimbatore</small></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 50" style="height:42px;width:auto;display:block"><text x="1" y="45" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="50" fill="#29ABE2">C</text><rect x="42" y="8" width="25" height="8" rx="3" fill="#4DB849"/><rect x="71" y="8" width="25" height="8" rx="3" fill="#2BB5D8"/><rect x="100" y="8" width="25" height="8" rx="3" fill="#F7941D"/><rect x="129" y="8" width="25" height="8" rx="3" fill="#9BD9EC"/><rect x="158" y="8" width="50" height="8" rx="3" fill="#2D3E99"/><text x="42" y="30" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="15" fill="#29ABE2">COIMBATOUR</text><text x="42" y="44" font-family="Arial,Helvetica,sans-serif" font-size="7.5" fill="#C8963E" letter-spacing="0.5">YOUR FRIENDLY DMC FOR COIMBATORE</text></svg>
   </a>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="packages.html">Tour Packages</a>
     <a href="destinations.html" class="active">Destinations</a>
     <a href="contact.html">Contact</a>
-    <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+    <a href="contact.html" class="btn nav-cta">Plan My Trip →</a>
   </div>
   <div class="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
 </nav>
 <div class="mobile-menu" id="mobile-menu">
   <a href="index.html">Home</a><a href="packages.html">Tour Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a>
-  <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+  <a href="contact.html" class="btn nav-cta">Plan My Trip →</a>
 </div>
 
 <div class="page-hero">
-  <div class="page-hero-tag">â¦ Discover the Western Ghats</div>
+  <div class="page-hero-tag">✦ Discover the Western Ghats</div>
   <h1>Our Destinations</h1>
   <p>Every destination around Coimbatore holds a story. Let us show you the way.</p>
 </div>
@@ -154,27 +152,27 @@ footer a:hover{color:var(--gold)}
     <div class="overview-grid">
       <a href="#ooty" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Ooty & Nilgiris</div><div class="ov-dist">ð 86 km from Coimbatore</div></div>
+        <div class="ov-info"><div class="ov-name">Ooty &amp; Nilgiris</div><div class="ov-dist">📍 86 km from Coimbatore</div></div>
       </a>
       <a href="#valparai" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Valparai</div><div class="ov-dist">ð 102 km from Coimbatore</div></div>
+        <div class="ov-info"><div class="ov-name">Valparai</div><div class="ov-dist">📍 102 km from Coimbatore</div></div>
       </a>
       <a href="#anamalai" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Anamalai Tiger Reserve</div><div class="ov-dist">ð 65 km from Coimbatore</div></div>
+        <div class="ov-info"><div class="ov-name">Anamalai Tiger Reserve</div><div class="ov-dist">📍 65 km from Coimbatore</div></div>
       </a>
       <a href="#coimbatore" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Coimbatore City</div><div class="ov-dist">ð The Gateway City</div></div>
+        <div class="ov-info"><div class="ov-name">Coimbatore City</div><div class="ov-dist">📍 The Gateway City</div></div>
       </a>
       <a href="#siruvani" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Siruvani</div><div class="ov-dist">ð 37 km from Coimbatore</div></div>
+        <div class="ov-info"><div class="ov-name">Siruvani</div><div class="ov-dist">📍 37 km from Coimbatore</div></div>
       </a>
       <a href="#kodaikanal" class="ov-card">
         <div class="ov-img" style="background-image:url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?w=400&q=80')"></div>
-        <div class="ov-info"><div class="ov-name">Kodaikanal</div><div class="ov-dist">ð 175 km from Coimbatore</div></div>
+        <div class="ov-info"><div class="ov-name">Kodaikanal</div><div class="ov-dist">📍 175 km from Coimbatore</div></div>
       </a>
     </div>
   </div>
@@ -187,7 +185,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ð¡ï¸ 15â25Â°C</span>
+            <span class="dest-badge">🌡️ 15–25°C</span>
             <span class="dest-badge">2200m altitude</span>
           </div>
         </div>
@@ -197,21 +195,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ Nilgiris District</div>
-        <h2 class="dest-h2">Ooty â Queen of Hill Stations</h2>
+        <div class="dest-tag">✦ Nilgiris District</div>
+        <h2 class="dest-h2">Ooty — Queen of Hill Stations</h2>
         <p class="dest-desc">Nestled at 2,240m in the Nilgiri Hills, Ooty is Tamil Nadu's most beloved hill station. Famous for its rolling tea gardens, the legendary Nilgiri Mountain Railway, and the sprawling Botanical Gardens, Ooty offers a refreshing escape from the plains.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">ð <span><strong>86 km</strong> from Coimbatore</span></div>
-          <div class="dest-meta-item">â± <span><strong>2â3 hrs</strong> drive</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Best: <strong>Oct â Mar</strong></span></div>
+          <div class="dest-meta-item">📍 <span><strong>86 km</strong> from Coimbatore</span></div>
+          <div class="dest-meta-item">⏱ <span><strong>2–3 hrs</strong> drive</span></div>
+          <div class="dest-meta-item">🌤️ <span>Best: <strong>Oct – Mar</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Nilgiri Mountain Railway (UNESCO)</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¸</div><div class="dest-hl-text">Botanical Gardens & Rose Garden</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ðµ</div><div class="dest-hl-text">Doddabetta Tea Factory Tour</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ðï¸</div><div class="dest-hl-text">Emerald & Avalanche Lake</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🚂</div><div class="dest-hl-text">Nilgiri Mountain Railway (UNESCO)</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">📸</div><div class="dest-hl-text">Botanical Gardens &amp; Rose Garden</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🍵</div><div class="dest-hl-text">Doddabetta Tea Factory Tour</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🏔️</div><div class="dest-hl-text">Emerald &amp; Avalanche Lake</div></div>
         </div>
-        <a href="packages.html?cat=Hill+Station" class="dest-cta">View Ooty Packages â</a>
+        <a href="packages.html?cat=Hill+Station" class="dest-cta">View Ooty Packages →</a>
       </div>
     </div>
   </div>
@@ -224,7 +222,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ð¿ Shola Forest</span>
+            <span class="dest-badge">🌿 Shola Forest</span>
             <span class="dest-badge">Tea Country</span>
           </div>
         </div>
@@ -234,21 +232,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ Anamalai Hills</div>
-        <h2 class="dest-h2">Valparai â The Hidden Gem</h2>
+        <div class="dest-tag">✦ Anamalai Hills</div>
+        <h2 class="dest-h2">Valparai — The Hidden Gem</h2>
         <p class="dest-desc">Tucked deep in the Anamalai Hills at 1,000m, Valparai is a landscape of endless tea and coffee estates, shola forests, and pristine waterfalls. Less crowded than Ooty, it rewards those who seek genuine wilderness and tranquillity.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">ð <span><strong>102 km</strong> from Coimbatore</span></div>
-          <div class="dest-meta-item">â± <span><strong>3.5 hrs</strong> (64 hairpin bends)</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Best: <strong>Sep â Feb</strong></span></div>
+          <div class="dest-meta-item">📍 <span><strong>102 km</strong> from Coimbatore</span></div>
+          <div class="dest-meta-item">⏱ <span><strong>3.5 hrs</strong> (64 hairpin bends)</span></div>
+          <div class="dest-meta-item">🌤️ <span>Best: <strong>Sep – Feb</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Wild Elephant sightings on roads</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Athirapally & Vazhachal Falls</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">â</div><div class="dest-hl-text">Tea & Coffee Estate walks</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¾</div><div class="dest-hl-text">Indira Gandhi Wildlife Sanctuary</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🐘</div><div class="dest-hl-text">Wild Elephant sightings on roads</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">💧</div><div class="dest-hl-text">Athirapally &amp; Vazhachal Falls</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">☕</div><div class="dest-hl-text">Tea &amp; Coffee Estate walks</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🦁</div><div class="dest-hl-text">Indira Gandhi Wildlife Sanctuary</div></div>
         </div>
-        <a href="packages.html?cat=Nature" class="dest-cta">View Valparai Packages â</a>
+        <a href="packages.html?cat=Nature" class="dest-cta">View Valparai Packages →</a>
       </div>
     </div>
   </div>
@@ -261,7 +259,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ð¯ Tiger Reserve</span>
+            <span class="dest-badge">🎯 Tiger Reserve</span>
             <span class="dest-badge">Topslip</span>
           </div>
         </div>
@@ -271,21 +269,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ Pollachi</div>
+        <div class="dest-tag">✦ Pollachi</div>
         <h2 class="dest-h2">Anamalai Tiger Reserve</h2>
-        <p class="dest-desc">One of India's finest tiger reserves, Anamalai â popularly known as Topslip â is a vast wilderness sheltering tigers, leopards, elephants, giant squirrels, and hundreds of bird species across dense forest and grassland.</p>
+        <p class="dest-desc">One of India's finest tiger reserves, Anamalai — popularly known as Topslip â is a vast wilderness sheltering tigers, leopards, elephants, giant squirrels, and hundreds of bird species across dense forest and grassland.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">ð <span><strong>65 km</strong> from Coimbatore</span></div>
-          <div class="dest-meta-item">â± <span><strong>2 hrs</strong> drive</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Best: <strong>Nov â Jun</strong></span></div>
+          <div class="dest-meta-item">📍 <span><strong>65 km</strong> from Coimbatore</span></div>
+          <div class="dest-meta-item">⏱ <span><strong>2 hrs</strong> drive</span></div>
+          <div class="dest-meta-item">🌤️ <span>Best: <strong>Nov – Jun</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Elephant, Gaur & Tiger sightings</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¦</div><div class="dest-hl-text">350+ bird species (birding paradise)</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¿</div><div class="dest-hl-text">Trekking & nature walk permits</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ðï¸</div><div class="dest-hl-text">Forest Department camps & bamboo huts</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🐯</div><div class="dest-hl-text">Elephant, Gaur &amp; Tiger sightings</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🦜</div><div class="dest-hl-text">350+ bird species (birding paradise)</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🥾</div><div class="dest-hl-text">Trekking &amp; nature walk permits</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🏕️</div><div class="dest-hl-text">Forest Department camps &amp; bamboo huts</div></div>
         </div>
-        <a href="packages.html?cat=Nature+%2F+Wildlife" class="dest-cta">View Wildlife Packages â</a>
+        <a href="packages.html?cat=Nature+%2F+Wildlife" class="dest-cta">View Wildlife Packages →</a>
       </div>
     </div>
   </div>
@@ -298,7 +296,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ðï¸ Manchester of South India</span>
+            <span class="dest-badge">🗓️ Manchester of South India</span>
           </div>
         </div>
         <div class="dest-thumb-row">
@@ -307,21 +305,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ The Gateway</div>
+        <div class="dest-tag">✦ The Gateway</div>
         <h2 class="dest-h2">Coimbatore City</h2>
         <p class="dest-desc">The gateway to the Western Ghats, Coimbatore is a vibrant city rich in Tamil culture, ancient temples, and warm hospitality. Begin or end your journey with a heritage walk through the city's iconic landmarks.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">âï¸ <span>International Airport</span></div>
-          <div class="dest-meta-item">ð <span>Major Railway Junction</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Pleasant: <strong>Nov â Feb</strong></span></div>
+          <div class="dest-meta-item">✉️ <span>International Airport</span></div>
+          <div class="dest-meta-item">📍 <span>Major Railway Junction</span></div>
+          <div class="dest-meta-item">🌤️ <span>Pleasant: <strong>Nov – Feb</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Marudamalai & Perur Temples</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">VOC Park & Gedee Farm</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð­</div><div class="dest-hl-text">Kovai Culture & Heritage Walks</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð½ï¸</div><div class="dest-hl-text">Authentic Tamil Cuisine & Markets</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🕌</div><div class="dest-hl-text">Marudamalai &amp; Perur Temples</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🌳</div><div class="dest-hl-text">VOC Park &amp; Gedee Farm</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🎭</div><div class="dest-hl-text">Kovai Culture &amp; Heritage Walks</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🍽️</div><div class="dest-hl-text">Authentic Tamil Cuisine &amp; Markets</div></div>
         </div>
-        <a href="packages.html?cat=Cultural" class="dest-cta">View City Packages â</a>
+        <a href="packages.html?cat=Cultural" class="dest-cta">View City Packages →</a>
       </div>
     </div>
   </div>
@@ -334,7 +332,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ð§ 2nd Sweetest Water in the World</span>
+            <span class="dest-badge">💧 2nd Sweetest Water in the World</span>
           </div>
         </div>
         <div class="dest-thumb-row">
@@ -343,21 +341,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ Western Ghats</div>
-        <h2 class="dest-h2">Siruvani Falls & Dam</h2>
-        <p class="dest-desc">Siruvani is one of the closest escapes from Coimbatore city â a picturesque waterfall and reservoir set within deep forest. Famous for crystal-clear waters said to be the second sweetest in the world, it's a perfect half-day trip.</p>
+        <div class="dest-tag">✦ Western Ghats</div>
+        <h2 class="dest-h2">Siruvani Falls &amp; Dam</h2>
+        <p class="dest-desc">Siruvani is one of the closest escapes from Coimbatore city — a picturesque waterfall and reservoir set within deep forest. Famous for crystal-clear waters said to be the second sweetest in the world, it's a perfect half-day trip.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">ð <span><strong>37 km</strong> from Coimbatore</span></div>
-          <div class="dest-meta-item">â± <span><strong>1 hr</strong> drive</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Best: <strong>Aug â Jan</strong></span></div>
+          <div class="dest-meta-item">📍 <span><strong>37 km</strong> from Coimbatore</span></div>
+          <div class="dest-meta-item">⏱ <span><strong>1 hr</strong> drive</span></div>
+          <div class="dest-meta-item">🌤️ <span>Best: <strong>Aug – Jan</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð§</div><div class="dest-hl-text">Siruvani Waterfalls â crystal clear</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð²</div><div class="dest-hl-text">Forested drive through tribal belt</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¦</div><div class="dest-hl-text">Forest birding & nature photography</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¥¾</div><div class="dest-hl-text">Short trek to viewpoints</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">💧</div><div class="dest-hl-text">Siruvani Waterfalls — crystal clear</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🌲</div><div class="dest-hl-text">Forested drive through tribal belt</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🦜</div><div class="dest-hl-text">Forest birding &amp; nature photography</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🥾</div><div class="dest-hl-text">Short trek to viewpoints</div></div>
         </div>
-        <a href="packages.html?cat=Day+Trip" class="dest-cta">View Day Trip Packages â</a>
+        <a href="packages.html?cat=Day+Trip" class="dest-cta">View Day Trip Packages →</a>
       </div>
     </div>
   </div>
@@ -370,7 +368,7 @@ footer a:hover{color:var(--gold)}
       <div class="dest-img-wrap">
         <div class="dest-main-img-div" style="background-image:url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?w=800&q=80')">
           <div class="dest-badge-strip">
-            <span class="dest-badge">ðº Princess of Hill Stations</span>
+            <span class="dest-badge">🌺 Princess of Hill Stations</span>
           </div>
         </div>
         <div class="dest-thumb-row">
@@ -379,21 +377,21 @@ footer a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dest-info">
-        <div class="dest-tag">â¦ Palani Hills</div>
+        <div class="dest-tag">✦ Palani Hills</div>
         <h2 class="dest-h2">Kodaikanal</h2>
         <p class="dest-desc">The "Princess of Hill Stations", Kodaikanal sits at 2,133m in the Palani Hills. Known for its star-shaped lake, the stunning Coaker's Walk, rare Kurinji flowers, and misty pine forests, it's a dream destination for couples and families alike.</p>
         <div class="dest-meta">
-          <div class="dest-meta-item">ð <span><strong>175 km</strong> from Coimbatore</span></div>
-          <div class="dest-meta-item">â± <span><strong>4 hrs</strong> drive</span></div>
-          <div class="dest-meta-item">ð¤ï¸ <span>Best: <strong>Sep â May</strong></span></div>
+          <div class="dest-meta-item">📍 <span><strong>175 km</strong> from Coimbatore</span></div>
+          <div class="dest-meta-item">⏱ <span><strong>4 hrs</strong> drive</span></div>
+          <div class="dest-meta-item">🌤️ <span>Best: <strong>Sep – May</strong></span></div>
         </div>
         <div class="dest-highlights">
-          <div class="dest-hl"><div class="dest-hl-icon">ð£</div><div class="dest-hl-text">Boating on Kodai Lake</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð</div><div class="dest-hl-text">Coaker's Walk with Telescope</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ð¸</div><div class="dest-hl-text">Pine Forests & Kurinji Blossoms</div></div>
-          <div class="dest-hl"><div class="dest-hl-icon">ðï¸</div><div class="dest-hl-text">Bryant Park & Berijam Lake</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🚣</div><div class="dest-hl-text">Boating on Kodai Lake</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🔭</div><div class="dest-hl-text">Coaker's Walk with Telescope</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">📸</div><div class="dest-hl-text">Pine Forests &amp; Kurinji Blossoms</div></div>
+          <div class="dest-hl"><div class="dest-hl-icon">🌿</div><div class="dest-hl-text">Bryant Park &amp; Berijam Lake</div></div>
         </div>
-        <a href="packages.html?cat=Hill+Station" class="dest-cta">View Kodaikanal Packages â</a>
+        <a href="packages.html?cat=Hill+Station" class="dest-cta">View Kodaikanal Packages →</a>
       </div>
     </div>
   </div>
@@ -402,26 +400,26 @@ footer a:hover{color:var(--gold)}
 <!-- BEST TIME TO VISIT -->
 <section id="best-time">
   <div class="container">
-    <div class="section-tag" style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px;text-align:center">â¦ Plan Your Visit</div>
+    <div class="section-tag" style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px;text-align:center">✦ Plan Your Visit</div>
     <h2 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--teal-dark);text-align:center;margin-bottom:8px">Best Time to Visit</h2>
     <p style="text-align:center;color:#666;font-size:15px">The region has three distinct seasons, each with its own character.</p>
     <div class="bt-grid">
       <div class="bt-card">
-        <div class="bt-season">âï¸</div>
+        <div class="bt-season">✉️</div>
         <div class="bt-name">Peak Season</div>
-        <div class="bt-months">October â February</div>
-        <p class="bt-text">Cool, dry weather. Ideal for all destinations. Wildlife sightings at their best in Anamalai. Tea estates lush and fragrant. Peak demand â book accommodation early.</p>
+        <div class="bt-months">October – February</div>
+        <p class="bt-text">Cool, dry weather. Ideal for all destinations. Wildlife sightings at their best in Anamalai. Tea estates lush and fragrant. Peak demand â book accommodation early.</p>
       </div>
       <div class="bt-card">
-        <div class="bt-season">ð¸</div>
+        <div class="bt-season">📸</div>
         <div class="bt-name">Shoulder Season</div>
-        <div class="bt-months">March â May</div>
-        <p class="bt-text">Warmer days in the plains but hill stations remain pleasant. Summer school holidays make AprilâMay busy. Good time for bird watching as deciduous forests shed leaves.</p>
+        <div class="bt-months">March – May</div>
+        <p class="bt-text">Warmer days in the plains but hill stations remain pleasant. Summer school holidays make April–May busy. Good time for bird watching as deciduous forests shed leaves.</p>
       </div>
       <div class="bt-card">
-        <div class="bt-season">ð§ï¸</div>
+        <div class="bt-season">📍§ï¸</div>
         <div class="bt-name">Monsoon Season</div>
-        <div class="bt-months">June â September</div>
+        <div class="bt-months">June – September</div>
         <p class="bt-text">Lush, dramatic landscapes with waterfalls in full force. Best for Siruvani falls. Some forest roads may be restricted. Wildlife retreats deeper into the forest. Fewer tourists, lower rates.</p>
       </div>
     </div>
@@ -431,14 +429,14 @@ footer a:hover{color:var(--gold)}
 <div class="cta-strip">
   <h2>Ready to Explore?</h2>
   <p>Tell us which destination excites you and we'll craft a tailor-made itinerary.</p>
-  <a href="contact.html" class="btn btn-gold">Plan My Trip Now â</a>
+  <a href="contact.html" class="btn btn-gold">Plan My Trip Now →</a>
 </div>
 
 <footer>
   <div class="footer-links">
     <a href="index.html">Home</a><a href="packages.html">Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a><a href="../public/support.html">Support</a>
   </div>
-  Â© 2026 Coimbatour DMC. All rights reserved.
+  © 2026 Coimbatour DMC. All rights reserved.
 </footer>
 
 <script>
@@ -446,7 +444,6 @@ function toggleMobileMenu(){
   const mm=document.getElementById('mobile-menu');
   mm.style.display=mm.style.display==='flex'?'none':'flex';
 }
-// Handle anchor hash from overview grid
 window.addEventListener('load',()=>{
   const hash=window.location.hash;
   if(hash){
