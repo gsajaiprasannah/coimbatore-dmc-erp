@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan My Trip — Coimbatour DMC</title>
+<meta name="description" content="Contact Coimbatour DMC to plan your trip. Get a free personalised itinerary for Coimbatore, Ooty, Valparai and the Western Ghats.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
+  --gold:#C8963E;--gold-light:#FDF3E3;--gold-dark:#a07030;
+  --dark:#0f1a1a;--text:#2d2d2d;--grey:#f7f7f5;
+  --white:#ffffff;--shadow:0 4px 24px rgba(0,0,0,.12);--radius:12px;
+  --red:#e53e3e;--green:#38a169;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-logo-icon{width:42px;height:42px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--teal-dark);line-height:1.1}
+.nav-logo-text small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;opacity:.7;color:var(--text)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text);text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:6px;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--teal);background:var(--grey)}
+.nav-cta{background:var(--gold)!important;color:var(--dark)!important;font-weight:700!important;padding:10px 22px!important;border-radius:8px!important}
+.nav-cta:hover{background:var(--gold-dark)!important}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
+.nav-hamburger span{width:22px;height:2px;background:var(--teal-dark)}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--white);padding:20px;box-shadow:var(--shadow);flex-direction:column;gap:4px;z-index:999}
+.mobile-menu a{color:var(--text);text-decoration:none;font-size:14px;padding:12px 16px;border-radius:8px;display:block}
+.mobile-menu a:hover{background:var(--grey)}
+.mobile-menu .nav-cta{background:var(--gold)!important;color:var(--dark)!important;text-align:center;margin-top:8px}
+
+.page-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);padding:120px 40px 60px;text-align:center;margin-top:72px}
+.page-hero-tag{display:inline-block;background:rgba(200,150,62,.2);border:1px solid rgba(200,150,62,.5);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border-radius:20px;margin-bottom:18px}
+.page-hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);font-weight:700;color:#fff;margin-bottom:14px}
+.page-hero p{font-size:15px;color:rgba(255,255,255,.8);max-width:520px;margin:0 auto}
+
+/* MAIN LAYOUT */
+#main{padding:60px 40px;background:var(--grey)}
+.container{max-width:1100px;margin:0 auto}
+.contact-grid{display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start}
+
+/* FORM */
+.form-card{background:var(--white);border-radius:16px;padding:40px;box-shadow:var(--shadow)}
+.form-card h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--teal-dark);margin-bottom:6px}
+.form-card p{font-size:13px;color:#666;margin-bottom:28px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:.3px}
+.form-group label .req{color:var(--red)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:.2s;background:var(--white)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,107,107,.1)}
+.form-group textarea{resize:vertical;min-height:100px}
+.dest-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{padding:8px 14px;border-radius:20px;border:1.5px solid #e0e0e0;background:var(--white);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text);user-select:none}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.chip.selected{background:var(--teal);color:#fff;border-color:var(--teal)}
+.budget-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.submit-btn{width:100%;padding:16px;background:var(--gold);color:var(--dark);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;margin-top:8px}
+.submit-btn:hover{background:var(--gold-dark);transform:translateY(-1px)}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* SUCCESS */
+#success-msg{display:none;background:#f0fff4;border:1.5px solid #9ae6b4;border-radius:12px;padding:28px;text-align:center;margin-top:16px}
+#success-msg .icon{font-size:48px;margin-bottom:12px}
+#success-msg h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green);margin-bottom:8px}
+#success-msg p{font-size:13px;color:#555}
+#success-msg .ref{background:#c6f6d5;color:var(--green);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;display:inline-block;margin-top:10px;letter-spacing:1px}
+
+/* SIDEBAR */
+.sidebar{}
+.contact-box{background:var(--teal-dark);border-radius:16px;padding:32px;margin-bottom:20px}
+.contact-box h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:20px}
+.contact-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px}
+.contact-item:last-child{margin-bottom:0}
+.contact-icon{width:40px;height:40px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.contact-detail strong{display:block;color:#fff;font-size:13px;margin-bottom:2px}
+.contact-detail span{color:rgba(255,255,255,.7);font-size:13px}
+.contact-detail a{color:rgba(255,255,255,.7);text-decoration:none}
+.contact-detail a:hover{color:var(--gold)}
+
+.trust-box{background:var(--white);border-radius:16px;padding:28px;box-shadow:var(--shadow);margin-bottom:20px}
+.trust-box h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--teal-dark);margin-bottom:16px}
+.trust-item{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:var(--text)}
+.trust-item:last-child{margin-bottom:0}
+.trust-check{width:22px;height:22px;background:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+
+.hours-box{background:var(--gold-light);border-radius:16px;padding:24px}
+.hours-box h3{font-size:14px;font-weight:700;color:var(--gold-dark);margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
+.hours-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--text)}
+.hours-row:last-child{margin-bottom:0;color:#888}
+
+/* FAQ */
+#faq{padding:60px 40px;background:var(--white)}
+.faq-h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--teal-dark);text-align:center;margin-bottom:8px}
+.faq-sub{text-align:center;color:#666;margin-bottom:40px}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:960px;margin:0 auto}
+.faq-item{background:var(--grey);border-radius:var(--radius);padding:22px 24px;cursor:pointer}
+.faq-q{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;color:var(--teal-dark);gap:12px}
+.faq-toggle{font-size:18px;color:var(--teal);flex-shrink:0;transition:.3s}
+.faq-a{font-size:13px;color:#666;line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding-top:0}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+.faq-item.open .faq-toggle{transform:rotate(45deg)}
+
+footer{background:var(--dark);padding:40px;color:rgba(255,255,255,.6);text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,.5);text-decoration:none;margin:0 10px}
+footer a:hover{color:var(--gold)}
+.footer-links{margin-bottom:12px}
+
+@media(max-width:900px){
+  .contact-grid{grid-template-columns:1fr;direction:ltr}
+  .sidebar{order:-1}
+  .faq-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  #nav{padding:0 20px}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .page-hero{padding:100px 20px 48px}
+  #main{padding:40px 20px}
+  .form-card{padding:24px}
+  .form-row{grid-template-columns:1fr}
+  #faq{padding:48px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">C</div>
+    <div class="nav-logo-text">COIMBATOUR DMC<small>Your Friendly DMC for Coimbatore</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="packages.html">Tour Packages</a>
+    <a href="destinations.html">Destinations</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="contact.html" class="btn nav-cta">Plan My Trip ↗</a>
+  </div>
+  <div class="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a><a href="packages.html">Tour Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a>
+  <a href="contact.html" class="btn nav-cta">Plan My Trip ↗</a>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-tag">✦ Free Custom Itinerary</div>
+  <h1>Plan My Trip</h1>
+  <p>Tell us about your dream trip and we'll get back to you within 4 hours with a personalised itinerary and quote.</p>
+</div>
+
+<section id="main">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- FORM -->
+      <div>
+        <div class="form-card">
+          <h2>Send Us Your Requirements</h2>
+          <p>Fill in the details below — the more you share, the better we can tailor your experience.</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name <span class="req">*</span></label>
+              <input type="text" id="f-name" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label>Phone / WhatsApp <span class="req">*</span></label>
+              <input type="tel" id="f-phone" placeholder="+91 XXXXX XXXXX">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="f-email" placeholder="your@email.com">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Travel Date <span class="req">*</span></label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="form-group">
+              <label>No. of Travellers <span class="req">*</span></label>
+              <select id="f-pax">
+                <option value="">— Select —</option>
+                <option>1 – 2 (Couple)</option>
+                <option>3 – 5 (Small Group)</option>
+                <option>6 – 10 (Group)</option>
+                <option>11 – 20</option>
+                <option>21 – 50</option>
+                <option>50+ (Large Group / Corporate)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Trip Duration</label>
+            <select id="f-duration">
+              <option value="">— Select —</option>
+              <option>Day trip (1 day)</option>
+              <option>Weekend (2 days)</option>
+              <option>3 – 4 days</option>
+              <option>5 – 7 days</option>
+              <option>8 – 14 days</option>
+              <option>Flexible / Not sure</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Destinations of Interest</label>
+            <div class="dest-chips">
+              <span class="chip" onclick="toggleChip(this)">🏔️ Ooty / Nilgiris</span>
+              <span class="chip" onclick="toggleChip(this)">🌿 Valparai</span>
+              <span class="chip" onclick="toggleChip(this)">🐯 Anamalai / Topslip</span>
+              <span class="chip" onclick="toggleChip(this)">💧 Siruvani</span>
+              <span class="chip" onclick="toggleChip(this)">🏙️ Coimbatore City</span>
+              <span class="chip" onclick="toggleChip(this)">🌺 Kodaikanal</span>
+              <span class="chip" onclick="toggleChip(this)">🎭 Cultural / Temples</span>
+              <span class="chip" onclick="toggleChip(this)">🏢 Corporate / MICE</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Budget Range <small style="color:#888;font-weight:400">(per person)</small></label>
+            <div class="budget-chips">
+              <span class="chip" onclick="toggleBudget(this)" data-val="Under ₹3,000">Under ₹3k</span>
+              <span class="chip" onclick="toggleBudget(this)" data-val="₹3,000–7,000">₹3k–7k</span>
+              <span class="chip" onclick="toggleBudget(this)" data-val="₹7,000–15,000">₹7k–15k</span>
+              <span class="chip" onclick="toggleBudget(this)" data-val="₹15,000+">₹15k+</span>
+              <span class="chip" onclick="toggleBudget(this)" data-val="Flexible">Flexible</span>
+            </div>
+          </div>
+
+          <div class="form-group" id="pkg-group" style="display:none">
+            <label>Package of Interest</label>
+            <input type="text" id="f-pkg" placeholder="">
+          </div>
+
+          <div class="form-group">
+            <label>Tell us more about your trip</label>
+            <textarea id="f-message" placeholder="Any special requests, occasions, accessibility needs, or things you absolutely want to see..."></textarea>
+          </div>
+
+          <div id="error-msg" style="display:none;background:#fff5f5;border:1.5px solid #feb2b2;border-radius:8px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:14px"></div>
+
+          <button class="submit-btn" id="submit-btn" onclick="submitEnquiry()">Send My Trip Request 🚀</button>
+        </div>
+        <div id="success-msg">
+          <div class="icon">✅</div>
+          <h3>Enquiry Received!</h3>
+          <p>Thank you! Our team will review your requirements and reach out within <strong>4 hours</strong> with a personalised itinerary.</p>
+          <div class="ref" id="enquiry-ref"></div>
+          <p style="margin-top:14px;font-size:12px;color:#888">While you wait, explore our <a href="packages.html" style="color:var(--teal)">tour packages</a> for inspiration.</p>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="contact-box">
+          <h3>Contact Us Directly</h3>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div class="contact-detail"><strong>Call Us</strong><span>+91 XXXXX XXXXX</span></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💬</div>
+            <div class="contact-detail"><strong>WhatsApp</strong><a href="https://wa.me/91XXXXXXXXXX">+91 XXXXX XXXXX</a></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div class="contact-detail"><strong>Email</strong><a href="mailto:info@coimbatourindia.com">info@coimbatourindia.com</a></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div class="contact-detail"><strong>Visit Us</strong><span>Coimbatore, Tamil Nadu — 641 XXX</span></div>
+          </div>
+        </div>
+
+        <div class="trust-box">
+          <h3>Our Promise to You</h3>
+          <div class="trust-item"><div class="trust-check">✓</div>Response within 4 hours</div>
+          <div class="trust-item"><div class="trust-check">✓</div>100% Free itinerary planning</div>
+          <div class="trust-item"><div class="trust-check">✓</div>No commitment required</div>
+          <div class="trust-item"><div class="trust-check">✓</div>10+ years local expertise</div>
+          <div class="trust-item"><div class="trust-check">✓</div>Fully customised, not template</div>
+          <div class="trust-item"><div class="trust-check">✓</div>Transparent pricing, no hidden costs</div>
+        </div>
+
+        <div class="hours-box">
+          <h3>Office Hours</h3>
+          <div class="hours-row"><span>Monday – Friday</span><strong>9:00 AM – 7:00 PM</strong></div>
+          <div class="hours-row"><span>Saturday</span><strong>9:00 AM – 5:00 PM</strong></div>
+          <div class="hours-row"><span>Sunday</span><span>WhatsApp only</span></div>
+          <div style="margin-top:14px;font-size:12px;color:var(--gold-dark);font-weight:500">📱 WhatsApp queries answered 7 days a week</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <h2 class="faq-h2">Frequently Asked Questions</h2>
+    <p class="faq-sub">Everything you need to know before booking</p>
+    <div class="faq-grid">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How far in advance should I book? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">For peak season (October – February), we recommend booking at least 3–4 weeks in advance, especially for wildlife permits at Topslip which have limited availability. Off-season bookings can be done with as little as 1 week's notice.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Do you handle airport/railway transfers? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">Yes — all our packages include airport and railway pickups and drops. We have a fleet of AC cabs and tempo travellers for groups of all sizes. Just share your flight/train details and we'll handle the rest.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I get a package for just 1 or 2 people? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">Absolutely! We specialise in small-group and couple tours. Some of our most popular packages are specifically designed for couples on honeymoon or solo travellers. Pricing for solo or duo bookings is adjusted accordingly.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What payment methods do you accept? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">We accept bank transfers (NEFT/RTGS/IMPS), UPI (PhonePe, Google Pay, Paytm), and cash. A 25–50% advance confirms the booking, with the balance due 48 hours before departure. We'll send you an official invoice for every transaction.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What is your cancellation policy? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">Cancellations 14+ days before departure: full refund minus processing fees. 7–13 days: 50% refund. Under 7 days: no refund, but we can reschedule within 6 months. Please contact us as early as possible and we'll do our best to accommodate you.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Do you organise corporate / MICE tours? <span class="faq-toggle">+</span></div>
+        <div class="faq-a">Yes, corporate team outings are one of our specialties. We've handled groups from 10 to 300 people. We manage everything from transport and accommodation to team-building activities, conference setups, and gala dinners. Contact us for a dedicated corporate quote.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a><a href="packages.html">Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a><a href="../public/support.html">Support</a>
+  </div>
+  © 2026 Coimbatour DMC. All rights reserved.
+</footer>
+
+<script>
+const SB_URL='https://isszqzwkjznilqwnfpyc.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
+
+function toggleMobileMenu(){
+  const mm=document.getElementById('mobile-menu');
+  mm.style.display=mm.style.display==='flex'?'none':'flex';
+}
+function toggleChip(el){el.classList.toggle('selected')}
+let selectedBudget='';
+function toggleBudget(el){
+  document.querySelectorAll('.budget-chips .chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBudget=el.dataset.val;
+}
+function toggleFaq(item){item.classList.toggle('open')}
+
+// Pre-fill package from URL
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const pkg=params.get('pkg');
+  if(pkg){
+    const g=document.getElementById('pkg-group');
+    const i=document.getElementById('f-pkg');
+    g.style.display='block';
+    i.value=decodeURIComponent(pkg);
+  }
+});
+
+async function submitEnquiry(){
+  const name=document.getElementById('f-name').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const date=document.getElementById('f-date').value;
+  const pax=document.getElementById('f-pax').value;
+  const duration=document.getElementById('f-duration').value;
+  const message=document.getElementById('f-message').value.trim();
+  const pkg=document.getElementById('f-pkg').value.trim();
+  const errEl=document.getElementById('error-msg');
+  errEl.style.display='none';
+
+  const selectedDests=[...document.querySelectorAll('.dest-chips .chip.selected')].map(c=>c.textContent.trim());
+
+  if(!name){showError('Please enter your name.');return}
+  if(!phone){showError('Please enter your phone/WhatsApp number.');return}
+  if(!pax){showError('Please select number of travellers.');return}
+  if(!date){showError('Please select your travel date.');return}
+
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  btn.textContent='Sending...';
+
+  try {
+    // fetch current leads
+    const getRes=await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.leads`,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const rows=await getRes.json();
+    const leads=rows.length&&Array.isArray(rows[0].value)?rows[0].value:[];
+
+    const now=new Date();
+    const refNum=String(leads.length+1).padStart(6,'0');
+    const lead={
+      id:`LEAD-${refNum}`,
+      submitted_at:now.toISOString(),
+      name,phone,email,
+      travel_date:date,
+      pax,duration,
+      destinations:selectedDests.join(', '),
+      budget:selectedBudget,
+      package_interest:pkg||'',
+      message,
+      source:'website',
+      status:'new'
+    };
+    leads.unshift(lead);
+
+    const upsertRes=await fetch(`${SB_URL}/rest/v1/app_data`,{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'
+      },
+      body:JSON.stringify({data_key:'leads',value:leads,updated_at:now.toISOString()})
+    });
+    if(!upsertRes.ok) throw new Error('Save failed');
+
+    document.querySelector('.form-card').style.display='none';
+    const suc=document.getElementById('success-msg');
+    suc.style.display='block';
+    document.getElementById('enquiry-ref').textContent='Reference: '+lead.id;
+    suc.scrollIntoView({behavior:'smooth'});
+  } catch(e) {
+    showError('Something went wrong. Please call us directly at +91 XXXXX XXXXX or WhatsApp us.');
+    btn.disabled=false;
+    btn.textContent='Send My Trip Request 🚀';
+  }
+}
+
+function showError(msg){
+  const el=document.getElementById('error-msg');
+  el.textContent=msg;
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>
