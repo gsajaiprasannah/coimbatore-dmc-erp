@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coimbatour DMC â Your Friendly DMC for Coimbatore & Western Ghats</title>
+<meta name="description" content="Discover the best of Coimbatore, Ooty, Valparai and the Western Ghats with Coimbatour DMC â your trusted local destination management company since 2014.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
+  --gold:#C8963E;--gold-light:#FDF3E3;--gold-dark:#a07030;
+  --dark:#0f1a1a;--text:#2d2d2d;--grey:#f7f7f5;
+  --white:#ffffff;--shadow:0 4px 24px rgba(0,0,0,.12);
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
+
+/* ââ NAV âââââââââââââââââââââââââââââââ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:all .3s ease;background:transparent}
+#nav.scrolled{background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-logo-icon{width:42px;height:42px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;line-height:1.1;transition:color .3s}
+.nav-logo-text small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;opacity:.8}
+#nav.scrolled .nav-logo-text{color:var(--teal-dark)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:rgba(255,255,255,.9);text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{background:rgba(255,255,255,.15);color:#fff}
+#nav.scrolled .nav-links a{color:var(--text)}
+#nav.scrolled .nav-links a:hover{background:var(--grey);color:var(--teal)}
+.nav-cta{background:var(--gold)!important;color:var(--dark)!important;font-weight:700!important;padding:10px 22px!important;border-radius:8px!important}
+.nav-cta:hover{background:var(--gold-dark)!important;transform:translateY(-1px)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
+.nav-hamburger span{width:22px;height:2px;background:var(--white);transition:.3s}
+#nav.scrolled .nav-hamburger span{background:var(--teal-dark)}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--white);padding:20px;box-shadow:var(--shadow);flex-direction:column;gap:4px;z-index:999}
+.mobile-menu a{color:var(--text);text-decoration:none;font-size:14px;font-weight:500;padding:12px 16px;border-radius:8px;display:block}
+.mobile-menu a:hover{background:var(--grey)}
+.mobile-menu .nav-cta{background:var(--gold)!important;color:var(--dark)!important;text-align:center;margin-top:8px}
+
+/* ââ HERO âââââââââââââââââââââââââââââââ */
+#hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+#hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80');background-size:cover;background-position:center;transform:scale(1.05);transition:transform 8s ease}
+#hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,30,30,.65) 0%,rgba(0,50,50,.75) 60%,rgba(0,20,20,.85) 100%)}
+.hero-content{position:relative;z-index:2;max-width:860px;padding:0 24px}
+.hero-tag{display:inline-block;background:rgba(200,150,62,.2);border:1px solid rgba(200,150,62,.6);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border-radius:20px;margin-bottom:24px}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,72px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px}
+.hero-h1 span{color:var(--gold)}
+.hero-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.85);max-width:600px;margin:0 auto 36px;font-weight:300;line-height:1.7}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:all .25s}
+.btn-gold{background:var(--gold);color:var(--dark)}
+.btn-gold:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,150,62,.4)}
+.btn-outline-white{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.7)}
+.btn-outline-white:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.hero-scroll-line{width:1px;height:40px;background:rgba(255,255,255,.3);animation:scrollLine 2s ease-in-out infinite}
+@keyframes scrollLine{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(.6)}}
+
+/* ââ STATS STRIP âââââââââââââââââââââââ */
+#stats{background:var(--teal-dark);padding:32px 40px;display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+.stat-item{text-align:center;padding:16px 48px;border-right:1px solid rgba(255,255,255,.15);flex:1;min-width:160px}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--gold);line-height:1}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,.65);font-weight:400;margin-top:4px;letter-spacing:.5px}
+
+/* ââ SECTION COMMON âââââââââââââââââââââ */
+section{padding:88px 40px}
+.section-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.section-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--teal-dark);margin-bottom:16px;line-height:1.2}
+.section-sub{font-size:15px;color:#666;max-width:560px;line-height:1.7}
+.section-hdr{margin-bottom:48px}
+.section-hdr.centered{text-align:center}
+.section-hdr.centered .section-sub{margin:0 auto}
+.container{max-width:1200px;margin:0 auto}
+.view-all{display:inline-flex;align-items:center;gap:6px;color:var(--teal);font-weight:600;font-size:13px;text-decoration:none;border:1.5px solid var(--teal);padding:10px 22px;border-radius:8px;transition:all .2s;margin-top:12px}
+.view-all:hover{background:var(--teal);color:#fff}
+
+/* ââ PACKAGES âââââââââââââââââââââââââââ */
+#packages{background:var(--grey)}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.pkg-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .3s;cursor:pointer}
+.pkg-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+.pkg-img{height:210px;background-size:cover;background-position:center;position:relative}
+.pkg-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6) 0%,transparent 60%)}
+.pkg-badge{position:absolute;top:14px;left:14px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+.pkg-dur{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:4px 10px;border-radius:6px}
+.pkg-body{padding:20px}
+.pkg-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--teal-dark);margin-bottom:6px;line-height:1.3}
+.pkg-dest{font-size:12px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:4px}
+.pkg-incl{font-size:12px;color:#666;margin-bottom:14px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pkg-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #eee}
+.pkg-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--teal)}
+.pkg-price small{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;color:#888;display:block;margin-top:-2px}
+.pkg-enquire{background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.pkg-enquire:hover{background:var(--teal);color:#fff}
+.pkg-skeleton{background:#eee;border-radius:var(--radius);height:340px;animation:shimmer 1.5s infinite}
+@keyframes shimmeb{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
+
+/* ââ DESTINATIONS âââââââââââââââââââââââ */
+#destinations{background:var(--white)}
+.dest-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:280px 280px;gap:18px}
+.dest-card{border-radius:var(--radius);overflow:hidden;position:relative;cursor:pointer}
+.dest-card:first-child{grid-row:1/3;grid-column:1/2}
+.dest-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease}
+.dest-card:hover .dest-bg{transform:scale(1.06)}
+.dest-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,40,40,.8) 0%,transparent 55%)}
+.dest-info{position:absolute;bottom:0;left:0;right:0;padding:22px}
+.dest-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.dest-tag{font-size:11px;color:rgba(255,255,255,.7);font-weight:400;letter-spacing:.5px}
+.dest-card a{position:absolute;inset:0;z-index:2}
+
+/* ââ WHY US âââââââââââââââââââââââââââââ */
+#why{background:var(--teal-dark);padding:88px 40px}
+#why .section-h2{color:#fff}
+#why .section-sub{color:rgba(255,255,255,.7)}
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:48px}
+.why-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:28px 24px;transition:all .3s}
+.why-card:hover{background:rgba(255,255,255,.1);transform:translateY(-4px)}
+.why-icon{font-size:36px;margin-bottom:16px}
+.why-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:10px}
+.why-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.7}
+
+/* ââ TESTIMONIALS âââââââââââââââââââââââ */
+#testimonials{background:var(--grey)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.testi-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);position:relative}
+.testi-quote{font-size:48px;color:var(--teal-light);font-family:'Playfair Display',serif;line-height:.8;margin-bottom:16px}
+.testi-text{font-size:14px;color:#555;line-height:1.7;margin-bottom:20px;font-style:italic}
+.testi-stars{color:var(--gold);font-size:14px;margin-bottom:12px}
+.testi-name{font-weight:700;font-size:13px;color:var(--teal-dark)}
+.testi-role{font-size:12px;color:#888}
+.testi-badge{position:absolute;top:24px;right:24px;background:var(--teal-light);color:var(--teal);font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:1px;text-transform:uppercase}
+
+/* ââ CTA BANNER âââââââââââââââââââââââââ */
+#cta-banner{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);text-align:center;padding:80px 40px;position:relative;overflow:hidden}
+#cta-banner::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:rgba(200,150,62,.08);border-radius:50%}
+#cta-banner::after{content:'';position:absolute;bottom:-80px;left:-40px;width:240px;height:240px;background:rgba(200,150,62,.06);border-radius:50%}
+.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:#fff;margin-bottom:14px}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.8);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+.btn-white{background:#fff;color:var(--teal-dark);font-weight:700}
+.btn-white:hover{background:var(--gold);color:var(--dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+/* ââ FOOTER âââââââââââââââââââââââââââââ */
+footer{background:var(--dark);padding:60px 40px 30px;color:rgba(255,255,255,.7)}
+.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 48px}
+.footer-brand{}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.footer-logo-icon{width:38px;height:38px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:18px;color:var(--teal-dark)}
+.footer-logo-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff}
+.footer-brand p{font-size:13px;line-height:1.7;max-width:280px;margin-bottom:20px}
+.footer-social{display:flex;gap:10px}
+.footer-social a{width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;text-decoration:none;color:rgba(255,255,255,.7);transition:all .2s}
+.footer-social a:hover{background:var(--gold);color:var(--dark)}
+.footer-col h4{color:#fff;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-contact-item{display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px;align-items:flex-start}
+.footer-contact-item span:first-child{font-size:16px;margin-top:1px}
+.footer-bottom{max-width:1200px;margin:0 auto;border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px}
+.footer-bottom a{color:rgba(255,255,255,.5);text-decoration:none;margin-left:16px}
+.footer-bottom a:hover{color:var(--gold)}
+
+/* ââ RESPONSIVE âââââââââââââââââââââââââ */
+@media(max-width:1024px){
+  .pkg-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+}
+@media(max-width:768px){
+  #nav{padding:0 20px}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  section{padding:60px 20px}
+  #stats{padding:24px 20px}
+  .stat-item{padding:14px 20px;border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}
+  .stat-item:last-child{border-bottom:none}
+  .pkg-grid{grid-template-columns:1fr}
+  .dest-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .dest-card:first-child{grid-row:auto;grid-column:auto}
+  .why-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:24px}
+  #hero{height:80vh}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">C</div>
+    <div class="nav-logo-text">COIMBATOUR DMC<small>Your Friendly DMC for Coimbatore</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="packages.html">Tour Packages</a>
+    <a href="destinations.html">Destinations</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+  </div>
+  <div class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="packages.html">Tour Packages</a>
+  <a href="destinations.html">Destinations</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag">â¦ Trusted Since 2014 Â· Coimbatore, Tamil Nadu</div>
+    <h1 class="hero-h1">Discover the <span>Magic</span> of the Western Ghats</h1>
+    <p class="hero-sub">Expertly crafted tours to Ooty, Valparai, Anamalai and beyond. Your local partner for unforgettable experiences in South India.</p>
+    <div class="hero-btns">
+      <a href="packages.html" class="btn btn-gold">Explore Our Tours â</a>
+      <a href="contact.html" class="btn btn-outline-white">Plan My Trip</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat-item"><div class="stat-num">500<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Happy Travellers</div></div>
+  <div class="stat-item"><div class="stat-num">10<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Years of Experience</div></div>
+  <div class="stat-item"><div class="stat-num">50<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Unique Packages</div></div>
+  <div class="stat-item"><div class="stat-num">98<span style="color:var(--gold-light);font-size:28px">%</span></div><div class="stat-lbl">Guest Satisfaction</div></div>
+</div>
+
+<!-- FEATURED PACKAGES -->
+<section id="packages">
+  <div class="container">
+    <div class="section-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="section-tag">â¦ Our Tour Packages</div>
+        <h2 class="section-h2">Signature Experiences</h2>
+        <p class="section-sub">Handcrafted itineraries that blend adventure, culture, and comfort â made for every kind of traveller.</p>
+      </div>
+      <a href="packages.html" class="view-all">View All Packages â</a>
+    </div>
+    <div class="pkg-grid" id="pkg-grid">
+      <div class="pkg-skeleton"></div>
+      <div class="pkg-skeleton"></div>
+      <div class="pkg-skeleton"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section id="destinations">
+  <div class="container">
+    <div class="section-hdr centered">
+      <div class="section-tag">â¦ Where We Take You</div>
+      <h2 class="section-h2">Explore Our Destinations</h2>
+      <p class="section-sub">From misty hill stations to dense tiger reserves, every destination around Coimbatore is a world of its own.</p>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card">
+        <div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info"><div class="dest-name">Ooty & Nilgiris</div><div class="dest-tag">Hill Station Â· Heritage Train Â· Botanical Gardens</div></div>
+        <a href="destinations.html#ooty"></a>
+      </div>
+      <div class="dest-card">
+        <div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info"><div class="dest-name">Valparai</div><div class="dest-tag">Tea Estates Â· Forest Trails Â· Shola Streams</div></div>
+        <a href="destinations.html#valparai"></a>
+      </div>
+      <div class="dest-card">
+        <div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info"><div class="dest-name">Anamalai Tiger Reserve</div><div class="dest-tag">Wildlife Â· Elephant Safari Â· Topslip</div></div>
+        <a href="destinations.html#anamalai"></a>
+      </div>
+      <div class="dest-card">
+        <div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info"><div class="dest-name">Coimbatore City</div><div class="dest-tag">Temples Â· Culture Â· Heritage Walks</div></div>
+        <a href="destinations.html#coimbatore"></a>
+      </div>
+      <div class="dest-card">
+        <div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info"><div class="dest-name">Siruvani</div><div class="dest-tag">Crystal Waters Â· Scenic Dam Â· Forest Walks</div></div>
+        <a href="destinations.html#siruvani"></a>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <a href="destinations.html" class="view-all">Explore All Destinations â</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section id="why">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-tag" style="color:var(--gold)">â¦ The Coimbatour Promise</div>
+      <h2 class="section-h2">Why Travellers Choose Us</h2>
+      <p class="section-sub">We're not just a travel agency. We're a team of passionate locals who've spent years curating the finest experiences the Western Ghats has to offer.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">ðºï¸</div>
+        <div class="why-title">Deep Local Knowledge</div>
+        <p class="why-text">Born and bred in Coimbatore, our team knows every trail, temple, and hidden waterfall. We take you beyond the tourist map.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">ð¡ï¸</div>
+        <div class="why-title">100% Safe & Reliable</div>
+        <p class="why-text">All our drivers are verified, vehicles are insured, and our guides are certified. Your safety is our absolute priority â always.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">ð¯</div>
+        <div class="why-title">Tailored Itineraries</div>
+        <p class="why-text">No two groups are the same. Every itinerary we build is customised to your interests, travel pace, and budget â nothing off-the-shelf.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">ð</div>
+        <div class="why-title">24/7 On-Ground Support</div>
+        <p class="why-text">From airport pickup to last-day drop, you have a dedicated point of contact available round the clock during your journey.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-hdr centered">
+      <div class="section-tag">â¦ Guest Stories</div>
+      <h2 class="section-h2">What Our Travellers Say</h2>
+      <p class="section-sub">Real experiences from real guests who've explored the Western Ghats with us.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-badge">Verified Guest</div>
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">âââââ</div>
+        <p class="testi-text">The Valparai trip was beyond what I imagined. We saw wild elephants from just 30 feet away! Our guide knew exactly where to take us and the accommodation was pristine. Will absolutely be back.</p>
+        <div class="testi-name">Rajesh & Family, Chennai</div>
+        <div class="testi-role">Valparai Wilderness Retreat Â· December 2024</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-badge">Verified Guest</div>
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">âââââ</div>
+        <p class="testi-text">Organised a 3-day team outing through Coimbatour DMC for 25 people. Everything was perfectly on time â transfers, meals, activities. The team handled every last detail without a single hiccup. Outstanding professionalism.</p>
+        <div class="testi-name">Priya Subramaniam, Bangalore</div>
+        <div class="testi-role">Corporate Team Outing Â· February 2025</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-badge">Verified Guest</div>
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">âââââ</div>
+        <p class="testi-text">Our honeymoon was absolutely magical. The surprise candle-lit dinner at the hilltop resort, the spa, the private nature walk â all arranged by Coimbatour. They genuinely care about making it special.</p>
+        <div class="testi-name">Arun & Divya, Coimbatore</div>
+        <div class="testi-role">Honeymoon Escape Â· January 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section id="cta-banner">
+  <div class="container" style="position:relative;z-index:1">
+    <h2 class="cta-h2">Ready to Plan Your Perfect Trip?</h2>
+    <p class="cta-sub">Tell us where you want to go and we'll craft a bespoke itinerary just for you â completely free.</p>
+    <a href="contact.html" class="btn btn-white">Start Planning Now â</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">C</div>
+        <div class="footer-logo-text">COIMBATOUR DMC</div>
+      </div>
+      <p>Your trusted local partner for curated travel experiences across Coimbatore, Ooty, Valparai, and the Western Ghats since 2014.</p>
+      <div class="footer-social">
+        <a href="#" title="Instagram">ð¸</a>
+        <a href="#" title="Facebook">ð</a>
+        <a href="#" title="WhatsApp">ð¬</a>
+        <a href="#" title="YouTube">â¶ï¸</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="packages.html">Tour Packages</a></li>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="contact.html">Plan My Trip</a></li>
+        <li><a href="../public/support.html">Customer Support</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Tour Categories</h4>
+      <ul>
+        <li><a href="packages.html?cat=Hill+Station">Hill Station Tours</a></li>
+        <li><a href="packages.html?cat=Nature">Wildlife & Nature</a></li>
+        <li><a href="packages.html?cat=Adventure">Adventure Tours</a></li>
+        <li><a href="packages.html?cat=Spiritual">Spiritual Retreats</a></li>
+        <li><a href="packages.html?cat=MICE">Corporate / MICE</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <div class="footer-contact-item"><span>ð</span><span>+91 XXXXX XXXXX</span></div>
+      <div class="footer-contact-item"><span>ð¬</span><span>WhatsApp: +91 XXXXX XXXXX</span></div>
+      <div class="footer-contact-item"><span>âï¸</span><span>info@coimbatourindia.com</span></div>
+      <div class="footer-contact-item"><span>ð</span><span>Coimbatore, Tamil Nadu â 641 XXX</span></div>
+      <div class="footer-contact-item"><span>ð</span><span>Mon â Sat: 9:00 AM â 7:00 PM</span></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Â© 2026 Coimbatour DMC. All rights reserved.</span>
+    <div>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="../public/?v=5">Staff Login</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const SB_URL = 'https://isszqzwkjznilqwnfpyc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
+
+const CAT_IMAGES = {
+  'Cultural':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  'Hill Station':'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=600&q=80',
+  'Nature / Wildlife':'https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?w=600&q=80',
+  'Adventure':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+  'Day Trip':'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&q=80',
+  'Spiritual':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  'Family':'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=600&q=80',
+  'Heritage':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  'Agri Tourism':'https://images.unsplash.com/photo-1569880153113-76e33fc52d5f?w=600&q=80',
+  'MICE':'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',
+  'Romantic':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+  'Eco Tour':'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&q=80',
+  'default':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
+};
+
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Parallax hero bg
+window.addEventListener('scroll', () => {
+  const heroEl = document.getElementById('hero-bg');
+  if(heroEl) heroEl.style.transform = `scale(1.05) translateY(${window.scrollY * 0.15}px)`;
+});
+
+// Mobile menu
+function toggleMobileMenu(){
+  const mm = document.getElementById('mobile-menu');
+  mm.style.display = mm.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// Load featured packages from Supabase
+async function loadFeaturedPackages(){
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.packages`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    const rows = await res.json();
+    const packages = (rows.length && Array.isArray(rows[0].value)) ? rows[0].value : [];
+    const active = packages.filter(p => p.status === 'Active' || !p.status).slice(0, 3);
+    renderPackageCards(active);
+  } catch(e) {
+    document.getElementById('pkg-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888">Unable to load packages right now. Please <a href="contact.html" style="color:var(--teal)">contact us</a> for details.</div>`;
+  }
+}
+
+function renderPackageCards(pkgs){
+  const grid = document.getElementById('pkg-grid');
+  if(!pkgs.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888">No packages available right now.</div>`;
+    return;
+  }
+  grid.innerHTML = pkgs.map(p => {
+    const img = CAT_IMAGES[p.category] || CAT_IMAGES['default'];
+    const price = p.pricePerPax || p.basePrice || 0;
+    return `
+    <div class="pkg-card" onclick="location.href='packages.html?id=${p.id}'">
+      <div class="pkg-img" style="background-image:url('${img}')">
+        <div class="pkg-img-overlay"></div>
+        <div class="pkg-badge">${p.category || 'Tour'}</div>
+        <div class="pkg-dur">â± ${p.duration || 1} Day${p.duration > 1 ? 's' : ''}</div>
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-name">${p.name || 'Tour Package'}</div>
+        <div class="pkg-dest">ð ${(p.destinations || '').split(',').slice(0,2).join(' Â· ')}</div>
+        <div class="pkg-incl">â ${p.inclusions || 'Contact us for details'}</div>
+        <div class="pkg-footer">
+          <div class="pkg-price">â¹${price.toLocaleString('en-IN')}<small>per person onwards</small></div>
+          <button class="pkg-enquire" onclick="event.stopPropagation();location.href='contact.html?pkg=${encodeURIComponent(p.name)}'">Enquire â</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+loadFeaturedPackages();
+</script>
+</body>
+</html>
