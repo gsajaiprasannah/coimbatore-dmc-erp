@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tour Packages â Coimbatour DMC</title>
+<meta name="description" content="Browse our curated tour packages across Coimbatore, Ooty, Valparai, Anamalai and the Western Ghats. Tailored for families, couples, groups and corporates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
+  --gold:#C8963E;--gold-light:#FDF3E3;--gold-dark:#a07030;
+  --dark:#0f1a1a;--text:#2d2d2d;--grey:#f7f7f5;
+  --white:#ffffff;--shadow:0 4px 24px rgba(0,0,0,.12);--radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-logo-icon{width:42px;height:42px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--teal-dark);line-height:1.1}
+.nav-logo-text small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;opacity:.7;color:var(--text)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--text);text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{background:var(--grey);color:var(--teal)}
+.nav-links a.active{color:var(--teal);font-weight:600}
+.nav-cta{background:var(--gold)!important;color:var(--dark)!important;font-weight:700!important;padding:10px 22px!important;border-radius:8px!important}
+.nav-cta:hover{background:var(--gold-dark)!important}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
+.nav-hamburger span{width:22px;height:2px;background:var(--teal-dark)}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--white);padding:20px;box-shadow:var(--shadow);flex-direction:column;gap:4px;z-index:999}
+.mobile-menu a{color:var(--text);text-decoration:none;font-size:14px;padding:12px 16px;border-radius:8px;display:block}
+.mobile-menu a:hover{background:var(--grey)}
+.mobile-menu .nav-cta{background:var(--gold)!important;color:var(--dark)!important;text-align:center;margin-top:8px}
+
+/* HERO */
+.page-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);padding:120px 40px 60px;text-align:center;margin-top:72px}
+.page-hero-tag{display:inline-block;background:rgba(200,150,62,.2);border:1px solid rgba(200,150,62,.5);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border-radius:20px;margin-bottom:18px}
+.page-hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);font-weight:700;color:#fff;margin-bottom:14px}
+.page-hero p{font-size:15px;color:rgba(255,255,255,.8);max-width:520px;margin:0 auto}
+
+/* FILTERS */
+#filter-bar{background:var(--white);padding:24px 40px;border-bottom:1px solid #eee;position:sticky;top:72px;z-index:100}
+.filter-wrap{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter-label{font-size:12px;font-weight:600;color:#888;letter-spacing:.5px;text-transform:uppercase;margin-right:4px}
+.filter-btn{padding:8px 18px;border-radius:20px;border:1.5px solid #e0e0e0;background:var(--white);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text)}
+.filter-btn:hover{border-color:var(--teal);color:var(--teal)}
+.filter-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.filter-search{margin-left:auto;position:relative}
+.filter-search input{padding:9px 36px 9px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;width:220px;outline:none;transition:.2s}
+.filter-search input:focus{border-color:var(--teal)}
+.filter-search::after{content:'ð';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+
+/* GRID */
+#pkg-section{padding:48px 40px;background:var(--grey);min-height:400px}
+.container{max-width:1200px;margin:0 auto}
+.pkg-meta{font-size:13px;color:#666;margin-bottom:28px}
+.pkg-meta strong{color:var(--teal-dark);font-size:16px}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.pkg-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .3s;cursor:pointer;display:flex;flex-direction:column}
+.pkg-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+.pkg-img{height:210px;background-size:cover;background-position:center;position:relative;flex-shrink:0}
+.pkg-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6) 0%,transparent 60%)}
+.pkg-badge{position:absolute;top:14px;left:14px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+.pkg-dur{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:4px 10px;border-radius:6px}
+.pkg-pax{position:absolute;bottom:14px;left:14px;background:rgba(0,107,107,.7);color:#fff;font-size:11px;padding:4px 10px;border-radius:6px}
+.pkg-body{padding:20px;flex:1;display:flex;flex-direction:column}
+.pkg-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--teal-dark);margin-bottom:6px;line-height:1.3}
+.pkg-dest{font-size:12px;color:#888;margin-bottom:10px}
+.pkg-incl{font-size:13px;color:#555;margin-bottom:14px;line-height:1.6;flex:1}
+.pkg-season{font-size:11px;color:var(--gold-dark);background:var(--gold-light);padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:12px;font-weight:500}
+.pkg-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #eee;margin-top:auto}
+.pkg-price{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--teal)}
+.pkg-price small{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;color:#888;display:block;margin-top:-2px}
+.pkg-enquire{background:var(--teal);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.pkg-enquire:hover{background:var(--teal-dark)}
+.no-pkgs{text-align:center;padding:80px 20px;color:#888;grid-column:1/-1}
+.no-pkgs-icon{font-size:48px;margin-bottom:16px}
+.pkg-skeleton{background:#eee;border-radius:var(--radius);height:380px;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* DETAIL MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:16px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.3)}
+.modal-img{height:260px;background-size:cover;background-position:center;border-radius:16px 16px 0 0;position:relative}
+.modal-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 60%);border-radius:16px 16px 0 0}
+.modal-img-info{position:absolute;bottom:20px;left:24px;right:24px}
+.modal-badge{display:inline-block;background:var(--gold);color:var(--dark);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:8px}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff}
+.modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(0,0,0,.5);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.modal-body{padding:24px}
+.modal-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.modal-pill{background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:500;padding:5px 14px;border-radius:20px}
+.modal-section-h{font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:20px}
+.modal-section-h:first-of-type{margin-top:0}
+.modal-incl{font-size:14px;color:var(--text);line-height:1.7}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid #eee;flex-wrap:wrap;gap:12px}
+.modal-price-big{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--teal)}
+.modal-price-big small{font-family:'Inter',sans-serif;font-size:12px;font-weight:400;color:#888;display:block;line-height:1.3}
+.btn-book{background:var(--gold);color:var(--dark);font-size:14px;font-weight:700;padding:14px 30px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-book:hover{background:var(--gold-dark);transform:translateY(-1px)}
+
+/* CTA */
+.cta-strip{background:var(--teal-dark);padding:60px 40px;text-align:center}
+.cta-strip h2{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;margin-bottom:12px}
+.cta-strip p{font-size:15px;color:rgba(255,255,255,.8);margin-bottom:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:all .25s}
+.btn-gold{background:var(--gold);color:var(--dark)}
+.btn-gold:hover{background:var(--gold-dark);transform:translateY(-2px)}
+
+footer{background:var(--dark);padding:40px;color:rgba(255,255,255,.6);text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,.5);text-decoration:none;margin:0 10px}
+footer a:hover{color:var(--gold)}
+.footer-links{margin-bottom:12px}
+
+@media(max-width:1024px){.pkg-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  #nav{padding:0 20px}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .page-hero{padding:100px 20px 48px}
+  #filter-bar{padding:16px 20px}
+  #pkg-section{padding:32px 20px}
+  .pkg-grid{grid-template-columns:1fr}
+  .filter-search{margin-left:0;width:100%}
+  .filter-search input{width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">C</div>
+    <div class="nav-logo-text">COIMBATOUR DMC<small>Your Friendly DMC for Coimbatore</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="packages.html" class="active">Tour Packages</a>
+    <a href="destinations.html">Destinations</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+  </div>
+  <div class="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a><a href="packages.html">Tour Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a>
+  <a href="contact.html" class="btn nav-cta">Plan My Trip â</a>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-tag">â¦ Curated Tour Packages</div>
+  <h1>Explore Our Signature Tours</h1>
+  <p>From scenic hill retreats to wildlife adventures â find the perfect getaway crafted for you.</p>
+</div>
+
+<div id="filter-bar">
+  <div class="filter-wrap">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Hill Station',this)">Hill Station</button>
+    <button class="filter-btn" onclick="setFilter('Nature / Wildlife',this)">Wildlife</button>
+    <button class="filter-btn" onclick="setFilter('Adventure',this)">Adventure</button>
+    <button class="filter-btn" onclick="setFilter('Day Trip',this)">Day Trips</button>
+    <button class="filter-btn" onclick="setFilter('MICE',this)">Corporate</button>
+    <button class="filter-btn" onclick="setFilter('Romantic',this)">Romantic</button>
+    <div class="filter-search"><input type="text" id="search-input" placeholder="Search packages..." oninput="applyFilters()"></div>
+  </div>
+</div>
+
+<section id="pkg-section">
+  <div class="container">
+    <div class="pkg-meta" id="pkg-meta">Loading packages...</div>
+    <div class="pkg-grid" id="pkg-grid">
+      <div class="pkg-skeleton"></div><div class="pkg-skeleton"></div><div class="pkg-skeleton"></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-strip">
+  <h2>Can't Find What You're Looking For?</h2>
+  <p>We specialise in custom itineraries. Tell us your dates, budget, and interests â we'll build it from scratch.</p>
+  <a href="contact.html" class="btn btn-gold">Request a Custom Tour â</a>
+</div>
+
+<!-- PACKAGE DETAIL MODAL -->
+<div class="modal-overlay" id="pkg-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-img" id="modal-img">
+      <div class="modal-img-overlay"></div>
+      <button class="modal-close" onclick="closeModal()">â</button>
+      <div class="modal-img-info">
+        <div class="modal-badge" id="modal-badge"></div>
+        <div class="modal-title" id="modal-title"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-pills" id="modal-pills"></div>
+      <div class="modal-section-h">Destinations</div>
+      <div id="modal-dest" class="modal-incl"></div>
+      <div class="modal-section-h">What's Included</div>
+      <div id="modal-incl" class="modal-incl"></div>
+      <div id="modal-remarks-wrap" style="display:none">
+        <div class="modal-section-h">Tour Notes</div>
+        <div id="modal-remarks" class="modal-incl" style="color:#666"></div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <div class="modal-price-big" id="modal-price"></div>
+        </div>
+        <a id="modal-enquire-btn" href="#" class="btn-book">Enquire About This Tour â</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a><a href="packages.html">Packages</a><a href="destinations.html">Destinations</a><a href="contact.html">Contact</a><a href="../public/support.html">Support</a>
+  </div>
+  Â© 2026 Coimbatour DMC. All rights reserved.
+</footer>
+
+<script>
+const SB_URL = 'https://isszqzwkjznilqwnfpyc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
+
+const CAT_IMAGES = {
+  'Cultural':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80',
+  'Hill Station':'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=700&q=80',
+  'Nature / Wildlife':'https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?w=700&q=80',
+  'Adventure':'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=700&q=80',
+  'Day Trip':'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=700&q=80',
+  'Spiritual':'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&q=80',
+  'Family':'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=700&q=80',
+  'Heritage':'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=80',
+  'Agri Tourism':'https://images.unsplash.com/photo-1569880153113-76e33fc52d5f?w=700&q=80',
+  'MICE':'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=700&q=80',
+  'Romantic':'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&q=80',
+  'Eco Tour':'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=700&q=80',
+  'default':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80'
+};
+
+let ALL_PACKAGES = [];
+let activeFilter = 'all';
+
+function toggleMobileMenu(){
+  const mm=document.getElementById('mobile-menu');
+  mm.style.display=mm.style.display==='flex'?'none':'flex';
+}
+
+async function loadPackages(){
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.packages`,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    const rows = await res.json();
+    ALL_PACKAGES = (rows.length && Array.isArray(rows[0].value)) ? rows[0].value.filter(p=>p.status==='Active'||!p.status) : [];
+
+    // check URL params
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('cat')){
+      activeFilter = params.get('cat');
+      document.querySelectorAll('.filter-btn').forEach(b=>{
+        b.classList.toggle('active', b.textContent.trim()===activeFilter||b.textContent.trim()==='All'&&activeFilter==='all');
+      });
+    }
+    if(params.get('id')){
+      const pkg = ALL_PACKAGES.find(p=>p.id===params.get('id'));
+      if(pkg) setTimeout(()=>openModal(pkg),300);
+    }
+    applyFilters();
+  } catch(e) {
+    document.getElementById('pkg-grid').innerHTML<`<div class="no-pkgs"><div class="no-pkgs-icon">â ï¸</div><p>Unable to load packages. Please <a href="contact.html" style="color:var(--teal)">contact us</a> directly.</p></div>`;
+    document.getElementById('pkg-meta').textContent='';
+  }
+}
+
+function setFilter(cat, btn){
+  activeFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters(){
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  let filtered=ALL_PACKAGES;
+  if(activeFilter!=='all') filtered=filtered.filter(p=>(p.category||'')==activeFilter);
+  if(q) filtered=filtered.filter(p=>(p.name+' '+(p.destinations||'')+' '+(p.inclusions||'')).toLowerCase().includes(q));
+  renderGrid(filtered);
+}
+
+function renderGrid(pkgs){
+  const grid=document.getElementById('pkg-grid');
+  const meta=document.getElementById('pkg-meta');
+  meta.innerHTML=`Showing <strong>${pkgs.length}</strong> package${pkgs.length!==1?'s':''}`;
+  if(!pkgs.length){
+    grid.innerHTML=`<div class="no-pkgs"><div class="no-pkgs-icon">ðºï¸</div><p style="font-size:15px;font-weight:500;margin-bottom:8px">No packages match your search.</p><p>Try a different filter or <a href="contact.html" style="color:var(--teal)">request a custom tour</a>.</p></div>`;
+    return;
+  }
+  grid.innerHTML=pkgs.map(p=>{
+    const img=CAT_IMAGES[p.category]||CAT_IMAGES['default'];
+    const price=p.pricePerPax||p.basePrice||0;
+    const pax=p.minPax?`ð¥ Min ${p.minPay} pax`:'';
+    return `<div class="pkg-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="pkg-img" style="background-image:url('${img}')">
+        <div class="pkg-img-overlay"></div>
+        <div class="pkg-badge">${p.category||'Tour'}</div>
+        <div class="pkg-dur">â± ${p.duration||1} Day${(p.duration||1)>1?'s':''}</div>
+        ${pax?`<div class="pkg-pax">${pax}</div>`:''}
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-name">${p.name||'Tour Package'}</div>
+        <div class="pkg-dest">ð ${(p.destinations||'').split(',').slice(0,3).join(' Â· ')}</div>
+        <div class="pkg-incl">${(p.inclusions||'').substring(0,120)}${(p.inclusions||'').length>120?'...':''}</div>
+        ${p.season?`<span class="pkg-season">ðï¸ Best: ${p.season}</span>`:''}
+        <div class="pkg-footer">
+          <div class="pkg-price">â¹${price.toLocaleString('en-IN')}<small>per person onwards</small></div>
+          <a href="contact.html?pkg=${encodeURIComponent(p.name)}" class="pkg-enquire" onclick="event.stopPropagation()">Enquire â</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(p){
+  const img=CAT_IMAGES[p.category]||CAT_IMAGES['default'];
+  const price=p.pricePerPax||p.basePrice||0;
+  document.getElementById('modal-img').style.backgroundImage=`url('${img}')`;
+  document.getElementById('modal-badge').textContent=p.category||'Tour';
+  document.getElementById('modal-title').textContent=p.name||'Tour Package';
+  const pills=[
+    `â± ${p.duration||1} Day${(p.duration||1)>1?'s':''}`,
+    p.minPax?cð¥ ${p.minPax}${p.maxPax?'â'+p.maxPax:''} pax`:'',
+    p.season?`ðï¸ ${p.season}`:'',
+  ].filter(Boolean);
+  document.getElementById('modal-pills').innerHTML=pills.map(x=>`<span class="modal-pill">${x}</span>`).join('');
+  document.getElementById('modal-dest').textContent=p.destinations||'Coimbatore & surrounding areas';
+  document.getElementById('modal-incl').innerHTML=(p.inclusions||'').split('\n').map(l=>`<div>â ${l}</div>`).join('')||(p.inclusions||'Contact us for full details');
+  const rm=document.getElementById('modal-remarks-wrap');
+  rm.style.display=p.remarks?'block':'none';
+  document.getElementById('modal-remarks').textContent=p.remarks||'';
+  document.getElementById('modal-price').innerHTML=`â¹${price.toLocaleString('en-IN')}<small>per person onwards<br>Contact us for group rates</small>`;
+  document.getElementById('modal-enquire-btn').href=`contact.html?pkg=${encodeURIComponent(p.name)}`;
+  document.getElementById('pkg-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('pkg-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+loadPackages();
+</script>
+</body>
+</html>
