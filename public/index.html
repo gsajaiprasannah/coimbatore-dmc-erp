@@ -1434,17 +1434,19 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     <!-- Rate Sheet Modals -->
     <!-- FIT Package Modal -->
     <div class="modal-overlay" id="rs-fit-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal-box" style="max-width:640px;width:95%">
+      <div class="modal modal-lg">
         <div class="modal-hdr"><h3 id="rs-fit-modal-title">Add FIT Package Rate</h3><button class="modal-close" onclick="document.getElementById('rs-fit-modal').style.display='none'">×</button></div>
-        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="modal-body">
           <input type="hidden" id="rs-fit-id">
-          <div class="form-group" style="grid-column:span 3"><label>Itinerary Name</label><input id="rsfm-itinerary" placeholder="e.g. 3N Ooty-Coonoor"></div>
-          <div class="form-group"><label>Nights</label><input id="rsfm-nights" type="number" min="1" placeholder="e.g. 3"></div>
-          <div class="form-group" style="grid-column:span 2"><label>Hotel Category</label><select id="rsfm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
-          <div class="form-group"><label>₹/pax (02 pax)</label><input id="rsfm-p02" type="number" placeholder="e.g. 26500"></div>
-          <div class="form-group"><label>₹/pax (04 pax)</label><input id="rsfm-p04" type="number" placeholder="e.g. 21500"></div>
-          <div class="form-group"><label>₹/pax (06 pax)</label><input id="rsfm-p06" type="number" placeholder="e.g. 19500"></div>
-          <div class="form-group" style="grid-column:span 3"><label>Key Inclusions</label><input id="rsfm-inclusions" placeholder="Hotel (twin, CP), pvt AC vehicle, all transfers & sightseeing, e-pass..."></div>
+          <div class="form-grid form-grid-3">
+            <div class="form-group form-full"><label>Itinerary Name</label><input id="rsfm-itinerary" placeholder="e.g. 3N Ooty-Coonoor"></div>
+            <div class="form-group"><label>Nights</label><input id="rsfm-nights" type="number" min="1" placeholder="e.g. 3"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Hotel Category</label><select id="rsfm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+            <div class="form-group"><label>₹/pax (02 pax)</label><input id="rsfm-p02" type="number" placeholder="e.g. 26500"></div>
+            <div class="form-group"><label>₹/pax (04 pax)</label><input id="rsfm-p04" type="number" placeholder="e.g. 21500"></div>
+            <div class="form-group"><label>₹/pax (06 pax)</label><input id="rsfm-p06" type="number" placeholder="e.g. 19500"></div>
+            <div class="form-group form-full"><label>Key Inclusions</label><input id="rsfm-inclusions" placeholder="Hotel (twin, CP), pvt AC vehicle, all transfers & sightseeing, e-pass..."></div>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-fit-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveFitRow()">Save</button></div>
       </div>
@@ -1452,18 +1454,20 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
 
     <!-- Hotel Net Rate Modal -->
     <div class="modal-overlay" id="rs-hotel-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal-box" style="max-width:600px;width:95%">
+      <div class="modal">
         <div class="modal-hdr"><h3 id="rs-hotel-modal-title">Add Hotel Net Rate</h3><button class="modal-close" onclick="document.getElementById('rs-hotel-modal').style.display='none'">×</button></div>
-        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-body">
           <input type="hidden" id="rs-hotel-id">
-          <div class="form-group"><label>Location</label><input id="rshm-location" placeholder="e.g. Ooty"></div>
-          <div class="form-group"><label>Hotel / Resort</label><input id="rshm-hotel" placeholder="Hotel name"></div>
-          <div class="form-group"><label>Category</label><select id="rshm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
-          <div class="form-group"><label>Room Type</label><input id="rshm-roomtype" placeholder="e.g. Deluxe Room"></div>
-          <div class="form-group"><label>Net ₹/room/night</label><input id="rshm-rate" type="number" placeholder="5500"></div>
-          <div class="form-group"><label>Meal Plan</label><select id="rshm-meal"><option>CP</option><option>MAP</option><option>AP</option><option>EP</option></select></div>
-          <div class="form-group"><label>Extra Adult (with bed)</label><input id="rshm-extra-adult" type="number" placeholder="1800"></div>
-          <div class="form-group"><label>Child (without bed)</label><input id="rshm-child" type="number" placeholder="1200"></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Location</label><input id="rshm-location" placeholder="e.g. Ooty"></div>
+            <div class="form-group"><label>Hotel / Resort</label><input id="rshm-hotel" placeholder="Hotel name"></div>
+            <div class="form-group"><label>Category</label><select id="rshm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+            <div class="form-group"><label>Room Type</label><input id="rshm-roomtype" placeholder="e.g. Deluxe Room"></div>
+            <div class="form-group"><label>Net ₹/room/night</label><input id="rshm-rate" type="number" placeholder="e.g. 5500"></div>
+            <div class="form-group"><label>Meal Plan</label><select id="rshm-meal"><option>CP</option><option>MAP</option><option>AP</option><option>EP</option></select></div>
+            <div class="form-group"><label>Extra Adult (with bed)</label><input id="rshm-extra-adult" type="number" placeholder="e.g. 1800"></div>
+            <div class="form-group"><label>Child (without bed)</label><input id="rshm-child" type="number" placeholder="e.g. 1200"></div>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-hotel-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveHotelRow()">Save</button></div>
       </div>
@@ -1471,17 +1475,19 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
 
     <!-- GIT Package Modal -->
     <div class="modal-overlay" id="rs-git-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal-box" style="max-width:640px;width:95%">
+      <div class="modal modal-lg">
         <div class="modal-hdr"><h3 id="rs-git-modal-title">Add GIT Package Rate</h3><button class="modal-close" onclick="document.getElementById('rs-git-modal').style.display='none'">×</button></div>
-        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-body">
           <input type="hidden" id="rs-git-id">
-          <div class="form-group" style="grid-column:span 2"><label>Itinerary Name</label><input id="rsgm-itinerary" placeholder="e.g. 4N Ooty-Coonoor-Mudumalai"></div>
-          <div class="form-group"><label>Nights</label><input id="rsgm-nights" type="number" min="1" placeholder="4"></div>
-          <div class="form-group"><label>Hotel Category</label><select id="rsgm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
-          <div class="form-group"><label>₹/pax (15-20 pax)</label><input id="rsgm-p15" type="number" placeholder="24500"></div>
-          <div class="form-group"><label>₹/pax (21-30 pax)</label><input id="rsgm-p21" type="number" placeholder="22800"></div>
-          <div class="form-group"><label>₹/pax (31+ pax)</label><input id="rsgm-p31" type="number" placeholder="21500"></div>
-          <div class="form-group" style="grid-column:span 2"><label>Basis / Notes</label><input id="rsgm-basis" placeholder="Coach (AC), hotels (twin, CP), all sightseeing, e-pass, tolls/parking..."></div>
+          <div class="form-grid">
+            <div class="form-group form-full"><label>Itinerary Name</label><input id="rsgm-itinerary" placeholder="e.g. 4N Ooty-Coonoor-Mudumalai"></div>
+            <div class="form-group"><label>Nights</label><input id="rsgm-nights" type="number" min="1" placeholder="e.g. 4"></div>
+            <div class="form-group"><label>Hotel Category</label><select id="rsgm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+            <div class="form-group"><label>₹/pax (15–20 pax)</label><input id="rsgm-p15" type="number" placeholder="e.g. 24500"></div>
+            <div class="form-group"><label>₹/pax (21–30 pax)</label><input id="rsgm-p21" type="number" placeholder="e.g. 22800"></div>
+            <div class="form-group"><label>₹/pax (31+ pax)</label><input id="rsgm-p31" type="number" placeholder="e.g. 21500"></div>
+            <div class="form-group form-full"><label>Basis / Notes</label><input id="rsgm-basis" placeholder="Coach (AC), hotels (twin, CP), all sightseeing, e-pass, tolls/parking..."></div>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-git-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveGitRow()">Save</button></div>
       </div>
@@ -1489,16 +1495,18 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
 
     <!-- Vehicle Rate Modal -->
     <div class="modal-overlay" id="rs-vehicle-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal-box" style="max-width:560px;width:95%">
+      <div class="modal">
         <div class="modal-hdr"><h3 id="rs-vehicle-modal-title">Add Vehicle Rate</h3><button class="modal-close" onclick="document.getElementById('rs-vehicle-modal').style.display='none'">×</button></div>
-        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-body">
           <input type="hidden" id="rs-vehicle-id">
-          <div class="form-group" style="grid-column:span 2"><label>Vehicle</label><input id="rsvm-vehicle" placeholder="e.g. SUV (Innova/Crysta)"></div>
-          <div class="form-group"><label>Seats</label><input id="rsvm-seats" type="number" placeholder="6"></div>
-          <div class="form-group"><label>Airport ↔ Ooty Transfer ₹</label><input id="rsvm-transfer" type="number" placeholder="5200"></div>
-          <div class="form-group"><label>Full Day (8hr/80km) ₹</label><input id="rsvm-fullday" type="number" placeholder="4500"></div>
-          <div class="form-group"><label>Extra / km ₹</label><input id="rsvm-km" type="number" placeholder="24"></div>
-          <div class="form-group"><label>Extra / hr ₹</label><input id="rsvm-hr" type="number" placeholder="240"></div>
+          <div class="form-grid">
+            <div class="form-group form-full"><label>Vehicle</label><input id="rsvm-vehicle" placeholder="e.g. SUV (Innova/Crysta)"></div>
+            <div class="form-group"><label>Seats</label><input id="rsvm-seats" type="number" placeholder="e.g. 6"></div>
+            <div class="form-group"><label>Airport ↔ Ooty Transfer ₹</label><input id="rsvm-transfer" type="number" placeholder="e.g. 5200"></div>
+            <div class="form-group"><label>Full Day (8hr/80km) ₹</label><input id="rsvm-fullday" type="number" placeholder="e.g. 4500"></div>
+            <div class="form-group"><label>Extra / km ₹</label><input id="rsvm-km" type="number" placeholder="e.g. 24"></div>
+            <div class="form-group"><label>Extra / hr ₹</label><input id="rsvm-hr" type="number" placeholder="e.g. 240"></div>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-vehicle-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveVehicleRow()">Save</button></div>
       </div>
@@ -1506,13 +1514,15 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
 
     <!-- Add-on Modal -->
     <div class="modal-overlay" id="rs-addon-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal-box" style="max-width:440px;width:95%">
+      <div class="modal" style="max-width:480px">
         <div class="modal-hdr"><h3 id="rs-addon-modal-title">Add Extra / Service</h3><button class="modal-close" onclick="document.getElementById('rs-addon-modal').style.display='none'">×</button></div>
         <div class="modal-body">
           <input type="hidden" id="rs-addon-id">
-          <div class="form-group"><label>Service / Attraction</label><input id="rsam-service" placeholder="e.g. English-speaking guide"></div>
-          <div class="form-group"><label>Unit</label><input id="rsam-unit" placeholder="e.g. per day, per adult, per vehicle"></div>
-          <div class="form-group"><label>Rate ₹</label><input id="rsam-rate" type="number" placeholder="1800"></div>
+          <div class="form-grid">
+            <div class="form-group form-full"><label>Service / Attraction</label><input id="rsam-service" placeholder="e.g. English-speaking guide"></div>
+            <div class="form-group"><label>Unit</label><input id="rsam-unit" placeholder="e.g. per day, per adult"></div>
+            <div class="form-group"><label>Rate ₹</label><input id="rsam-rate" type="number" placeholder="e.g. 1800"></div>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-addon-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveAddonRow()">Save</button></div>
       </div>
