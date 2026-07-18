@@ -359,6 +359,7 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     <a data-mod="ratesheets" onclick="nav('ratesheets')"><span class="icon">💵</span>Rate Sheets</a>
 
     <div class="sb-group" onclick="sbToggle(this)">Sales &amp; CRM (Pre-Booking)<span class="sb-arrow">▾</span></div>
+    <a data-mod="servicereqs" onclick="nav('servicereqs')"><span class="icon">📥</span>Service Requests <span id="sr-badge" style="display:none;background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:9px;font-weight:700;margin-left:4px">0</span></a>
     <a data-mod="crm" onclick="nav('crm')"><span class="icon">👥</span>CRM / Leads</a>
     <a data-mod="contracted" onclick="nav('contracted')"><span class="icon">📄</span>Contracted Rates</a>
     <a data-mod="itinerary" onclick="nav('itinerary')"><span class="icon">🗓️</span>Itinerary Builder</a>
@@ -461,6 +462,74 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         <table><thead><tr><th>Booking ID</th><th>Customer</th><th>Package</th><th>Travel Date</th><th>Pax</th><th>Total ₹</th><th>Advance ₹</th><th>Balance ₹</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bkg-tbody"></tbody></table>
       </div>
     </div>
+    <!-- SERVICE REQUESTS -->
+    <div class="module" id="mod-servicereqs">
+      <div class="section-hdr">
+        <div><h3>Service Requests</h3><p>Inbound trip enquiries submitted via the website — review and convert to CRM leads</p></div>
+        <button class="btn btn-outline btn-sm" onclick="srRefresh()">🔄 Refresh</button>
+      </div>
+      <!-- KPI Stats -->
+      <div class="kpi-grid" style="margin-bottom:20px">
+        <div class="kpi-card"><span class="kpi-icon">📥</span><div class="kpi-label">Total Requests</div><div class="kpi-value" id="srStat-total">0</div></div>
+        <div class="kpi-card red"><span class="kpi-icon">🆕</span><div class="kpi-label">New</div><div class="kpi-value" id="srStat-new">0</div></div>
+        <div class="kpi-card gold"><span class="kpi-icon">🔍</span><div class="kpi-label">In Review</div><div class="kpi-value" id="srStat-review">0</div></div>
+        <div class="kpi-card green"><span class="kpi-icon">✅</span><div class="kpi-label">Converted to Lead</div><div class="kpi-value" id="srStat-converted">0</div></div>
+      </div>
+      <!-- Table -->
+      <div class="tbl-wrap">
+        <div class="tbl-toolbar">
+          <input id="srSearch" placeholder="Search name, phone, destination…" oninput="renderSR()">
+          <select id="srStatus" onchange="renderSR()">
+            <option value="">All Statuses</option>
+            <option value="new">New</option>
+            <option value="in_review">In Review</option>
+            <option value="converted">Converted</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <table><thead><tr><th>SR ID</th><th>Name</th><th>Phone</th><th>Destinations</th><th>PAX</th><th>Travel Date</th><th>Duration</th><th>Budget</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="sr-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SERVICE REQUEST VIEW MODAL -->
+    <div class="modal-overlay" id="sr-view-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal modal-lg">
+        <div class="modal-hdr">
+          <h3>Service Request — <span id="sr-modal-id"></span></h3>
+          <button class="modal-close" onclick="document.getElementById('sr-view-modal').style.display='none'">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name</label><div id="srv-name" style="font-size:13px;font-weight:600;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Phone / WhatsApp</label><div id="srv-phone" style="font-size:13px;font-weight:600;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Email</label><div id="srv-email" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Travel Date</label><div id="srv-date" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>No. of Travellers</label><div id="srv-pax" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Duration</label><div id="srv-duration" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group form-full"><label>Destinations of Interest</label><div id="srv-destinations" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Budget Range</label><div id="srv-budget" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group"><label>Package Interest</label><div id="srv-pkg" style="font-size:13px;padding:6px 0;color:var(--dark)">—</div></div>
+            <div class="form-group form-full"><label>Special Requirements / Message</label><div id="srv-message" style="font-size:13px;padding:8px 10px;color:var(--dark);background:var(--grey1);border-radius:6px;min-height:60px;white-space:pre-wrap;line-height:1.5">—</div></div>
+            <div class="form-group"><label>Submitted At</label><div id="srv-submitted" style="font-size:13px;padding:6px 0;color:var(--grey4)">—</div></div>
+            <div class="form-group"><label>Update Status</label>
+              <select id="srv-status-sel" onchange="srUpdateStatus()">
+                <option value="new">🆕 New</option>
+                <option value="in_review">🔍 In Review</option>
+                <option value="converted">✅ Converted</option>
+                <option value="closed">🔒 Closed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="document.getElementById('sr-view-modal').style.display='none'">Close</button>
+          <button class="btn btn-primary" id="sr-convert-btn" onclick="srConvertToLead()">✅ Convert to Lead</button>
+        </div>
+      </div>
+    </div>
+
     <!-- CRM -->
     <div class="module" id="mod-crm">
       <div class="tabs">
@@ -4151,11 +4220,15 @@ function initAllModules(){
   if(!DB.get('claims'))DB.set('claims',[]);
   if(!DB.get('contracted'))DB.set('contracted',[]);
   if(!DB.get('support_tickets'))DB.set('support_tickets',[]);
+  if(!DB.get('service_requests'))DB.set('service_requests',[]);
   // Update support badge count on load
   setTimeout(()=>{
     const newCount = DB.get('support_tickets').filter(t=>t.status==='new').length;
     const badge = document.getElementById('support-badge');
     if(badge){ badge.textContent=newCount||''; badge.style.display=newCount>0?'inline':'none'; }
+    const srNewCount = DB.get('service_requests').filter(r=>r.status==='new').length;
+    const srBadge = document.getElementById('sr-badge');
+    if(srBadge){ srBadge.textContent=srNewCount||''; srBadge.style.display=srNewCount>0?'inline':'none'; }
   }, 500);
   if(!DB.get('messages'))DB.set('messages',[]);
   if(!DB.get('gst_purchases'))DB.set('gst_purchases',[]);
@@ -4197,6 +4270,7 @@ const pageMeta={
   messages:{title:'Messages',sub:'Agent and supplier communication panels'},
   tourterms:{title:'Tour Terms Master',sub:'Manage reusable T&C, Inclusions, Exclusions & Special Notes templates'},
   ratesheets:{title:'Rate Sheets',sub:'FIT / GIT tariffs, transport rates & live quote calculator'},
+    servicereqs:{title:'Service Requests',sub:'Inbound website enquiries — review & convert to CRM leads'},
   support:{title:'Support Tickets',sub:'Client queries, complaints and requests from customers & agents'}
 };
 let currentModule='dashboard';
@@ -4209,7 +4283,7 @@ function nav(m){
   document.getElementById('page-sub').textContent=pageMeta[m]?.sub||'';
   currentModule=m;
   const renders={dashboard:renderDashboard,packages:renderPackages,bookings:renderBookings,customers:renderCustomers,crm:renderCRM,finance:renderFinance,suppliers:renderSuppliers,itinerary:renderItinerary,attractions:renderAttrCards,cabs:renderCabs,hotels:renderHotels,tickets:renderTickets,tourstatus:renderTourStatus,livetrack:renderLiveTrack,insurance:renderInsurance,contracted:renderContracted,messages:renderMessages,special:renderSpecial,mail:renderMail,tourterms:renderTourTerms,support:renderSupport};
-  const rsRenders={ratesheets:rsLoad};
+  const rsRenders={ratesheets:rsLoad,servicereqs:srLoad};
   if(renders[m])renders[m]();
   else if(rsRenders[m])rsRenders[m]();
 }
@@ -4675,6 +4749,156 @@ function createInvFromBkg(){
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// SERVICE REQUESTS
+// ═══════════════════════════════════════════════════════════════
+let srCurrentId = null;
+
+function srLoad(){ renderSR(); }
+
+function srRefresh(){
+  DB.sync().then(()=>{renderSR();toast('Service Requests refreshed');}).catch(()=>{renderSR();toast('Refreshed (offline)','info');});
+}
+
+function srStatusBadge(s){
+  const map={new:'badge-red',in_review:'badge-gold',converted:'badge-green',closed:'badge-grey'};
+  const labels={new:'New',in_review:'In Review',converted:'Converted',closed:'Closed'};
+  return `<span class="badge ${map[s]||'badge-grey'}">${labels[s]||s}</span>`;
+}
+
+function renderSR(){
+  const search=(document.getElementById('srSearch')?.value||'').toLowerCase();
+  const statusF=document.getElementById('srStatus')?.value||'';
+  let reqs=DB.get('service_requests');
+  // Update KPIs
+  document.getElementById('srStat-total').textContent=reqs.length;
+  document.getElementById('srStat-new').textContent=reqs.filter(r=>r.status==='new').length;
+  document.getElementById('srStat-review').textContent=reqs.filter(r=>r.status==='in_review').length;
+  document.getElementById('srStat-converted').textContent=reqs.filter(r=>r.status==='converted').length;
+  // Update sidebar badge
+  const srNewCount=reqs.filter(r=>r.status==='new').length;
+  const srBadge=document.getElementById('sr-badge');
+  if(srBadge){srBadge.textContent=srNewCount||'';srBadge.style.display=srNewCount>0?'inline':'none';}
+  // Filter
+  if(search) reqs=reqs.filter(r=>(r.name||'').toLowerCase().includes(search)||(r.phone||'').includes(search)||(r.destinations||'').toLowerCase().includes(search)||(r.email||'').toLowerCase().includes(search));
+  if(statusF) reqs=reqs.filter(r=>r.status===statusF);
+  // Sort newest first
+  reqs=reqs.slice().sort((a,b)=>new Date(b.submitted_at||0)-new Date(a.submitted_at||0));
+  const tbody=document.getElementById('sr-tbody');
+  if(!tbody)return;
+  tbody.innerHTML=reqs.length?reqs.map(r=>{
+    const d=r.submitted_at?new Date(r.submitted_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'}):'—';
+    const alreadyConverted=r.status==='converted'||r.status==='closed';
+    return`<tr>
+      <td><span class="badge badge-teal">${r.id||'—'}</span></td>
+      <td><div class="cell-main">${r.name||'—'}</div><div class="cell-sub">${r.email||''}</div></td>
+      <td>${r.phone||'—'}</td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.destinations||''}">${r.destinations||'—'}</td>
+      <td>${r.pax||'—'}</td>
+      <td>${r.travel_date||'—'}</td>
+      <td>${r.duration||'—'}</td>
+      <td>${r.budget||'—'}</td>
+      <td>${d}</td>
+      <td>${srStatusBadge(r.status||'new')}</td>
+      <td><div class="act-cluster">
+        <button class="btn-icon btn-icon-view" title="View details" onclick="viewSR('${r.id}')">👁️</button>
+        ${!alreadyConverted?`<button class="btn-icon btn-icon-edit" title="Convert to Lead" onclick="viewSR('${r.id}',true)" style="background:#e8f7ef;color:var(--green)">✅</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="11" class="tbl-empty">No service requests yet — they'll appear here when visitors submit the website form.</td></tr>`;
+}
+
+function viewSR(id, autoConvert=false){
+  const reqs=DB.get('service_requests');
+  const r=reqs.find(x=>x.id===id);
+  if(!r)return;
+  srCurrentId=id;
+  document.getElementById('sr-modal-id').textContent=r.id||'';
+  document.getElementById('srv-name').textContent=r.name||'—';
+  document.getElementById('srv-phone').textContent=r.phone||'—';
+  document.getElementById('srv-email').textContent=r.email||'—';
+  document.getElementById('srv-date').textContent=r.travel_date||'—';
+  document.getElementById('srv-pax').textContent=r.pax||'—';
+  document.getElementById('srv-duration').textContent=r.duration||'—';
+  document.getElementById('srv-destinations').textContent=r.destinations||'—';
+  document.getElementById('srv-budget').textContent=r.budget||'—';
+  document.getElementById('srv-pkg').textContent=r.package_interest||'—';
+  document.getElementById('srv-message').textContent=r.message||'—';
+  document.getElementById('srv-submitted').textContent=r.submitted_at?new Date(r.submitted_at).toLocaleString('en-IN'):'—';
+  const sel=document.getElementById('srv-status-sel');
+  if(sel) sel.value=r.status||'new';
+  const convertBtn=document.getElementById('sr-convert-btn');
+  if(convertBtn){
+    const done=r.status==='converted'||r.status==='closed';
+    convertBtn.disabled=done;
+    convertBtn.textContent=done?'Already Converted':'✅ Convert to Lead';
+  }
+  // Auto-mark as in_review on open (if new)
+  if(r.status==='new'){
+    const all=DB.get('service_requests');
+    const idx=all.findIndex(x=>x.id===id);
+    if(idx>-1){all[idx].status='in_review';DB.set('service_requests',all);}
+    if(sel) sel.value='in_review';
+  }
+  document.getElementById('sr-view-modal').style.display='flex';
+  if(autoConvert) srConvertToLead();
+}
+
+function srUpdateStatus(){
+  if(!srCurrentId)return;
+  const sel=document.getElementById('srv-status-sel');
+  const newStatus=sel?.value||'new';
+  const reqs=DB.get('service_requests');
+  const idx=reqs.findIndex(r=>r.id===srCurrentId);
+  if(idx>-1){reqs[idx].status=newStatus;DB.set('service_requests',reqs);}
+  renderSR();
+  toast('Status updated');
+}
+
+function srConvertToLead(){
+  if(!srCurrentId)return;
+  const reqs=DB.get('service_requests');
+  const idx=reqs.findIndex(r=>r.id===srCurrentId);
+  if(idx===-1)return;
+  const r=reqs[idx];
+  if(r.status==='converted'){toast('Already converted to a lead','info');return;}
+  // Build lead object
+  const leads=DB.get('leads');
+  const paxNum=parseInt((r.pax||'').replace(/\D/g,''))||2;
+  const lead={
+    id:`CRM-${2000+leads.length+1}`,
+    dateAdded:today(),
+    customerId:'',
+    name:r.name||'',
+    org:'',
+    contactName:r.name||'',
+    temp:'Hot',
+    phone:r.phone||'',
+    email:r.email||'',
+    interestedPackage:r.package_interest||r.destinations||'',
+    paxCount:paxNum,
+    budget:0,
+    source:'Website Enquiry',
+    lastContact:today(),
+    nextFollowUp:'',
+    stage:'New Lead',
+    assignedTo:'',
+    notes:`Website service request ${r.id}.\nDestinations: ${r.destinations||'—'}\nTravel date: ${r.travel_date||'—'}\nDuration: ${r.duration||'—'}\nBudget: ${r.budget||'—'}\nMessage: ${r.message||''}`,
+    converted:false,
+    bookingId:'',
+    srId:r.id
+  };
+  leads.push(lead);
+  DB.set('leads',leads);
+  // Mark SR as converted
+  reqs[idx].status='converted';
+  reqs[idx].leadId=lead.id;
+  DB.set('service_requests',reqs);
+  renderSR();
+  document.getElementById('sr-view-modal').style.display='none';
+  toast(`✅ Converted to Lead ${lead.id}! Open CRM → Leads to follow up.`);
+}
+
 // CRM
 // ═══════════════════════════════════════════════════════════════
 function crmTab(tab,btn){
