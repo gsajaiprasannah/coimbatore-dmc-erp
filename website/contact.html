@@ -397,16 +397,16 @@ async function submitEnquiry(){
   btn.textContent='Sending...';
 
   try {
-    const getRes=await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.leads`,{
+    const getRes=await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.service_requests`,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
     });
     const rows=await getRes.json();
-    const leads=rows.length&&Array.isArray(rows[0].value)?rows[0].value:[];
+    const reqs=rows.length&&Array.isArray(rows[0].value)?rows[0].value:[];
 
     const now=new Date();
-    const refNum=String(leads.length+1).padStart(6,'0');
-    const lead={
-      id:`LEAD-${refNum}`,
+    const refNum=String(reqs.length+1).padStart(6,'0');
+    const req={
+      id:`SR-${refNum}`,
       submitted_at:now.toISOString(),
       name,phone,email,
       travel_date:date,
@@ -418,7 +418,7 @@ async function submitEnquiry(){
       source:'website',
       status:'new'
     };
-    leads.unshift(lead);
+    reqs.unshift(req);
 
     const upsertRes=await fetch(`${SB_URL}/rest/v1/app_data`,{
       method:'POST',
@@ -426,14 +426,14 @@ async function submitEnquiry(){
         'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
         'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'
       },
-      body:JSON.stringify({data_key:'leads',value:leads,updated_at:now.toISOString()})
+      body:JSON.stringify({data_key:'service_requests',value:reqs,updated_at:now.toISOString()})
     });
     if(!upsertRes.ok) throw new Error('Save failed');
 
     document.querySelector('.form-card').style.display='none';
     const suc=document.getElementById('success-msg');
     suc.style.display='block';
-    document.getElementById('enquiry-ref').textContent='Reference: '+lead.id;
+    document.getElementById('enquiry-ref').textContent='Reference: '+req.id;
     suc.scrollIntoView({behavior:'smooth'});
   } catch(e) {
     showError('Something went wrong. Please call us directly at +91 6374 56 0077 or WhatsApp us.');
