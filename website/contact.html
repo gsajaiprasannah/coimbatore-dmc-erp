@@ -162,12 +162,46 @@ footer a:hover{color:var(--gold)}
       <div>
         <div class="form-card">
           <h2>Send Us Your Requirements</h2>
-          <p>Fill in the details below — the more you share, the better we can tailor your experience.</p>
+          <p>A dedicated B2B enquiry form for travel agencies. Fill in your agency details and trip requirements — we'll respond within 4 hours.</p>
 
+          <!-- Agency Details — always visible, required -->
+          <div style="background:#E0F4F4;border-radius:10px;padding:18px 16px;margin-bottom:20px;border-left:3px solid var(--teal)">
+            <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teal-dark);margin-bottom:14px">🏢 Agency Details</p>
+            <div class="form-group" style="margin-bottom:14px">
+              <label>Agency / Company Name <span class="req">*</span></label>
+              <input type="text" id="f-agency-name" placeholder="e.g. Sunrise Holidays Pvt. Ltd.">
+            </div>
+            <div class="form-row" style="margin-bottom:14px">
+              <div class="form-group">
+                <label>City <span class="req">*</span></label>
+                <input type="text" id="f-agency-city" placeholder="e.g. Chennai">
+              </div>
+              <div class="form-group">
+                <label>State</label>
+                <input type="text" id="f-agency-state" placeholder="e.g. Tamil Nadu">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label>Full Address</label>
+              <textarea id="f-agency-address" rows="2" placeholder="Street, Area, PIN code…" style="resize:none;border:1.5px solid #c0d8d8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;width:100%;box-sizing:border-box;outline:none;background:#fff"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>GSTIN</label>
+                <input type="text" id="f-agency-gstin" placeholder="e.g. 33AABCS1429B1ZB" style="text-transform:uppercase">
+              </div>
+              <div class="form-group">
+                <label>Designation</label>
+                <input type="text" id="f-agency-designation" placeholder="e.g. Operations Manager">
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact person -->
           <div class="form-row">
             <div class="form-group">
-              <label>Full Name <span class="req">*</span></label>
-              <input type="text" id="f-name" placeholder="Your name">
+              <label>Contact Person Name <span class="req">*</span></label>
+              <input type="text" id="f-name" placeholder="Your full name">
             </div>
             <div class="form-group">
               <label>Phone / WhatsApp <span class="req">*</span></label>
@@ -177,7 +211,7 @@ footer a:hover{color:var(--gold)}
 
           <div class="form-group">
             <label>Email Address</label>
-            <input type="email" id="f-email" placeholder="your@email.com">
+            <input type="email" id="f-email" placeholder="your@agency.com">
           </div>
 
           <div class="form-row">
@@ -374,6 +408,12 @@ window.addEventListener('load',()=>{
 });
 
 async function submitEnquiry(){
+  const agencyName=document.getElementById('f-agency-name').value.trim();
+  const agencyCity=document.getElementById('f-agency-city').value.trim();
+  const agencyState=document.getElementById('f-agency-state').value.trim();
+  const agencyAddress=document.getElementById('f-agency-address').value.trim();
+  const agencyGstin=document.getElementById('f-agency-gstin').value.trim().toUpperCase();
+  const agencyDesignation=document.getElementById('f-agency-designation').value.trim();
   const name=document.getElementById('f-name').value.trim();
   const phone=document.getElementById('f-phone').value.trim();
   const email=document.getElementById('f-email').value.trim();
@@ -387,7 +427,9 @@ async function submitEnquiry(){
 
   const selectedDests=[...document.querySelectorAll('.dest-chips .chip.selected')].map(c=>c.textContent.trim());
 
-  if(!name){showError('Please enter your name.');return}
+  if(!agencyName){showError('Please enter your agency / company name.');return}
+  if(!agencyCity){showError('Please enter your agency city.');return}
+  if(!name){showError('Please enter the contact person name.');return}
   if(!phone){showError('Please enter your phone/WhatsApp number.');return}
   if(!pax){showError('Please select number of travellers.');return}
   if(!date){showError('Please select your travel date.');return}
@@ -408,7 +450,16 @@ async function submitEnquiry(){
     const req={
       id:`SR-${refNum}`,
       submitted_at:now.toISOString(),
+      // Agency details
+      agency_name:agencyName,
+      agency_city:agencyCity,
+      agency_state:agencyState,
+      agency_address:agencyAddress,
+      agency_gstin:agencyGstin,
+      agency_designation:agencyDesignation,
+      // Contact person
       name,phone,email,
+      // Trip details
       travel_date:date,
       pax,duration,
       destinations:selectedDests.join(', '),
