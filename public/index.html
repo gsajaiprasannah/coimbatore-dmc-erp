@@ -11761,11 +11761,11 @@ function rsLoad() {
   if (saved && saved.fitRates) {
     RS = saved;
   } else {
-    RS.fitRates = RS_DEFAULT_FIT;
-    RS.hotelRates = RS_DEFAULT_HOTEL;
-    RS.gitRates = RS_DEFAULT_GIT;
-    RS.vehicles = RS_DEFAULT_VEHICLES;
-    RS.addons = RS_DEFAULT_ADDONS;
+    RS.fitRates = [];
+    RS.hotelRates = [];
+    RS.gitRates = [];
+    RS.vehicles = [];
+    RS.addons = [];
   }
   document.getElementById('rs-fit-validity').value = RS.fitValidity || '';
   document.getElementById('rs-git-validity').value = RS.gitValidity || '';
