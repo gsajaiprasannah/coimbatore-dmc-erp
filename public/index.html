@@ -356,6 +356,7 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
     <a data-mod="attractions" onclick="nav('attractions')"><span class="icon">🗺️</span>Attractions</a>
     <a data-mod="special" onclick="nav('special')"><span class="icon">🎀</span>Special Arrangements</a>
     <a data-mod="tourterms" onclick="nav('tourterms')"><span class="icon">📜</span>Tour Terms Master</a>
+    <a data-mod="ratesheets" onclick="nav('ratesheets')"><span class="icon">💵</span>Rate Sheets</a>
 
     <div class="sb-group" onclick="sbToggle(this)">Sales &amp; CRM (Pre-Booking)<span class="sb-arrow">▾</span></div>
     <a data-mod="crm" onclick="nav('crm')"><span class="icon">👥</span>CRM / Leads</a>
@@ -940,6 +941,137 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         </table>
       </div>
     </div>
+    <div class="module" id="mod-ratesheets">
+      <div class="tabs" style="margin-bottom:0">
+        <button class="tab-btn active" onclick="rsTab('fit',this)">📋 FIT Rates</button>
+        <button class="tab-btn" onclick="rsTab('git',this)">👥 GIT Rates</button>
+        <button class="tab-btn" onclick="rsTab('transport',this)">🚗 Transport &amp; Extras</button>
+        <button class="tab-btn" onclick="rsTab('quote',this)">🧮 Quote Calculator</button>
+        <button class="tab-btn" onclick="rsTab('terms',this)">📜 T&amp;C</button>
+      </div>
+
+      <!-- ── FIT RATES ── -->
+      <div class="tab-pane active" id="rs-fit-pane">
+        <div class="section-hdr" style="margin-top:16px">
+          <div><h3>FIT Tariff — Free Independent Traveller</h3><p>Per person, twin sharing, NET (non-commissionable). Rates in ₹.</p></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:12px;color:var(--grey4)">Validity:</span>
+            <input id="rs-fit-validity" type="text" style="width:220px;font-size:12px" placeholder="e.g. 01-Oct-2026 to 30-Jun-2027" onchange="rsSave()">
+            <button class="btn btn-sm btn-primary" onclick="rsOpenFitModal(null)">+ Add Package</button>
+            <button class="btn btn-sm btn-outline" onclick="rsOpenHotelModal(null)">+ Add Hotel Rate</button>
+            <button class="btn btn-sm btn-outline" onclick="window.print()">🖨️ Print</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--grey4);margin:0 0 10px">A. PER-PERSON PACKAGE TARIFF (accommodation + private transport + sightseeing + e-pass)</p>
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <table>
+            <colgroup><col style="width:110px"><col style="min-width:160px"><col style="width:60px"><col style="width:100px"><col style="width:100px"><col style="width:100px"><col style="width:100px"><col style="min-width:200px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Ref</th><th>Itinerary</th><th>Nights</th><th>Category</th><th>₹/pax (02)</th><th>₹/pax (04)</th><th>₹/pax (06)</th><th>Inclusions</th><th>Actions</th></tr></thead>
+            <tbody id="rs-fit-tbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--grey4);margin:0 0 10px">B. HOTEL NET RATES (per room per night, twin, incl. breakfast)</p>
+        <div class="tbl-wrap">
+          <table>
+            <colgroup><col style="width:110px"><col style="min-width:160px"><col style="width:90px"><col style="min-width:130px"><col style="width:110px"><col style="width:80px"><col style="width:100px"><col style="width:110px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Location</th><th>Hotel / Resort</th><th>Category</th><th>Room Type</th><th>Net ₹/room/night</th><th>Meal Plan</th><th>Extra Adult</th><th>Child (no bed)</th><th>Actions</th></tr></thead>
+            <tbody id="rs-hotel-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── GIT RATES ── -->
+      <div class="tab-pane" id="rs-git-pane" style="display:none">
+        <div class="section-hdr" style="margin-top:16px">
+          <div><h3>GIT Tariff — Group Inclusive Tour</h3><p>Per person, twin sharing, NET. Priced on coach load.</p></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:12px;color:var(--grey4)">Validity:</span>
+            <input id="rs-git-validity" type="text" style="width:220px;font-size:12px" placeholder="e.g. 01-Oct-2026 to 30-Jun-2027" onchange="rsSave()">
+            <button class="btn btn-sm btn-primary" onclick="rsOpenGitModal(null)">+ Add Package</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <colgroup><col style="min-width:160px"><col style="width:60px"><col style="width:100px"><col style="width:100px"><col style="width:110px"><col style="width:110px"><col style="min-width:200px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Itinerary</th><th>Nights</th><th>Category</th><th>₹/pax (15-20)</th><th>₹/pax (21-30)</th><th>₹/pax (31+)</th><th>Basis / Notes</th><th>Actions</th></tr></thead>
+            <tbody id="rs-git-tbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--grey4);margin:12px 0 0">Group note: rates assume min. 15 paying pax + 1 FOC (tour leader) on 15-20 slab. 1 FOC per 20 pax. Single supplement on request.</p>
+      </div>
+
+      <!-- ── TRANSPORT & EXTRAS ── -->
+      <div class="tab-pane" id="rs-transport-pane" style="display:none">
+        <div class="section-hdr" style="margin-top:16px">
+          <div><h3>Transport &amp; Extras</h3><p>Per-vehicle &amp; per-service NET rates. All vehicles TN-43 registered.</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm btn-primary" onclick="rsOpenVehicleModal(null)">+ Add Vehicle</button>
+            <button class="btn btn-sm btn-outline" onclick="rsOpenAddonModal(null)">+ Add Extra</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--grey4);margin:0 0 10px">A. VEHICLE RATES (NET, incl. driver/fuel/parking/tolls unless noted)</p>
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <table>
+            <colgroup><col style="min-width:160px"><col style="width:70px"><col style="width:140px"><col style="width:140px"><col style="width:100px"><col style="width:100px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Vehicle</th><th>Seats</th><th>Airport ↔ Ooty Transfer</th><th>Full Day (8hr/80km)</th><th>Extra / km</th><th>Extra / hr</th><th>Actions</th></tr></thead>
+            <tbody id="rs-vehicle-tbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--grey4);margin:0 0 10px">B. ADD-ONS &amp; EXTRAS (per unit, NET)</p>
+        <div class="tbl-wrap">
+          <table>
+            <colgroup><col style="min-width:200px"><col style="width:110px"><col style="width:100px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Service / Attraction</th><th>Unit</th><th>Rate ₹</th><th>Actions</th></tr></thead>
+            <tbody id="rs-addon-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── QUOTE CALCULATOR ── -->
+      <div class="tab-pane" id="rs-quote-pane" style="display:none">
+        <div class="section-hdr" style="margin-top:16px">
+          <div><h3>Quote Calculator — FIT</h3><p>Pick itinerary, category &amp; pax count. Totals pull live from your FIT rate table.</p></div>
+          <button class="btn btn-sm btn-outline" onclick="rsQuotePrint()">🖨️ Print Quote</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:820px">
+          <div style="background:var(--grey1);border:1px solid var(--grey2);border-radius:var(--radius);padding:20px">
+            <h4 style="margin:0 0 14px;font-size:14px;color:var(--grey5)">Inputs</h4>
+            <div class="form-group"><label>Itinerary</label><select id="qs-itinerary" onchange="rsCalcQuote()"><option value="">— select —</option></select></div>
+            <div class="form-group"><label>Hotel Category</label><select id="qs-category" onchange="rsCalcQuote()"><option value="">— select —</option><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+            <div class="form-group"><label>Pax Slab (for per-pax rate)</label><select id="qs-slab" onchange="rsCalcQuote()"><option value="02">02 pax</option><option value="04">04 pax</option><option value="06">06 pax</option></select></div>
+            <div class="form-group"><label>No. of Paying Pax</label><input id="qs-pax" type="number" min="1" value="4" onchange="rsCalcQuote()"></div>
+            <div class="form-group"><label>+ Extras (guide, safari, entries, train)</label><input id="qs-extras" type="number" min="0" value="0" placeholder="₹ total extras" onchange="rsCalcQuote()"></div>
+            <div class="form-group"><label>+ Peak-date Surcharge</label><input id="qs-surcharge" type="number" min="0" value="0" placeholder="₹ surcharge" onchange="rsCalcQuote()"></div>
+            <div class="form-group"><label>Client / Reference</label><input id="qs-client" type="text" placeholder="Client name or booking ref"></div>
+          </div>
+          <div style="background:#F0F7FF;border:1.5px solid #29ABE2;border-radius:var(--radius);padding:20px" id="qs-result-box">
+            <h4 style="margin:0 0 14px;font-size:14px;color:#29ABE2">Quote Summary</h4>
+            <div id="qs-result-detail" style="font-size:13px;color:var(--grey5);line-height:2"></div>
+            <hr style="margin:14px 0;border-color:var(--grey2)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:13px;font-weight:600;color:var(--grey5)">Grand Total (NET, excl. GST)</span>
+              <span id="qs-grand-total" style="font-size:22px;font-weight:800;color:#2D3E99">₹0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px">
+              <span style="font-size:12px;color:var(--grey4)">Per-person NET</span>
+              <span id="qs-per-person" style="font-size:15px;font-weight:700;color:#29ABE2">₹0</span>
+            </div>
+            <p style="font-size:11px;color:var(--grey4);margin:14px 0 0">Package rate includes hotels (twin, CP), private transport, all sightseeing &amp; Nilgiris e-pass. Add GST/TCS per current rules when invoicing.</p>
+          </div>
+        </div>
+        <div id="qs-no-rate" style="display:none;margin-top:12px;padding:10px 14px;background:#FFF3CD;border:1px solid #F7941D;border-radius:6px;font-size:13px;color:#856404">⚠️ No matching rate found. Please add the itinerary &amp; category in the FIT Rates tab first.</div>
+      </div>
+
+      <!-- ── TERMS & CONDITIONS ── -->
+      <div class="tab-pane" id="rs-terms-pane" style="display:none">
+        <div class="section-hdr" style="margin-top:16px">
+          <div><h3>Terms &amp; Conditions</h3><p>Standard inclusions, exclusions, child policy, payment &amp; cancellation. Edit to your own policy.</p></div>
+          <button class="btn btn-sm btn-primary" onclick="rsSaveTerms()">💾 Save</button>
+        </div>
+        <textarea id="rs-terms-text" style="width:100%;min-height:500px;font-family:inherit;font-size:13px;line-height:1.7;border:1.5px solid var(--grey2);border-radius:var(--radius);padding:16px;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+    </div>
+
     <!-- ─ SUPPORT TICKETS MODULE ─ -->
     <div class="module" id="mod-support">
       <!-- KPIs -->
@@ -1298,6 +1430,94 @@ body[data-print-mode="quote"] #quote-pdf-print{display:block!important;padding:0
         </table>
       </div>
     </div>
+
+    <!-- Rate Sheet Modals -->
+    <!-- FIT Package Modal -->
+    <div class="modal-overlay" id="rs-fit-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal-box" style="max-width:640px;width:95%">
+        <div class="modal-hdr"><h3 id="rs-fit-modal-title">Add FIT Package Rate</h3><button class="modal-close" onclick="document.getElementById('rs-fit-modal').style.display='none'">×</button></div>
+        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <input type="hidden" id="rs-fit-id">
+          <div class="form-group" style="grid-column:span 2"><label>Itinerary Name</label><input id="rsfm-itinerary" placeholder="e.g. 3N Ooty-Coonoor"></div>
+          <div class="form-group"><label>Nights</label><input id="rsfm-nights" type="number" min="1" placeholder="3"></div>
+          <div class="form-group"><label>Hotel Category</label><select id="rsfm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+          <div class="form-group"><label>₹/pax (02 pax)</label><input id="rsfm-p02" type="number" placeholder="26500"></div>
+          <div class="form-group"><label>₹/pax (04 pax)</label><input id="rsfm-p04" type="number" placeholder="21500"></div>
+          <div class="form-group"><label>₹/pax (06 pax)</label><input id="rsfm-p06" type="number" placeholder="19500"></div>
+          <div class="form-group" style="grid-column:span 2"><label>Key Inclusions</label><input id="rsfm-inclusions" placeholder="Hotel (twin, CP), pvt AC vehicle, all transfers & sightseeing, e-pass..."></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-fit-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveFitRow()">Save</button></div>
+      </div>
+    </div>
+
+    <!-- Hotel Net Rate Modal -->
+    <div class="modal-overlay" id="rs-hotel-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal-box" style="max-width:600px;width:95%">
+        <div class="modal-hdr"><h3 id="rs-hotel-modal-title">Add Hotel Net Rate</h3><button class="modal-close" onclick="document.getElementById('rs-hotel-modal').style.display='none'">×</button></div>
+        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <input type="hidden" id="rs-hotel-id">
+          <div class="form-group"><label>Location</label><input id="rshm-location" placeholder="e.g. Ooty"></div>
+          <div class="form-group"><label>Hotel / Resort</label><input id="rshm-hotel" placeholder="Hotel name"></div>
+          <div class="form-group"><label>Category</label><select id="rshm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+          <div class="form-group"><label>Room Type</label><input id="rshm-roomtype" placeholder="e.g. Deluxe Room"></div>
+          <div class="form-group"><label>Net ₹/room/night</label><input id="rshm-rate" type="number" placeholder="5500"></div>
+          <div class="form-group"><label>Meal Plan</label><select id="rshm-meal"><option>CP</option><option>MAP</option><option>AP</option><option>EP</option></select></div>
+          <div class="form-group"><label>Extra Adult (with bed)</label><input id="rshm-extra-adult" type="number" placeholder="1800"></div>
+          <div class="form-group"><label>Child (without bed)</label><input id="rshm-child" type="number" placeholder="1200"></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-hotel-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveHotelRow()">Save</button></div>
+      </div>
+    </div>
+
+    <!-- GIT Package Modal -->
+    <div class="modal-overlay" id="rs-git-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal-box" style="max-width:640px;width:95%">
+        <div class="modal-hdr"><h3 id="rs-git-modal-title">Add GIT Package Rate</h3><button class="modal-close" onclick="document.getElementById('rs-git-modal').style.display='none'">×</button></div>
+        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <input type="hidden" id="rs-git-id">
+          <div class="form-group" style="grid-column:span 2"><label>Itinerary Name</label><input id="rsgm-itinerary" placeholder="e.g. 4N Ooty-Coonoor-Mudumalai"></div>
+          <div class="form-group"><label>Nights</label><input id="rsgm-nights" type="number" min="1" placeholder="4"></div>
+          <div class="form-group"><label>Hotel Category</label><select id="rsgm-category"><option>Budget</option><option>Standard</option><option>Deluxe</option></select></div>
+          <div class="form-group"><label>₹/pax (15-20 pax)</label><input id="rsgm-p15" type="number" placeholder="24500"></div>
+          <div class="form-group"><label>₹/pax (21-30 pax)</label><input id="rsgm-p21" type="number" placeholder="22800"></div>
+          <div class="form-group"><label>₹/pax (31+ pax)</label><input id="rsgm-p31" type="number" placeholder="21500"></div>
+          <div class="form-group" style="grid-column:span 2"><label>Basis / Notes</label><input id="rsgm-basis" placeholder="Coach (AC), hotels (twin, CP), all sightseeing, e-pass, tolls/parking..."></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-git-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveGitRow()">Save</button></div>
+      </div>
+    </div>
+
+    <!-- Vehicle Rate Modal -->
+    <div class="modal-overlay" id="rs-vehicle-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal-box" style="max-width:560px;width:95%">
+        <div class="modal-hdr"><h3 id="rs-vehicle-modal-title">Add Vehicle Rate</h3><button class="modal-close" onclick="document.getElementById('rs-vehicle-modal').style.display='none'">×</button></div>
+        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <input type="hidden" id="rs-vehicle-id">
+          <div class="form-group" style="grid-column:span 2"><label>Vehicle</label><input id="rsvm-vehicle" placeholder="e.g. SUV (Innova/Crysta)"></div>
+          <div class="form-group"><label>Seats</label><input id="rsvm-seats" type="number" placeholder="6"></div>
+          <div class="form-group"><label>Airport ↔ Ooty Transfer ₹</label><input id="rsvm-transfer" type="number" placeholder="5200"></div>
+          <div class="form-group"><label>Full Day (8hr/80km) ₹</label><input id="rsvm-fullday" type="number" placeholder="4500"></div>
+          <div class="form-group"><label>Extra / km ₹</label><input id="rsvm-km" type="number" placeholder="24"></div>
+          <div class="form-group"><label>Extra / hr ₹</label><input id="rsvm-hr" type="number" placeholder="240"></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-vehicle-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveVehicleRow()">Save</button></div>
+      </div>
+    </div>
+
+    <!-- Add-on Modal -->
+    <div class="modal-overlay" id="rs-addon-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+      <div class="modal-box" style="max-width:440px;width:95%">
+        <div class="modal-hdr"><h3 id="rs-addon-modal-title">Add Extra / Service</h3><button class="modal-close" onclick="document.getElementById('rs-addon-modal').style.display='none'">×</button></div>
+        <div class="modal-body">
+          <input type="hidden" id="rs-addon-id">
+          <div class="form-group"><label>Service / Attraction</label><input id="rsam-service" placeholder="e.g. English-speaking guide"></div>
+          <div class="form-group"><label>Unit</label><input id="rsam-unit" placeholder="e.g. per day, per adult, per vehicle"></div>
+          <div class="form-group"><label>Rate ₹</label><input id="rsam-rate" type="number" placeholder="1800"></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline" onclick="document.getElementById('rs-addon-modal').style.display='none'">Cancel</button><button class="btn btn-primary" onclick="rsSaveAddonRow()">Save</button></div>
+      </div>
+    </div>
+
 
     <!-- ─ MESSAGES MODULE ─ -->
     <div class="module" id="mod-messages">
@@ -3966,6 +4186,7 @@ const pageMeta={
   contracted:{title:'Contracted Rates',sub:'Hotel, cab and ticket rates contracted for stipulated periods'},
   messages:{title:'Messages',sub:'Agent and supplier communication panels'},
   tourterms:{title:'Tour Terms Master',sub:'Manage reusable T&C, Inclusions, Exclusions & Special Notes templates'},
+  ratesheets:{title:'Rate Sheets',sub:'FIT / GIT tariffs, transport rates & live quote calculator'}
   support:{title:'Support Tickets',sub:'Client queries, complaints and requests from customers & agents'}
 };
 let currentModule='dashboard';
@@ -3978,7 +4199,9 @@ function nav(m){
   document.getElementById('page-sub').textContent=pageMeta[m]?.sub||'';
   currentModule=m;
   const renders={dashboard:renderDashboard,packages:renderPackages,bookings:renderBookings,customers:renderCustomers,crm:renderCRM,finance:renderFinance,suppliers:renderSuppliers,itinerary:renderItinerary,attractions:renderAttrCards,cabs:renderCabs,hotels:renderHotels,tickets:renderTickets,tourstatus:renderTourStatus,livetrack:renderLiveTrack,insurance:renderInsurance,contracted:renderContracted,messages:renderMessages,special:renderSpecial,mail:renderMail,tourterms:renderTourTerms,support:renderSupport};
+  const rsRenders={ratesheets:rsLoad};
   if(renders[m])renders[m]();
+  else if(rsRenders[m])rsRenders[m]();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -11531,6 +11754,390 @@ function duplicateTerm(){
   duplicateTermById(currentTermId);
   closeModal('tt-modal');
 }
+
+const rsFmt = n => '₹' + fmt(n);
+function rsLoad() {
+  const saved = DB.get('ratesheets');
+  if (saved && saved.fitRates) {
+    RS = saved;
+  } else {
+    RS.fitRates = RS_DEFAULT_FIT;
+    RS.hotelRates = RS_DEFAULT_HOTEL;
+    RS.gitRates = RS_DEFAULT_GIT;
+    RS.vehicles = RS_DEFAULT_VEHICLES;
+    RS.addons = RS_DEFAULT_ADDONS;
+  }
+  document.getElementById('rs-fit-validity').value = RS.fitValidity || '';
+  document.getElementById('rs-git-validity').value = RS.gitValidity || '';
+  document.getElementById('rs-terms-text').value = RS.terms || RS_DEFAULT_TERMS;
+  rsRenderFit(); rsRenderHotel(); rsRenderGit(); rsRenderVehicles(); rsRenderAddons();
+  rsPopulateQuoteDropdowns();
+}
+
+function rsSave() {
+  RS.fitValidity = document.getElementById('rs-fit-validity').value;
+  RS.gitValidity = document.getElementById('rs-git-validity').value;
+  DB.set('ratesheets', RS);
+}
+
+function rsSaveTerms() {
+  RS.terms = document.getElementById('rs-terms-text').value;
+  rsSave();
+  showToast('Terms & Conditions saved.', 'success');
+}
+
+function rsTab(tab, btn) {
+  ['fit','git','transport','quote','terms'].forEach(t => {
+    document.getElementById('rs-'+t+'-pane').style.display = (t===tab?'block':'none');
+  });
+  document.querySelectorAll('#mod-ratesheets .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'quote') rsCalcQuote();
+}
+
+
+// ── FIT Rates ──
+function rsRenderFit() {
+  const tb = document.getElementById('rs-fit-tbody');
+  if (!tb) return;
+  tb.innerHTML = RS.fitRates.map(r => `
+    <tr>
+      <td><span class="badge badge-blue">${r.id}</span></td>
+      <td><strong>${r.itinerary}</strong></td>
+      <td style="text-align:center">${r.nights}N</td>
+      <td><span class="badge" style="background:${r.category==='Deluxe'?'#9B59B6':r.category==='Standard'?'#2980B9':'#27AE60'};color:#fff">${r.category}</span></td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p02)}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p04)}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p06)}</td>
+      <td style="font-size:11px;color:var(--grey4)">${r.inclusions}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="rsOpenFitModal('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:#fee;color:#c00;border:1px solid #fcc" onclick="rsDeleteFit('${r.id}')">Del</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--grey4);padding:20px">No FIT rates yet. Click "+ Add Package" to begin.</td></tr>';
+}
+
+function rsRenderHotel() {
+  const tb = document.getElementById('rs-hotel-tbody');
+  if (!tb) return;
+  tb.innerHTML = RS.hotelRates.map(r => `
+    <tr>
+      <td>${r.location}</td>
+      <td>${r.hotel}</td>
+      <td><span class="badge" style="background:${r.category==='Deluxe'?'#9B59B6':r.category==='Standard'?'#2980B9':'#27AE60'};color:#fff">${r.category}</span></td>
+      <td>${r.roomtype}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.rate)}</td>
+      <td style="text-align:center">${r.meal}</td>
+      <td style="text-align:right">${rsFmt(r.extraAdult)}</td>
+      <td style="text-align:right">${rsFmt(r.child)}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="rsOpenHotelModal('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:#fee;color:#c00;border:1px solid #fcc" onclick="rsDeleteHotel('${r.id}')">Del</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--grey4);padding:20px">No hotel rates yet.</td></tr>';
+}
+
+function rsOpenFitModal(id) {
+  const m = document.getElementById('rs-fit-modal');
+  const r = id ? RS.fitRates.find(x=>x.id===id) : null;
+  document.getElementById('rs-fit-id').value = id||'';
+  document.getElementById('rs-fit-modal-title').textContent = id ? 'Edit FIT Package Rate' : 'Add FIT Package Rate';
+  document.getElementById('rsfm-itinerary').value = r?.itinerary||'';
+  document.getElementById('rsfm-nights').value = r?.nights||'';
+  document.getElementById('rsfm-category').value = r?.category||'Standard';
+  document.getElementById('rsfm-p02').value = r?.p02||'';
+  document.getElementById('rsfm-p04').value = r?.p04||'';
+  document.getElementById('rsfm-p06').value = r?.p06||'';
+  document.getElementById('rsfm-inclusions').value = r?.inclusions||'Hotel (twin, CP), pvt AC vehicle, all transfers & sightseeing, Nilgiris e-pass, driver/fuel/parking/tolls';
+  m.style.display = 'flex';
+}
+
+function rsSaveFitRow() {
+  const id = document.getElementById('rs-fit-id').value;
+  const obj = {
+    id: id || ('FIT-'+String(Date.now()).slice(-4)),
+    itinerary: document.getElementById('rsfm-itinerary').value.trim(),
+    nights: parseInt(document.getElementById('rsfm-nights').value)||0,
+    category: document.getElementById('rsfm-category').value,
+    p02: parseFloat(document.getElementById('rsfm-p02').value)||0,
+    p04: parseFloat(document.getElementById('rsfm-p04').value)||0,
+    p06: parseFloat(document.getElementById('rsfm-p06').value)||0,
+    inclusions: document.getElementById('rsfm-inclusions').value.trim()
+  };
+  if (!obj.itinerary) return showToast('Enter itinerary name.','error');
+  if (id) { const i=RS.fitRates.findIndex(x=>x.id===id); if(i>=0) RS.fitRates[i]=obj; }
+  else RS.fitRates.push(obj);
+  rsSave(); rsRenderFit(); rsPopulateQuoteDropdowns();
+  document.getElementById('rs-fit-modal').style.display='none';
+  showToast('FIT rate saved.','success');
+}
+
+function rsDeleteFit(id) {
+  if(!confirm('Delete this FIT rate?')) return;
+  RS.fitRates = RS.fitRates.filter(x=>x.id!==id);
+  rsSave(); rsRenderFit(); rsPopulateQuoteDropdowns();
+}
+
+function rsOpenHotelModal(id) {
+  const m = document.getElementById('rs-hotel-modal');
+  const r = id ? RS.hotelRates.find(x=>x.id===id) : null;
+  document.getElementById('rs-hotel-id').value = id||'';
+  document.getElementById('rs-hotel-modal-title').textContent = id ? 'Edit Hotel Net Rate' : 'Add Hotel Net Rate';
+  document.getElementById('rshm-location').value = r?.location||'';
+  document.getElementById('rshm-hotel').value = r?.hotel||'';
+  document.getElementById('rshm-category').value = r?.category||'Standard';
+  document.getElementById('rshm-roomtype').value = r?.roomtype||'';
+  document.getElementById('rshm-rate').value = r?.rate||'';
+  document.getElementById('rshm-meal').value = r?.meal||'CP';
+  document.getElementById('rshm-extra-adult').value = r?.extraAdult||'';
+  document.getElementById('rshm-child').value = r?.child||'';
+  m.style.display='flex';
+}
+
+function rsSaveHotelRow() {
+  const id = document.getElementById('rs-hotel-id').value;
+  const obj = {
+    id: id || ('HTL-'+String(Date.now()).slice(-4)),
+    location: document.getElementById('rshm-location').value.trim(),
+    hotel: document.getElementById('rshm-hotel').value.trim(),
+    category: document.getElementById('rshm-category').value,
+    roomtype: document.getElementById('rshm-roomtype').value.trim(),
+    rate: parseFloat(document.getElementById('rshm-rate').value)||0,
+    meal: document.getElementById('rshm-meal').value,
+    extraAdult: parseFloat(document.getElementById('rshm-extra-adult').value)||0,
+    child: parseFloat(document.getElementById('rshm-child').value)||0
+  };
+  if (!obj.location) return showToast('Enter location.','error');
+  if (id) { const i=RS.hotelRates.findIndex(x=>x.id===id); if(i>=0) RS.hotelRates[i]=obj; }
+  else RS.hotelRates.push(obj);
+  rsSave(); rsRenderHotel();
+  document.getElementById('rs-hotel-modal').style.display='none';
+  showToast('Hotel rate saved.','success');
+}
+
+function rsDeleteHotel(id) {
+  if(!confirm('Delete this hotel rate?')) return;
+  RS.hotelRates = RS.hotelRates.filter(x=>x.id!==id);
+  rsSave(); rsRenderHotel();
+}
+
+// ── GIT Rates ──
+function rsRenderGit() {
+  const tb = document.getElementById('rs-git-tbody');
+  if (!tb) return;
+  tb.innerHTML = RS.gitRates.map(r => `
+    <tr>
+      <td><strong>${r.itinerary}</strong></td>
+      <td style="text-align:center">${r.nights}N</td>
+      <td><span class="badge" style="background:${r.category==='Deluxe'?'#9B59B6':r.category==='Standard'?'#2980B9':'#27AE60'};color:#fff">${r.category}</span></td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p15)}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p21)}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.p31)}</td>
+      <td style="font-size:11px;color:var(--grey4)">${r.basis}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="rsOpenGitModal('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:#fee;color:#c00;border:1px solid #fcc" onclick="rsDeleteGit('${r.id}')">Del</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--grey4);padding:20px">No GIT rates yet.</td></tr>';
+}
+
+function rsOpenGitModal(id) {
+  const m = document.getElementById('rs-git-modal');
+  const r = id ? RS.gitRates.find(x=>x.id===id) : null;
+  document.getElementById('rs-git-id').value = id||'';
+  document.getElementById('rs-git-modal-title').textContent = id ? 'Edit GIT Package Rate' : 'Add GIT Package Rate';
+  document.getElementById('rsgm-itinerary').value = r?.itinerary||'';
+  document.getElementById('rsgm-nights').value = r?.nights||'';
+  document.getElementById('rsgm-category').value = r?.category||'Standard';
+  document.getElementById('rsgm-p15').value = r?.p15||'';
+  document.getElementById('rsgm-p21').value = r?.p21||'';
+  document.getElementById('rsgm-p31').value = r?.p31||'';
+  document.getElementById('rsgm-basis').value = r?.basis||'';
+  m.style.display='flex';
+}
+
+function rsSaveGitRow() {
+  const id = document.getElementById('rs-git-id').value;
+  const obj = {
+    id: id || ('GIT-'+String(Date.now()).slice(-4)),
+    itinerary: document.getElementById('rsgm-itinerary').value.trim(),
+    nights: parseInt(document.getElementById('rsgm-nights').value)||0,
+    category: document.getElementById('rsgm-category').value,
+    p15: parseFloat(document.getElementById('rsgm-p15').value)||0,
+    p21: parseFloat(document.getElementById('rsgm-p21').value)||0,
+    p31: parseFloat(document.getElementById('rsgm-p31').value)||0,
+    basis: document.getElementById('rsgm-basis').value.trim()
+  };
+  if (!obj.itinerary) return showToast('Enter itinerary name.','error');
+  if (id) { const i=RS.gitRates.findIndex(x=>x.id===id); if(i>=0) RS.gitRates[i]=obj; }
+  else RS.gitRates.push(obj);
+  rsSave(); rsRenderGit();
+  document.getElementById('rs-git-modal').style.display='none';
+  showToast('GIT rate saved.','success');
+}
+
+function rsDeleteGit(id) {
+  if(!confirm('Delete this GIT rate?')) return;
+  RS.gitRates = RS.gitRates.filter(x=>x.id!==id);
+  rsSave(); rsRenderGit();
+}
+
+// ── Transport & Extras ──
+function rsRenderVehicles() {
+  const tb = document.getElementById('rs-vehicle-tbody');
+  if (!tb) return;
+  tb.innerHTML = RS.vehicles.map(r => `
+    <tr>
+      <td><strong>${r.vehicle}</strong></td>
+      <td style="text-align:center">${r.seats}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.transfer)}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.fullday)}</td>
+      <td style="text-align:right">₹${r.extraKm}/km</td>
+      <td style="text-align:right">₹${r.extraHr}/hr</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="rsOpenVehicleModal('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:#fee;color:#c00;border:1px solid #fcc" onclick="rsDeleteVehicle('${r.id}')">Del</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--grey4);padding:20px">No vehicle rates yet.</td></tr>';
+}
+
+function rsRenderAddons() {
+  const tb = document.getElementById('rs-addon-tbody');
+  if (!tb) return;
+  tb.innerHTML = RS.addons.map(r => `
+    <tr>
+      <td>${r.service}</td>
+      <td style="color:var(--grey4)">${r.unit}</td>
+      <td style="text-align:right;font-weight:600">${rsFmt(r.rate)}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="rsOpenAddonModal('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:#fee;color:#c00;border:1px solid #fcc" onclick="rsDeleteAddon('${r.id}')">Del</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--grey4);padding:20px">No extras yet.</td></tr>';
+}
+
+function rsOpenVehicleModal(id) {
+  const m = document.getElementById('rs-vehicle-modal');
+  const r = id ? RS.vehicles.find(x=>x.id===id) : null;
+  document.getElementById('rs-vehicle-id').value = id||'';
+  document.getElementById('rs-vehicle-modal-title').textContent = id ? 'Edit Vehicle Rate' : 'Add Vehicle Rate';
+  document.getElementById('rsvm-vehicle').value = r?.vehicle||'';
+  document.getElementById('rsvm-seats').value = r?.seats||'';
+  document.getElementById('rsvm-transfer').value = r?.transfer||'';
+  document.getElementById('rsvm-fullday').value = r?.fullday||'';
+  document.getElementById('rsvm-km').value = r?.extraKm||'';
+  document.getElementById('rsvm-hr').value = r?.extraHr||'';
+  m.style.display='flex';
+}
+
+function rsSaveVehicleRow() {
+  const id = document.getElementById('rs-vehicle-id').value;
+  const obj = {
+    id: id || ('VEH-'+String(Date.now()).slice(-4)),
+    vehicle: document.getElementById('rsvm-vehicle').value.trim(),
+    seats: parseInt(document.getElementById('rsvm-seats').value)||0,
+    transfer: parseFloat(document.getElementById('rsvm-transfer').value)||0,
+    fullday: parseFloat(document.getElementById('rsvm-fullday').value)||0,
+    extraKm: parseFloat(document.getElementById('rsvm-km').value)||0,
+    extraHr: parseFloat(document.getElementById('rsvm-hr').value)||0
+  };
+  if (!obj.vehicle) return showToast('Enter vehicle name.','error');
+  if (id) { const i=RS.vehicles.findIndex(x=>x.id===id); if(i>=0) RS.vehicles[i]=obj; }
+  else RS.vehicles.push(obj);
+  rsSave(); rsRenderVehicles();
+  document.getElementById('rs-vehicle-modal').style.display='none';
+  showToast('Vehicle rate saved.','success');
+}
+
+function rsDeleteVehicle(id) {
+  if(!confirm('Delete this vehicle rate?')) return;
+  RS.vehicles = RS.vehicles.filter(x=>x.id!==id);
+  rsSave(); rsRenderVehicles();
+}
+
+function rsOpenAddonModal(id) {
+  const m = document.getElementById('rs-addon-modal');
+  const r = id ? RS.addons.find(x=>x.id===id) : null;
+  document.getElementById('rs-addon-id').value = id||'';
+  document.getElementById('rs-addon-modal-title').textContent = id ? 'Edit Extra' : 'Add Extra / Service';
+  document.getElementById('rsam-service').value = r?.service||'';
+  document.getElementById('rsam-unit').value = r?.unit||'';
+  document.getElementById('rsam-rate').value = r?.rate||'';
+  m.style.display='flex';
+}
+
+function rsSaveAddonRow() {
+  const id = document.getElementById('rs-addon-id').value;
+  const obj = {
+    id: id || ('ADD-'+String(Date.now()).slice(-4)),
+    service: document.getElementById('rsam-service').value.trim(),
+    unit: document.getElementById('rsam-unit').value.trim(),
+    rate: parseFloat(document.getElementById('rsam-rate').value)||0
+  };
+  if (!obj.service) return showToast('Enter service name.','error');
+  if (id) { const i=RS.addons.findIndex(x=>x.id===id); if(i>=0) RS.addons[i]=obj; }
+  else RS.addons.push(obj);
+  rsSave(); rsRenderAddons();
+  document.getElementById('rs-addon-modal').style.display='none';
+  showToast('Extra saved.','success');
+}
+
+function rsDeleteAddon(id) {
+  if(!confirm('Delete this extra?')) return;
+  RS.addons = RS.addons.filter(x=>x.id!==id);
+  rsSave(); rsRenderAddons();
+}
+
+// ── Quote Calculator ──
+function rsPopulateQuoteDropdowns() {
+  const sel = document.getElementById('qs-itinerary');
+  if (!sel) return;
+  const itineraries = [...new Set(RS.fitRates.map(r=>r.itinerary))];
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— select itinerary —</option>' + itineraries.map(i=>`<option${i===cur?' selected':''}>${i}</option>`).join('');
+}
+
+function rsCalcQuote() {
+  const itinerary = document.getElementById('qs-itinerary')?.value;
+  const category  = document.getElementById('qs-category')?.value;
+  const slab      = document.getElementById('qs-slab')?.value;
+  const pax       = parseInt(document.getElementById('qs-pax')?.value)||0;
+  const extras    = parseFloat(document.getElementById('qs-extras')?.value)||0;
+  const surcharge = parseFloat(document.getElementById('qs-surcharge')?.value)||0;
+  const noRateEl  = document.getElementById('qs-no-rate');
+  const detailEl  = document.getElementById('qs-result-detail');
+  const totalEl   = document.getElementById('qs-grand-total');
+  const ppEl      = document.getElementById('qs-per-person');
+  if (!itinerary || !category) {
+    detailEl.innerHTML = '<em style="color:var(--grey4)">Select itinerary and category above.</em>';
+    totalEl.textContent = '₹0'; ppEl.textContent = '₹0';
+    noRateEl.style.display='none'; return;
+  }
+  const rateRow = RS.fitRates.find(r=>r.itinerary===itinerary && r.category===category);
+  if (!rateRow) { noRateEl.style.display='block'; detailEl.innerHTML=''; totalEl.textContent='₹0'; ppEl.textContent='₹0'; return; }
+  noRateEl.style.display='none';
+  const slabKey = 'p'+slab;
+  const perPaxRate = rateRow[slabKey]||0;
+  const pkgSubtotal = perPaxRate * pax;
+  const grand = pkgSubtotal + extras + surcharge;
+  const perPerson = pax > 0 ? grand/pax : 0;
+  detailEl.innerHTML = `
+    <div style="display:flex;justify-content:space-between"><span>Itinerary</span><strong>${itinerary} (${rateRow.nights}N)</strong></div>
+    <div style="display:flex;justify-content:space-between"><span>Category</span><strong>${category}</strong></div>
+    <div style="display:flex;justify-content:space-between"><span>Pax slab</span><strong>${slab} pax</strong></div>
+    <div style="display:flex;justify-content:space-between"><span>Rate / pax</span><strong>${rsFmt(perPaxRate)}</strong></div>
+    <div style="display:flex;justify-content:space-between"><span>× ${pax} pax</span><strong>${rsFmt(pkgSubtotal)}</strong></div>
+    ${extras>0?`<div style="display:flex;justify-content:space-between"><span>+ Extras</span><strong>${rsFmt(extras)}</strong></div>`:''}
+    ${surcharge>0?`<div style="display:flex;justify-content:space-between"><span>+ Peak surcharge</span><strong>${rsFmt(surcharge)}</strong></div>`:''}
+  `;
+  totalEl.textContent = rsFmt(grand);
+  ppEl.textContent = rsFmt(Math.round(perPerson));
+}
+
+function rsQuotePrint() { window.print(); }
+
+// rsLoad() is triggered by nav() renders map above
+
 
 // ═══════════════════════════════════════════════════════════════
 // ITINERARY — TAB SWITCHING
