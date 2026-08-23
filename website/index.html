@@ -1,459 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coimbatour DMC — Your Friendly DMC for Coimbatore & Western Ghats</title>
-<meta name="description" content="Discover the best of Coimbatore, Ooty, Valparai and the Western Ghats with Coimbatour DMC — your trusted local destination management company since 2014.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
---teal:#006B6B;--teal-dark:#004F4F;--teal-light:#E0F4F4;
---gold:#C8963E;--gold-light:#FDF3E3;--gold-dark:#a07030;
---dark:#0f1a1a;--text:#2d2d2d;--grey:#f7f7f5;
---white:#ffffff;--shadow:0 4px 24px rgba(0,0,0,.12);
---radius:12px;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
-#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:all .3s ease;background:transparent}
-#nav.scrolled{background:var(--white);box-shadow:0 2px 20px rgba(0,0,0,.1)}
-.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.nav-logo-icon{width:42px;height:42px;background:#29ABE2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--teal-dark)}
-.nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;line-height:1.1;transition:color .3s}
-.nav-logo-text small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;opacity:.8}
-#nav.scrolled .nav-logo-text{color:var(--teal-dark)}
-.nav-links{display:flex;align-items:center;gap:4px}
-.nav-links a{color:rgba(255,255,255,.9);text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:6px;transition:all .2s}
-.nav-links a:hover{background:rgba(255,255,255,.15);color:#fff}
-#nav.scrolled .nav-links a{color:var(--text)}
-#nav.scrolled .nav-links a:hover{background:var(--grey);color:var(--teal)}
-.nav-cta{background:var(--gold)!important;color:var(--dark)!important;font-weight:700!important;padding:10px 22px!important;border-radius:8px!important}
-.nav-cta:hover{background:var(--gold-dark)!important;transform:translateY(-1px)}
-.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
-.nav-hamburger span{width:22px;height:2px;background:var(--white);transition:.3s}
-#nav.scrolled .nav-hamburger span{background:var(--teal-dark)}
-.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--white);padding:20px;box-shadow:var(--shadow);flex-direction:column;gap:4px;z-index:999}
-.mobile-menu a{color:var(--text);text-decoration:none;font-size:14px;font-weight:500;padding:12px 16px;border-radius:8px;display:block}
-.mobile-menu a:hover{background:var(--grey)}
-.mobile-menu .nav-cta{background:var(--gold)!important;color:var(--dark)!important;text-align:center;margin-top:8px}
-#hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
-#hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80');background-size:cover;background-position:center;transform:scale(1.05);transition:transform 8s ease}
-#hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,30,30,.65) 0%,rgba(0,50,50,.75) 60%,rgba(0,20,20,.85) 100%)}
-.hero-content{position:relative;z-index:2;max-width:860px;padding:0 24px}
-.hero-tag{display:inline-block;background:rgba(200,150,62,.2);border:1px solid rgba(200,150,62,.6);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border-radius:20px;margin-bottom:24px}
-.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,72px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px}
-.hero-h1 span{color:var(--gold)}
-.hero-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.85);max-width:600px;margin:0 auto 36px;font-weight:300;line-height:1.7}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:all .25s}
-.btn-gold{background:var(--gold);color:var(--dark)}
-.btn-gold:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,150,62,.4)}
-.btn-outline-white{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.7)}
-.btn-outline-white:hover{background:rgba(255,255,255,.1);border-color:#fff}
-.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:2px;text-transform:uppercase}
-.hero-scroll-line{width:1px;height:40px;background:rgba(255,255,255,.3);animation:scrollLine 2s ease-in-out infinite}
-@keyframes scrollLine{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(.6)}}
-#stats{background:var(--teal-dark);padding:32px 40px;display:flex;justify-content:center;gap:0;flex-wrap:wrap}
-.stat-item{text-align:center;padding:16px 48px;border-right:1px solid rgba(255,255,255,.15);flex:1;min-width:160px}
-.stat-item:last-child{border-right:none}
-.stat-num{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--gold);line-height:1}
-.stat-lbl{font-size:12px;color:rgba(255,255,255,.65);font-weight:400;margin-top:4px;letter-spacing:.5px}
-section{padding:88px 40px}
-.section-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.section-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--teal-dark);margin-bottom:16px;line-height:1.2}
-.section-sub{font-size:15px;color:#666;max-width:560px;line-height:1.7}
-.section-hdr{margin-bottom:48px}
-.section-hdr.centered{text-align:center}
-.section-hdr.centered .section-sub{margin:0 auto}
-.container{max-width:1200px;margin:0 auto}
-.view-all{display:inline-flex;align-items:center;gap:6px;color:var(--teal);font-weight:600;font-size:13px;text-decoration:none;border:1.5px solid var(--teal);padding:10px 22px;border-radius:8px;transition:all .2s;margin-top:12px}
-.view-all:hover{background:var(--teal);color:#fff}
-#packages{background:var(--grey)}
-.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.pkg-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .3s;cursor:pointer}
-.pkg-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.15)}
-.pkg-img{height:210px;background-size:cover;background-position:center;position:relative}
-.pkg-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6) 0%,transparent 60%)}
-.pkg-badge{position:absolute;top:14px;left:14px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
-.pkg-dur{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:4px 10px;border-radius:6px}
-.pkg-body{padding:20px}
-.pkg-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--teal-dark);margin-bottom:6px;line-height:1.3}
-.pkg-dest{font-size:12px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:4px}
-.pkg-incl{font-size:12px;color:#666;margin-bottom:14px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pkg-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #eee}
-.pkg-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--teal)}
-.pkg-price small{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;color:#888;display:block;margin-top:-2px}
-.pkg-enquire{background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
-.pkg-enquire:hover{background:var(--teal);color:#fff}
-.pkg-skeleton{background:#eee;border-radius:var(--radius);height:340px;animation:shimmer 1.5s infinite}
-@keyframes shimmer{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
-#destinations{background:var(--white)}
-.dest-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:280px 280px;gap:18px}
-.dest-card{border-radius:var(--radius);overflow:hidden;position:relative;cursor:pointer}
-.dest-card:first-child{grid-row:1/3;grid-column:1/2}
-.dest-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease}
-.dest-card:hover .dest-bg{transform:scale(1.06)}
-.dest-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,40,40,.8) 0%,transparent 55%)}
-.dest-info{position:absolute;bottom:0;left:0;right:0;padding:22px}
-.dest-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
-.dest-tag{font-size:11px;color:rgba(255,255,255,.7);font-weight:400;letter-spacing:.5px}
-.dest-card a{position:absolute;inset:0;z-index:2}
-#why{background:var(--teal-dark);padding:88px 40px}
-#why .section-h2{color:#fff}
-#why .section-sub{color:rgba(255,255,255,.7)}
-.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:48px}
-.why-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:28px 24px;transition:all .3s}
-.why-card:hover{background:rgba(255,255,255,.1);transform:translateY(-4px)}
-.why-icon{font-size:36px;margin-bottom:16px}
-.why-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:10px}
-.why-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.7}
-#testimonials{background:var(--grey)}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.testi-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);position:relative}
-.testi-quote{font-size:48px;color:var(--teal-light);font-family:'Playfair Display',serif;line-height:.8;margin-bottom:16px}
-.testi-text{font-size:14px;color:#555;line-height:1.7;margin-bottom:20px;font-style:italic}
-.testi-stars{color:var(--gold);font-size:14px;margin-bottom:12px}
-.testi-name{font-weight:700;font-size:13px;color:var(--teal-dark)}
-.testi-role{font-size:12px;color:#888}
-.testi-badge{position:absolute;top:24px;right:24px;background:var(--teal-light);color:var(--teal);font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:1px;text-transform:uppercase}
-#cta-banner{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);text-align:center;padding:80px 40px;position:relative;overflow:hidden}
-#cta-banner::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:rgba(200,150,62,.08);border-radius:50%}
-#cta-banner::after{content:'';position:absolute;bottom:-80px;left:-40px;width:240px;height:240px;background:rgba(200,150,62,.06);border-radius:50%}
-.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:#fff;margin-bottom:14px}
-.cta-sub{font-size:15px;color:rgba(255,255,255,.8);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
-.btn-white{background:#fff;color:var(--teal-dark);font-weight:700}
-.btn-white:hover{background:var(--gold);color:var(--dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-footer{background:var(--dark);padding:60px 40px 30px;color:rgba(255,255,255,.7)}
-.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 48px}
-.footer-brand{}
-.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.footer-logo-icon{width:38px;height:38px;background:#29ABE2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:18px;color:var(--teal-dark)}
-.footer-logo-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff}
-.footer-brand p{font-size:13px;line-height:1.7;max-width:280px;margin-bottom:20px}
-.footer-social{display:flex;gap:10px}
-.footer-social a{width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;text-decoration:none;color:rgba(255,255,255,.7);transition:all .2s}
-.footer-social a:hover{background:var(--gold);color:var(--dark)}
-.footer-col h4{color:#fff;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px}
-.footer-col ul{list-style:none}
-.footer-col ul li{margin-bottom:10px}
-.footer-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .2s}
-.footer-col ul li a:hover{color:var(--gold)}
-.footer-contact-item{display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px;align-items:flex-start}
-.footer-contact-item span:first-child{font-size:16px;margin-top:1px}
-.footer-bottom{max-width:1200px;margin:0 auto;border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px}
-.footer-bottom a{color:rgba(255,255,255,.5);text-decoration:none;margin-left:16px}
-.footer-bottom a:hover{color:var(--gold)}
-@media(max-width:1024px){.pkg-grid{grid-template-columns:repeat(2,1fr)}.why-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr;gap:32px}}
-@media(max-width:768px){#nav{padding:0 20px}.nav-links{display:none}.nav-hamburger{display:flex}section{padding:60px 20px}#stats{padding:24px 20px}.stat-item{padding:14px 20px;border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.stat-item:last-child{border-bottom:none}.pkg-grid{grid-template-columns:1fr}.dest-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.dest-card:first-child{grid-row:auto;grid-column:auto}.why-grid{grid-template-columns:1fr}.testi-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr;gap:24px}#hero{height:80vh}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coimbatour DMC — Your Friendly DMC for Coimbatore & Western Ghats</title>
+  <meta name="description" content="Expertly crafted luxury tours to Ooty, Valparai, Anamalai Tiger Reserve, Siruvani, and Coimbatore. Your local partner for curated experiences in South India.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Contact Tab Bar ─────────────────────── */
+    .contact-tab-bar{display:flex;gap:12px;margin-bottom:36px;border-bottom:2px solid var(--ivory-subtle);padding-bottom:0;}
+    .contact-tab-btn{background:none;border:none;padding:14px 24px;font-family:var(--font-title);font-size:0.82rem;letter-spacing:1px;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .25s;}
+    .contact-tab-btn:hover{color:var(--emerald-deep);}
+    .contact-tab-btn.active{color:var(--emerald-deep);border-bottom-color:var(--gold-primary);}
+    .contact-tab-pane.hidden{display:none;}
+    /* ── Agency Form Layout ──────────────────── */
+    .agency-form-wrap{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start;}
+    @media(max-width:900px){.agency-form-wrap{grid-template-columns:1fr;}}
+    .agency-form-card{background:var(--ivory-card);padding:36px;border-radius:var(--radius-lg);border:1px solid var(--ivory-subtle);box-shadow:0 12px 32px rgba(0,0,0,0.05);}
+    .agency-form-sidebar{}
+    .af-band{background:#F5F9F7;border-left:3px solid var(--emerald-accent);border-radius:8px;padding:20px 20px 8px;}
+    .af-band-label{font-family:var(--font-title);font-size:0.75rem;letter-spacing:1.5px;color:var(--emerald-accent);margin-bottom:16px;}
+    .af-req{color:#e05252;}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:600px){.form-row-2{grid-template-columns:1fr;}}
+    .af-group{display:flex;flex-direction:column;gap:5px;}
+    .af-group.af-full{grid-column:1/-1;}
+    .af-group label{font-size:0.78rem;font-weight:600;color:var(--emerald-deep);text-transform:uppercase;letter-spacing:.5px;}
+    .af-group input,.af-group select,.af-group textarea{padding:10px 14px;border:1.5px solid var(--ivory-subtle);border-radius:8px;font-size:0.9rem;font-family:inherit;color:var(--text-dark);background:var(--ivory-card);transition:border-color .2s;outline:none;}
+    .af-group input:focus,.af-group select:focus,.af-group textarea:focus{border-color:var(--emerald-accent);}
+    .af-group textarea{resize:vertical;}
+    .af-dest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
+    @media(max-width:600px){.af-dest-grid{grid-template-columns:1fr 1fr;}}
+    .af-chk-label{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);cursor:pointer;padding:8px 10px;border:1.5px solid var(--ivory-subtle);border-radius:6px;transition:all .2s;}
+    .af-chk-label:hover{border-color:var(--emerald-accent);color:var(--emerald-deep);}
+    .af-chk-label input[type=checkbox]{accent-color:var(--emerald-accent);width:15px;height:15px;}
+  </style>
+
+  <link rel="icon" href="assets/images/coimbatore_dmc_logo.png">
 </head>
 <body>
-<nav id="nav">
-<a href="index.html" class="nav-logo">
-<div class="nav-logo-icon">C</div>
-<div class="nav-logo-text">COIMBATOUR DMC<small>Your Friendly DMC for Coimbatore</small></div>
-</a>
-<div class="nav-links">
-<a href="index.html">Home</a>
-<a href="packages.html">Tour Packages</a>
-<a href="destinations.html">Destinations</a>
-<a href="contact.html">Contact</a>
-<a href="contact.html" class="btn nav-cta">Plan My Trip →</a>
-</div>
-<div class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">
-<span></span><span></span><span></span>
-</div>
-</nav>
-<div class="mobile-menu" id="mobile-menu">
-<a href="index.html">Home</a>
-<a href="packages.html">Tour Packages</a>
-<a href="destinations.html">Destinations</a>
-<a href="contact.html">Contact</a>
-<a href="contact.html" class="btn nav-cta">Plan My Trip →</a>
-</div>
-<section id="hero">
-<div id="hero-bg"></div>
-<div class="hero-content">
-<div class="hero-tag">✦ Trusted Since 2014 · Coimbatore, Tamil Nadu</div>
-<h1 class="hero-h1">Discover the <span>Magic</span> of the Western Ghats</h1>
-<p class="hero-sub">Expertly crafted tours to Ooty, Valparai, Anamalai and beyond. Your local partner for unforgettable experiences in South India.</p>
-<div class="hero-btns">
-<a href="packages.html" class="btn btn-gold">Explore Our Tours →</a>
-<a href="contact.html" class="btn btn-outline-white">Plan My Trip</a>
-</div>
-</div>
-<div class="hero-scroll">
-<div class="hero-scroll-line"></div>
-Scroll
-</div>
-</section>
-<div id="stats">
-<div class="stat-item"><div class="stat-num">500<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Happy Travellers</div></div>
-<div class="stat-item"><div class="stat-num">10<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Years of Experience</div></div>
-<div class="stat-item"><div class="stat-num">50<span style="color:var(--gold-light);font-size:28px">+</span></div><div class="stat-lbl">Unique Packages</div></div>
-<div class="stat-item"><div class="stat-num">98<span style="color:var(--gold-light);font-size:28px">%</span></div><div class="stat-lbl">Guest Satisfaction</div></div>
-</div>
-<section id="packages">
-<div class="container">
-<div class="section-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
-<div>
-<div class="section-tag">✦ Our Tour Packages</div>
-<h2 class="section-h2">Signature Experiences</h2>
-<p class="section-sub">Handcrafted itineraries that blend adventure, culture, and comfort â made for every kind of traveller.</p>
-</div>
-<a href="packages.html" class="view-all">View All Packages →</a>
-</div>
-<div class="pkg-grid" id="pkg-grid">
-<div class="pkg-skeleton"></div>
-<div class="pkg-skeleton"></div>
-<div class="pkg-skeleton"></div>
-</div>
-</div>
-</section>
-<section id="destinations">
-<div class="container">
-<div class="section-hdr centered">
-<div class="section-tag">✦ Where We Take You</div>
-<h2 class="section-h2">Explore Our Destinations</h2>
-<p class="section-sub">From misty hill stations to dense tiger reserves, every destination around Coimbatore is a world of its own.</p>
-</div>
-<div class="dest-grid">
-<div class="dest-card">
-<div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&w=800&q=80')"></div>
-<div class="dest-overlay"></div>
-<div class="dest-info"><div class="dest-name">Ooty &amp; Nilgiris</div><div class="dest-tag">Hill Station · Heritage Train · Botanical Gardens</div></div>
-<a href="destinations.html#ooty"></a>
-</div>
-<div class="dest-card">
-<div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80')"></div>
-<div class="dest-overlay"></div>
-<div class="dest-info"><div class="dest-name">Valparai</div><div class="dest-tag">Tea Estates · Forest Trails · Shola Streams</div></div>
-<a href="destinations.html#valparai"></a>
-</div>
-<div class="dest-card">
-<div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?auto=format&fit=crop&w=800&q=80')"></div>
-<div class="dest-overlay"></div>
-<div class="dest-info"><div class="dest-name">Anamalai Tiger Reserve</div><div class="dest-tag">Wildlife · Elephant Safari · Topslip</div></div>
-<a href="destinations.html#anamalai"></a>
-</div>
-<div class="dest-card">
-<div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80')"></div>
-<div class="dest-overlay"></div>
-<div class="dest-info"><div class="dest-name">Coimbatore City</div><div class="dest-tag">Temples · Culture · Heritage Walks</div></div>
-<a href="destinations.html#coimbatore"></a>
-</div>
-<div class="dest-card">
-<div class="dest-bg" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80')"></div>
-<div class="dest-overlay"></div>
-<div class="dest-info"><div class="dest-name">Siruvani</div><div class="dest-tag">Crystal Waters · Scenic Dam · Forest Walks</div></div>
-<a href="destinations.html#siruvani"></a>
-</div>
-</div>
-<div style="text-align:center;margin-top:32px">
-<a href="destinations.html" class="view-all">Explore All Destinations →</a>
-</div>
-</div>
-</section>
-<section id="why">
-<div class="container">
-<div class="section-hdr">
-<div class="section-tag" style="color:var(--gold)">✦ The Coimbatour Promise</div>
-<h2 class="section-h2">Why Travellers Choose Us</h2>
-<p class="section-sub">We're not just a travel agency. We're a team of passionate locals who've spent years curating the finest experiences the Western Ghats has to offer.</p>
-</div>
-<div class="why-grid">
-<div class="why-card">
-<div class="why-icon">🗺️</div>
-<div class="why-title">Deep Local Knowledge</div>
-<p class="why-text">Born and bred in Coimbatore, our team knows every trail, temple, and hidden waterfall. We take you beyond the tourist map.</p>
-</div>
-<div class="why-card">
-<div class="why-icon">🌡️</div>
-<div class="why-title">100% Safe &amp; Reliable</div>
-<p class="why-text">All our drivers are verified, vehicles are insured, and our guides are certified. Your safety is our absolute priority — always.</p>
-</div>
-<div class="why-card">
-<div class="why-icon">🎯</div>
-<div class="why-title">Tailored Itineraries</div>
-<p class="why-text">No two groups are the same. Every itinerary we build is customised to your interests, travel pace, and budget — nothing off-the-shelf.</p>
-</div>
-<div class="why-card">
-<div class="why-icon">📍</div>
-<div class="why-title">24/7 On-Ground Support</div>
-<p class="why-text">From airport pickup to last-day drop, you have a dedicated point of contact available round the clock during your journey.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="testimonials">
-<div class="container">
-<div class="section-hdr centered">
-<div class="section-tag">✦ Guest Stories</div>
-<h2 class="section-h2">What Our Travellers Say</h2>
-<p class="section-sub">Real experiences from real guests who've explored the Western Ghats with us.</p>
-</div>
-<div class="testi-grid">
-<div class="testi-card">
-<div class="testi-badge">Verified Guest</div>
-<div class="testi-quote">"</div>
-<div class="testi-stars">★★★★★</div>
-<p class="testi-text">The Valparai trip was beyond what I imagined. We saw wild elephants from just 30 feet away! Our guide knew exactly where to take us and the accommodation was pristine. Will absolutely be back.</p>
-<div class="testi-name">Rajesh &amp; Family, Chennai</div>
-<div class="testi-role">Valparai Wilderness Retreat · December 2024</div>
-</div>
-<div class="testi-card">
-<div class="testi-badge">Verified Guest</div>
-<div class="testi-quote">"</div>
-<div class="testi-stars">★★★★★</div>
-<p class="testi-text">Organised a 3-day team outing through Coimbatour DMC for 25 people. Everything was perfectly on time â transfers, meals, activities. The team handled every last detail without a single hiccup. Outstanding professionalism.</p>
-<div class="testi-name">Priya Subramaniam, Bangalore</div>
-<div class="testi-role">Corporate Team Outing · February 2025</div>
-</div>
-<div class="testi-card">
-<div class="testi-badge">Verified Guest</div>
-<div class="testi-quote">"</div>
-<div class="testi-stars">★★★★★</div>
-<p class="testi-text">Our honeymoon was absolutely magical. The surprise candle-lit dinner at the hilltop resort, the spa, the private nature walk â all arranged by Coimbatour. They genuinely care about making it special.</p>
-<div class="testi-name">Arun &amp; Divya, Coimbatore</div>
-<div class="testi-role">Honeymoon Escape · January 2025</div>
-</div>
-</div>
-</div>
-</section>
-<section id="cta-banner">
-<div class="container" style="position:relative;z-index:1">
-<h2 class="cta-h2">Ready to Plan Your Perfect Trip?</h2>
-<p class="cta-sub">Tell us where you want to go and we'll craft a bespoke itinerary just for you — completely free.</p>
-<a href="contact.html" class="btn btn-white">Start Planning Now →</a>
-</div>
-</section>
-<footer>
-<div class="footer-grid">
-<div class="footer-brand">
-<div class="footer-logo">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" style="height:36px;width:auto;display:block"><text x="1" y="36" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="40" fill="#29ABE2">C</text><text x="38" y="22" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" fill="#ffffff">COIMBATOUR DMC</text><text x="38" y="36" font-family="Arial,Helvetica,sans-serif" font-size="7" fill="#C8963E" letter-spacing="0.5">YOUR FRIENDLY DMC FOR COIMBATORE</text></svg>
-</div>
-<p>Your trusted local partner for curated travel experiences across Coimbatore, Ooty, Valparai, and the Western Ghats since 2014.</p>
-<div class="footer-social">
-<a href="#" title="Instagram">📸</a>
-<a href="#" title="Facebook">📍</a>
-<a href="#" title="WhatsApp">💬</a>
-<a href="#" title="YouTube">▶️</a>
-</div>
-</div>
-<div class="footer-col">
-<h4>Quick Links</h4>
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="packages.html">Tour Packages</a></li>
-<li><a href="destinations.html">Destinations</a></li>
-<li><a href="contact.html">Plan My Trip</a></li>
-<li><a href="../public/support.html">Customer Support</a></li>
-</ul>
-</div>
-<div class="footer-col">
-<h4>Tour Categories</h4>
-<ul>
-<li><a href="packages.html?cat=Hill+Station">Hill Station Tours</a></li>
-<li><a href="packages.html?cat=Nature">Wildlife &amp; Nature</a></li>
-<li><a href="packages.html?cat=Adventure">Adventure Tours</a></li>
-<li><a href="packages.html?cat=Spiritual">Spiritual Retreats</a></li>
-<li><a href="packages.html?cat=MICE">Corporate / MICE</a></li>
-</ul>
-</div>
-<div class="footer-col">
-<h4>Contact Us</h4>
-<div class="footer-contact-item"><span>📍</span><span>+91 6374 56 0077</span></div>
-<div class="footer-contact-item"><span>💬</span><span>WhatsApp: +91 6374 56 0077</span></div>
-<div class="footer-contact-item"><span>✉️</span><span>vanga@coimbatourindia.com</span></div>
-<div class="footer-contact-item"><span>📍</span><span>Coimbatore, Tamil Nadu â 641 XXX</span></div>
-<div class="footer-contact-item"><span>📍</span><span>Mon – Sat: 9:00 AM – 7:00 PM</span></div>
-</div>
-</div>
-<div class="footer-bottom">
-<span>© 2026 Coimbatour DMC. All rights reserved.</span>
-<div>
-<a href="#">Privacy Policy</a>
-<a href="#">Terms of Service</a>
-<a href="../public/?v=5">Staff Login</a>
-</div>
-</div>
-</footer>
-<script>
-const SB_URL = 'https://isszqzwkjznilqwnfpyc.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzc3pxendranpuaWxxd25mcHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDM4NjksImV4cCI6MjA5ODg3OTg2OX0.W7gLm9fD1HQyY84EoRwYixsE0bxtDusmZwUUYiK2Lqk';
-const CAT_IMAGES = {
-'Cultural':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-'Hill Station':'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=600&q=80',
-'Nature / Wildlife':'https://images.unsplash.com/photo-1585016495481-91c3a69eb74f?w=600&q=80',
-'Adventure':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
-'Day Trip':'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&q=80',
-'Spiritual':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-'Family':'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=600&q=80',
-'Heritage':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-'Agri Tourism':'https://images.unsplash.com/photo-1569880153113-76e33fc52d5f?w=600&q=80',
-'MICE':'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',
-'Romantic':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
-'Eco Tour':'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&q=80',
-'default':'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'
-};
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-nav.classList.toggle('scrolled', window.scrollY > 60);
-});
-window.addEventListener('scroll', () => {
-const heroEl = document.getElementById('hero-bg');
-if(heroEl) heroEl.style.transform = `scale(1.05) translateY(${window.scrollY * 0.15}px)`;
-});
-function toggleMobileMenu(){
-const mm = document.getElementById('mobile-menu');
-mm.style.display = mm.style.display === 'flex' ? 'none' : 'flex';
-}
-async function loadFeaturedPackages(){
-try {
-const res = await fetch(`${SB_URL}/rest/v1/app_data?select=value&data_key=eq.packages`, {
-headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-});
-const rows = await res.json();
-const packages = (rows.length && Array.isArray(rows[0].value)) ? rows[0].value : [];
-const active = packages.filter(p => p.status === 'Active' || !p.status).slice(0, 3);
-renderPackageCards(active);
-} catch(e) {
-document.getElementById('pkg-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888">Unable to load packages right now. Please <a href="contact.html" style="color:var(--teal)">contact us</a> for details.</div>`;
-}
-}
-function renderPackageCards(pkgs){
-const grid = document.getElementById('pkg-grid');
-if(!pkgs.length){
-grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888">No packages available right now.</div>`;
-return;
-}
-grid.innerHTML = pkgs.map(p => {
-const img = CAT_IMAGES[p.category] || CAT_IMAGES['default'];
-const price = p.pricePerPax || p.basePrice || 0;
-return `
-<div class="pkg-card" onclick="location.href='packages.html?id=${p.id}'">
-<div class="pkg-img" style="background-image:url('${img}')">
-<div class="pkg-img-overlay"></div>
-<div class="pkg-badge">${p.category || 'Tour'}</div>
-<div class="pkg-dur">⏱ ${p.duration || 1} Day${p.duration > 1 ? 's' : ''}</div>
-</div>
-<div class="pkg-body">
-<div class="pkg-name">${p.name || 'Tour Package'}</div>
-<div class="pkg-dest">📍 ${(p.destinations || '').split(',').slice(0,2).join(' · ')}</div>
-<div class="pkg-incl">â ${p.inclusions || 'Contact us for details'}</div>
-<div class="pkg-footer">
-<div class="pkg-price">₹${price.toLocaleString('en-IN')}<small>per person onwards</small></div>
-<button class="pkg-enquire" onclick="event.stopPropagation();location.href='contact.html?pkg=${encodeURIComponent(p.name)}'">Enquire →</button>
-</div>
-</div>
-</div>`;
-}).join('');
-}
-loadFeaturedPackages();
-</script>
+
+  <!-- ==========================================================================
+       TOP NAVIGATION BAR
+       ========================================================================== -->
+  <nav id="navbar">
+    <div class="container nav-wrap">
+      <a class="nav-brand" data-view="home">
+        <!-- User Uploaded Luxury Golden Monogram Emblem Logo -->
+        <img src="assets/images/coimbatore_dmc_logo.png" alt="Coimbatour DMC Logo" class="brand-logo-img" />
+        <div class="brand-title">
+          <span class="brand-name">COIMBATOUR DMC</span>
+          <span class="brand-subtitle">Your Friendly DMC for Coimbatore</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a class="nav-link active" data-view="home">Home</a></li>
+        <li><a class="nav-link" data-view="destinations">Destinations</a></li>
+        <li><a class="nav-link" data-view="packages">Tour Packages</a></li>
+        <li><a class="nav-link" data-view="contact">Contact & Enquiry</a></li>
+        <li class="mobile-only-item" style="width:100%; margin-top:8px;">
+          <button class="btn-luxury trigger-chat" style="width:100%; justify-content:center; padding:12px;">Plan My Trip →</button>
+        </li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="tel:+916374560077" class="btn-outline-gold">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>24/7 Hotline</span>
+        </a>
+        <button class="btn-luxury trigger-chat">Plan My Trip →</button>
+        <button class="mobile-toggle" aria-label="Toggle Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================================================
+       VIEW 1: HOME VIEW
+       ========================================================================== -->
+  <div id="view-home" class="app-view">
+    <!-- Hero Section -->
+    <header class="hero-section">
+      <video id="heroVideo" class="hero-video-bg" autoplay loop muted playsinline poster="assets/images/nilgiris_mist.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-misty-mountain-range-and-forest-41135-large.mp4" type="video/mp4">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-over-a-green-mountain-forest-41584-large.mp4" type="video/mp4">
+      </video>
+      
+      <div class="hero-overlay"></div>
+
+      <div class="container hero-content">
+        <span class="hero-badge">✦ YOUR LOCAL DMC PARTNER SINCE 2014 ✦</span>
+        <h1 class="hero-title">Unveil Coimbatore & The Western Ghats</h1>
+        <p class="hero-subtitle">
+          Expertly crafted tours to Ooty, Valparai, Anamalai Tiger Reserve, Siruvani, and Coimbatore. Your trusted local partner for unforgettable experiences in South India.
+        </p>
+
+        <!-- Floating Quick Search Box -->
+        <div class="hero-search-box">
+          <div class="search-field">
+            <label>Destination</label>
+            <select id="searchDest">
+              <option value="">All Regions</option>
+              <option value="Ooty">Ooty & Nilgiris</option>
+              <option value="Valparai">Valparai & Hills</option>
+              <option value="Anamalai">Anamalai Wildlife</option>
+              <option value="Coimbatore">Coimbatore & Spiritual</option>
+            </select>
+          </div>
+
+          <div class="search-field">
+            <label>Trip Duration</label>
+            <select id="searchDuration">
+              <option value="">Any Duration</option>
+              <option value="3">2 - 3 Days</option>
+              <option value="5">4 - 5 Days</option>
+              <option value="7">6+ Days Grand Tour</option>
+            </select>
+          </div>
+
+          <div class="search-field">
+            <label>Experience Type</label>
+            <select id="searchType">
+              <option value="">All Categories</option>
+              <option value="hill-station">Hill Station Retreat</option>
+              <option value="wildlife">Wildlife Safari</option>
+              <option value="spiritual">Spiritual Sanctuary</option>
+              <option value="adventure">Adventure & Trek</option>
+            </select>
+          </div>
+
+          <button id="heroSearchBtn" class="btn-search">
+            <span>Explore Tours</span> ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls with Clean Vector SVG Icons -->
+      <div class="hero-controls">
+        <button id="muteToggle" class="control-btn" title="Toggle Sound">
+          <svg class="icon-svg sound-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 0 19 12v-1"/><path d="M5 11v1a7 7 0 0 0 11.95 4.95"/></svg>
+        </button>
+        <button id="playToggle" class="control-btn" title="Pause/Play Video">
+          <svg class="icon-svg play-state" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Home Featured Destinations -->
+    <section class="section-padding section-dark">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">EXPLORE DESTINATIONS</span>
+          <h2 class="section-title">Around Coimbatore & The Western Ghats</h2>
+          <p class="section-desc">From misty hill stations to dense tiger reserves, every destination around Coimbatore is a world of its own.</p>
+        </div>
+
+        <div class="dest-grid">
+          <!-- Card 1 -->
+          <div class="dest-card" data-view="destinations">
+            <img src="assets/images/ooty_tea.jpg" alt="Ooty Tea Slopes" class="dest-card-img" />
+            <div class="dest-card-overlay">
+              <span class="dest-badge-tag">2,240M ALTITUDE</span>
+              <h3 class="dest-card-title">Ooty & Nilgiris</h3>
+              <div class="dest-card-info">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 88 km from Coimbatore</span>
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> All Year Round</span>
+              </div>
+              <p class="dest-card-desc">Rolling emerald tea plantations, mountain lakes, and historic colonial charm.</p>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="dest-card" data-view="destinations">
+            <img src="assets/images/ooty_train.jpg" alt="Nilgiri Toy Train" class="dest-card-img" />
+            <div class="dest-card-overlay">
+              <span class="dest-badge-tag">UNESCO HERITAGE</span>
+              <h3 class="dest-card-title">Nilgiri Toy Train & Coonoor</h3>
+              <div class="dest-card-info">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M16 19l2 3"/></svg> Historic Railway</span>
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg> Tea Estates</span>
+              </div>
+              <p class="dest-card-desc">Traverse historic stone bridges and misty mountain tunnels on the UNESCO railway.</p>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="dest-card" data-view="destinations">
+            <img src="assets/images/valparai_tea.jpg" alt="Valparai" class="dest-card-img" />
+            <div class="dest-card-overlay">
+              <span class="dest-badge-tag">40 HAIRPIN BENDS</span>
+              <h3 class="dest-card-title">Valparai Hills</h3>
+              <div class="dest-card-info">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 104 km from Coimbatore</span>
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg> Sholayar Dam</span>
+              </div>
+              <p class="dest-card-desc">Secluded tea plantations, hairpin curves, and serene mountain vistas.</p>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="dest-card" data-view="destinations">
+            <img src="assets/images/anamalai_wildlife.jpg" alt="Anamalai Elephant Safari" class="dest-card-img" />
+            <div class="dest-card-overlay">
+              <span class="dest-badge-tag">TIGER RESERVE</span>
+              <h3 class="dest-card-title">Anamalai Tiger Reserve</h3>
+              <div class="dest-card-info">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 74 km from Coimbatore</span>
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Jungle Safari</span>
+              </div>
+              <p class="dest-card-desc">Pristine tropical rainforest teeming with wild Asian elephants and wildlife safaris.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top:40px;">
+          <button class="btn-outline-gold" data-view="destinations">View All Destinations →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Home Featured Packages -->
+    <section class="section-padding">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">SIGNATURE EXPERIENCES</span>
+          <h2 class="section-title">Handcrafted Tour Packages</h2>
+          <p class="section-desc">Itineraries that blend adventure, culture, and comfort made for every kind of traveler.</p>
+        </div>
+
+        <div class="package-grid package-grid-target"></div>
+
+        <div style="text-align:center; margin-top:40px;">
+          <button class="btn-luxury" data-view="packages">View All Tour Packages →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us (REPLACED EMOJIS WITH CLEAN GOLD VECTOR SVG ICONS) -->
+    <section class="section-padding section-dark">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">WHY TRAVELLERS CHOOSE US</span>
+          <h2 class="section-title">Born & Bred In Coimbatore</h2>
+          <p class="section-desc">We're not just a travel agency. We're a team of passionate locals who know every trail and hidden waterfall.</p>
+        </div>
+
+        <div class="feature-grid">
+          <!-- Card 1: Local Experts -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </div>
+            <h3 class="feature-title">Local Experts</h3>
+            <p class="feature-desc">Our team knows every hidden viewpoint and heritage trail beyond the regular tourist map.</p>
+          </div>
+
+          <!-- Card 2: Verified Safety -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <h3 class="feature-title">Verified Safety</h3>
+            <p class="feature-desc">Insured vehicles and certified mountain drivers ensure your safety is always our priority.</p>
+          </div>
+
+          <!-- Card 3: 100% Customized -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h3 class="feature-title">100% Customized</h3>
+            <p class="feature-desc">Every itinerary is customized to your travel pace, preferences, and budget.</p>
+          </div>
+
+          <!-- Card 4: 24/7 Support -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <h3 class="feature-title">24/7 Support</h3>
+            <p class="feature-desc">Dedicated point of contact available round-the-clock from pickup to drop.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================================================
+       VIEW 2: TOUR PACKAGES VIEW
+       ========================================================================== -->
+  <div id="view-packages" class="app-view hidden">
+    <div class="subpage-hero">
+      <video class="subpage-hero-video" autoplay loop muted playsinline poster="assets/images/ooty_tea.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-over-a-green-mountain-forest-41584-large.mp4" type="video/mp4">
+      </video>
+      <div class="subpage-hero-overlay"></div>
+      <div class="subpage-hero-content">
+        <span class="hero-badge">✦ CURATED JOURNEYS ✦</span>
+        <h1 style="font-family:var(--font-serif); font-size:clamp(2.2rem, 4vw, 3.2rem); color:#fff; margin-bottom:14px; text-shadow: 0 4px 20px rgba(0,0,0,0.6);">Handcrafted Tour Packages</h1>
+        <p style="color:rgba(255,255,255,0.9); font-size:1.05rem; line-height:1.6;">Browse our curated itineraries across Coimbatore, Ooty, Valparai, Anamalai, and the Western Ghats.</p>
+      </div>
+    </div>
+
+    <section class="section-padding">
+      <div class="container">
+        <div class="filter-bar">
+          <button class="filter-chip active" data-category="all">All Experiences</button>
+          <button class="filter-chip" data-category="hill-station">Hill Station Tours</button>
+          <button class="filter-chip" data-category="wildlife">Wildlife & Nature</button>
+          <button class="filter-chip" data-category="spiritual">Spiritual Retreats</button>
+          <button class="filter-chip" data-category="adventure">Adventure Treks</button>
+        </div>
+
+        <div class="package-grid package-grid-target"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================================================
+       VIEW 3: DESTINATIONS VIEW
+       ========================================================================== -->
+  <div id="view-destinations" class="app-view hidden">
+    <div class="subpage-hero">
+      <video class="subpage-hero-video" autoplay loop muted playsinline poster="assets/images/valparai_tea.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-misty-mountain-range-and-forest-41135-large.mp4" type="video/mp4">
+      </video>
+      <div class="subpage-hero-overlay"></div>
+      <div class="subpage-hero-content">
+        <span class="hero-badge">✦ THE WESTERN GHATS DIRECTORY ✦</span>
+        <h1 style="font-family:var(--font-serif); font-size:clamp(2.2rem, 4vw, 3.2rem); color:#fff; margin-bottom:14px; text-shadow: 0 4px 20px rgba(0,0,0,0.6);">Explore Destinations</h1>
+        <p style="color:rgba(255,255,255,0.9); font-size:1.05rem; line-height:1.6;">Discover Ooty, Valparai, Anamalai Tiger Reserve, Siruvani, and hidden gems around Coimbatore.</p>
+      </div>
+    </div>
+
+    <section class="section-padding">
+      <div class="container">
+        <!-- Ooty -->
+        <div class="dest-row">
+          <div>
+            <img src="assets/images/ooty_tea.jpg" alt="Ooty Tea Estates" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">2,240M ALTITUDE</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Ooty — Queen of Hill Stations</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              Surrounded by misty blue mountains and endless tea gardens, Ooty offers cool pine forests, botanical splendor, and serene lake boat rides.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Distance:</strong> 88 km from Coimbatore</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Best Season:</strong> Oct - June</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Highlight:</strong> Toy Train & Doddabetta</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Stay:</strong> Colonial Tea Bungalows</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Ooty Trip →</button>
+          </div>
+        </div>
+
+        <!-- Valparai -->
+        <div class="dest-row reverse">
+          <div>
+            <img src="assets/images/valparai_tea.jpg" alt="Valparai Hairpin Bends" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">40 HAIRPIN BENDS</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Valparai & Sholayar Dam</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              A tranquil plateau 1,075m above sea level with 40 thrilling hairpin bends, lush tea estates, and wild animal corridors.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Distance:</strong> 104 km from Coimbatore</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Best Season:</strong> Sept - May</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Wildlife:</strong> Lion-tailed Macaque</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Dam:</strong> Sholayar & Aliyar</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Valparai Trip →</button>
+          </div>
+        </div>
+
+        <!-- Anamalai -->
+        <div class="dest-row">
+          <div>
+            <img src="assets/images/anamalai_wildlife.jpg" alt="Anamalai Elephants" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">TIGER RESERVE</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Anamalai Tiger Reserve</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              Protected tropical rainforest ecosystem teeming with wild Asian elephants, tigers, leopards, and rare endemic bird species.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Distance:</strong> 74 km from Coimbatore</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Safari:</strong> Topslip Jungle Safari</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Wildlife Safari →</button>
+          </div>
+        </div>
+      </div>
+
+        <!-- Siruvani -->
+        <div class="dest-row reverse">
+          <div>
+            <img src="assets/images/siruvani_waterfall.jpg" alt="Siruvani Waterfalls" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">WORLD'S 2ND TASTIEST WATER</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Siruvani Waterfalls</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              Nestled in the dense forests of the Western Ghats, Siruvani is renowned for its crystal-clear water — ranked among the world's tastiest. The forested trail to the dam and falls is a spectacular nature walk.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Distance:</strong> 37 km from Coimbatore</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Best Season:</strong> Aug – Feb</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Highlight:</strong> Crystal clear dam water</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Activity:</strong> Trekking &amp; Rappelling</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Siruvani Adventure &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Coimbatore & Adiyogi -->
+        <div class="dest-row">
+          <div>
+            <img src="assets/images/coimbatore_adiyogi.jpg" alt="Adiyogi Shiva Statue" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">SPIRITUAL HUB</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Coimbatore &amp; Adiyogi</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              Home to the iconic 112-foot Adiyogi Shiva statue at Isha Yoga Center, Coimbatore blends ancient temple culture with modern spiritual tourism. The Dhyanalinga meditation dome and Linga Bhairavi temple are unmissable.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Highlight:</strong> 112ft Adiyogi Statue</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Best Time:</strong> All year round</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Also Visit:</strong> Marudhamalai Temple</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Cuisine:</strong> Kongunadu Thali</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Spiritual Journey &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Kotagiri & Coonoor -->
+        <div class="dest-row reverse">
+          <div>
+            <img src="assets/images/nilgiris_mist.jpg" alt="Kotagiri Mist" class="dest-main-img" />
+          </div>
+          <div>
+            <span class="dest-badge-tag">OLDEST NILGIRI HILL STATION</span>
+            <h2 style="font-family:var(--font-serif); font-size:2.4rem; color:var(--emerald-deep); margin-bottom:14px;">Kotagiri &amp; Coonoor</h2>
+            <p style="color:var(--text-muted); line-height:1.7; margin-bottom:20px;">
+              Kotagiri is the oldest and quietest hill station in the Nilgiris — perfect for couples seeking solitude. Coonoor is known for its 19th-century colonial charm, Sim's Park, and access to the famous UNESCO toy train.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Distance:</strong> 95 km from Coimbatore</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Best Season:</strong> Oct – April</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Waterfall:</strong> Catherine Falls</div>
+              <div style="background:var(--ivory-subtle); padding:12px 16px; border-radius:8px; font-size:0.85rem;"><strong>Viewpoint:</strong> Kodanad &amp; Lamb's Rock</div>
+            </div>
+            <button class="btn-luxury trigger-chat">Plan Kotagiri Escape &rarr;</button>
+          </div>
+        </div>
+
+    </section>
+
+    <!-- Best Time To Visit Guide -->
+    <section class="section-padding section-dark">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">SEASONAL GUIDE</span>
+          <h2 class="section-title">Best Time To Visit</h2>
+          <p class="section-desc">Plan your journey according to the changing weather across the Western Ghats.</p>
+        </div>
+
+        <div class="best-time-grid">
+          <div class="season-card">
+            <div class="season-title">Summer (Peak)</div>
+            <span class="month-badge">March - June</span>
+            <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">Pleasant hill temperatures (15°C - 22°C). Ideal for sightseeing, flower shows, and escaping city heat.</p>
+          </div>
+
+          <div class="season-card">
+            <div class="season-title">Monsoon (Lush)</div>
+            <span class="month-badge">July - September</span>
+            <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">Lush green landscapes, roaring waterfalls at Siruvani, and atmospheric misty drives.</p>
+          </div>
+
+          <div class="season-card">
+            <div class="season-title">Winter (Crisp)</div>
+            <span class="month-badge">October - February</span>
+            <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">Crisp cold weather (5°C - 15°C). Clear skies, wildlife safari sightings, and cozy fireplace evenings.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================================================
+       VIEW 4: CONTACT & FAQ VIEW
+       ========================================================================== -->
+  <div id="view-contact" class="app-view hidden">
+    <div class="subpage-hero">
+      <video class="subpage-hero-video" autoplay loop muted playsinline poster="assets/images/siruvani_waterfall.jpg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-over-a-green-mountain-forest-41584-large.mp4" type="video/mp4">
+      </video>
+      <div class="subpage-hero-overlay"></div>
+      <div class="subpage-hero-content">
+        <span class="hero-badge">✦ CONTACT & CONCIERGE ✦</span>
+        <h1 style="font-family:var(--font-serif); font-size:clamp(2.2rem, 4vw, 3.2rem); color:#fff; margin-bottom:14px; text-shadow: 0 4px 20px rgba(0,0,0,0.6);">Send Us Your Requirements</h1>
+        <p style="color:rgba(255,255,255,0.9); font-size:1.05rem; line-height:1.6;">Your direct B2B enquiry channel — tell us your group details and we'll craft a bespoke itinerary.</p>
+      </div>
+    </div>
+
+    <section class="section-padding">
+      <div class="container">
+        <!-- Tab Bar -->
+        <div class="contact-tab-bar">
+          <button class="contact-tab-btn active" data-tab="form">📋 Agency Enquiry Form</button>
+          <button class="contact-tab-btn" data-tab="chat">💬 Concierge Chat</button>
+        </div>
+
+        <!-- Tab 1: B2B Agency Enquiry Form -->
+        <div id="ctab-form" class="contact-tab-pane">
+          <div class="agency-form-wrap">
+            <div class="agency-form-card">
+              <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:24px;line-height:1.6;">A dedicated B2B enquiry form for travel agencies &amp; tour operators. Submit your group requirements and our team will respond within 4 business hours.</p>
+              <div class="af-band">
+                <div class="af-band-label">🏢 Agency Details</div>
+                <div class="form-row-2">
+                  <div class="af-group af-full"><label>Agency / Company Name <span class="af-req">*</span></label><input id="af-agency-name" type="text" placeholder="e.g. Sunrise Holidays Pvt. Ltd." /></div>
+                  <div class="af-group"><label>City <span class="af-req">*</span></label><input id="af-agency-city" type="text" placeholder="e.g. Mumbai" /></div>
+                  <div class="af-group"><label>State</label><input id="af-agency-state" type="text" placeholder="e.g. Maharashtra" /></div>
+                  <div class="af-group af-full"><label>Full Address</label><textarea id="af-agency-address" rows="2" placeholder="Street, area, landmark…"></textarea></div>
+                  <div class="af-group"><label>GSTIN</label><input id="af-agency-gstin" type="text" placeholder="e.g. 29ABCDE1234F1Z5" style="text-transform:uppercase;" /></div>
+                  <div class="af-group"><label>Your Designation</label><input id="af-agency-designation" type="text" placeholder="e.g. Operations Manager" /></div>
+                </div>
+              </div>
+              <div class="af-band" style="margin-top:20px;">
+                <div class="af-band-label">👤 Contact Person</div>
+                <div class="form-row-2">
+                  <div class="af-group"><label>Full Name <span class="af-req">*</span></label><input id="af-name" type="text" placeholder="Your full name" /></div>
+                  <div class="af-group"><label>Phone / WhatsApp <span class="af-req">*</span></label><input id="af-phone" type="tel" placeholder="+91 XXXXX XXXXX" /></div>
+                  <div class="af-group af-full"><label>Email <span class="af-req">*</span></label><input id="af-email" type="email" placeholder="yourname@agency.com" /></div>
+                </div>
+              </div>
+              <div class="af-band" style="margin-top:20px;">
+                <div class="af-band-label">🗺️ Trip Requirements</div>
+                <div class="form-row-2">
+                  <div class="af-group"><label>Preferred Travel Date</label><input id="af-date" type="date" /></div>
+                  <div class="af-group"><label>Number of Pax</label><select id="af-pax"><option value="">Select group size</option><option>2–5 Pax</option><option>6–10 Pax</option><option>11–20 Pax</option><option>21–50 Pax</option><option>51–100 Pax</option><option>100+ Pax</option></select></div>
+                  <div class="af-group"><label>Trip Duration</label><select id="af-duration"><option value="">Select duration</option><option>1 Day (Day Trip)</option><option>2 Days / 1 Night</option><option>3 Days / 2 Nights</option><option>4 Days / 3 Nights</option><option>5 Days / 4 Nights</option><option>6+ Days</option></select></div>
+                  <div class="af-group"><label>Budget / Head</label><select id="af-budget"><option value="">Select budget range</option><option>Below ₹5,000</option><option>₹5,000 – ₹10,000</option><option>₹10,000 – ₹20,000</option><option>₹20,000 – ₹35,000</option><option>₹35,000+</option></select></div>
+                  <div class="af-group af-full"><label>Destinations of Interest</label>
+                    <div class="af-dest-grid">
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Ooty &amp; Nilgiris"> Ooty &amp; Nilgiris</label>
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Valparai Hills"> Valparai Hills</label>
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Anamalai Tiger Reserve"> Anamalai Tiger Reserve</label>
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Siruvani Waterfalls"> Siruvani Waterfalls</label>
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Coimbatore &amp; Adiyogi"> Coimbatore &amp; Adiyogi</label>
+                      <label class="af-chk-label"><input type="checkbox" class="af-dest-chk" value="Kotagiri &amp; Coonoor"> Kotagiri &amp; Coonoor</label>
+                    </div>
+                  </div>
+                  <div class="af-group"><label>Package / Experience Type</label><select id="af-package"><option value="">Select type</option><option>Hill Station Retreat</option><option>Wildlife Safari</option><option>Spiritual Retreat</option><option>Adventure Trek</option><option>Corporate / MICE</option><option>Honeymoon Special</option><option>Custom Itinerary</option></select></div>
+                  <div class="af-group af-full"><label>Additional Requirements / Notes</label><textarea id="af-message" rows="3" placeholder="Special requests, accommodation preferences, dietary needs, accessibility…"></textarea></div>
+                </div>
+              </div>
+              <div id="af-error" style="display:none;margin-top:14px;padding:12px 16px;background:#fff0f0;border-left:3px solid #e05252;border-radius:8px;color:#b33;font-size:0.88rem;"></div>
+              <div id="af-success" style="display:none;margin-top:14px;padding:16px 20px;background:#eafaf4;border-left:3px solid #2e7d32;border-radius:8px;color:#1b5e20;font-size:0.92rem;">&#10003; <strong>Enquiry submitted successfully!</strong> Our team will reach out within 4 business hours. Check your inbox for a confirmation.</div>
+              <form id="agencyEnquiryForm" onsubmit="return false;" style="margin-top:24px;">
+                <button id="af-submit-btn" type="submit" onclick="submitAgencyForm()" class="btn-luxury" style="padding:14px 32px;font-size:1rem;width:100%;">Submit Enquiry &#8594;</button>
+              </form>
+            </div>
+            <div class="agency-form-sidebar">
+              <div style="background:var(--emerald-deep);color:#fff;padding:32px;border-radius:var(--radius-lg);border:1px solid var(--gold-primary);margin-bottom:24px;">
+                <h3 style="font-family:var(--font-title);color:var(--gold-primary);font-size:1.05rem;margin-bottom:20px;letter-spacing:1px;">COIMBATOUR DMC</h3>
+                <div style="display:flex;flex-direction:column;gap:16px;font-size:0.88rem;">
+                  <div><strong style="color:var(--gold-primary);">&#128205; Address</strong><br><span style="color:rgba(255,255,255,0.8);">Race Course Road, Coimbatore, Tamil Nadu 641018</span></div>
+                  <div><strong style="color:var(--gold-primary);">&#128222; Hotline</strong><br><a href="tel:+916374560077" style="color:rgba(255,255,255,0.9);text-decoration:none;">+91 6374 56 0077</a></div>
+                  <div><strong style="color:var(--gold-primary);">&#9993; Email</strong><br><a href="mailto:vanga@coimbatourindia.com" style="color:rgba(255,255,255,0.9);text-decoration:none;">vanga@coimbatourindia.com</a></div>
+                  <div><strong style="color:var(--gold-primary);">&#128336; Office Hours</strong><br><span style="color:rgba(255,255,255,0.8);">Mon &ndash; Sat: 9:00 AM &ndash; 7:00 PM IST</span></div>
+                </div>
+                <a href="https://wa.me/916374560077?text=Hi%20Coimbatour%20DMC,%20I%20have%20a%20group%20enquiry" target="_blank" class="btn-luxury" style="display:block;margin-top:20px;text-align:center;text-decoration:none;padding:10px 16px;font-size:0.85rem;">WhatsApp Us &#8599;</a>
+              </div>
+              <div style="background:var(--ivory-card);padding:24px;border-radius:var(--radius-lg);border:1px solid var(--ivory-subtle);">
+                <h4 style="font-family:var(--font-title);color:var(--emerald-deep);font-size:0.9rem;margin-bottom:12px;letter-spacing:1px;">WHY SEND US A BRIEF?</h4>
+                <ul style="list-style:none;padding:0;margin:0;font-size:0.85rem;color:var(--text-muted);line-height:2;">
+                  <li>&#10004; Dedicated sales person assigned</li>
+                  <li>&#10004; Customised itinerary within 4 hrs</li>
+                  <li>&#10004; Competitive net rates for agents</li>
+                  <li>&#10004; GST-compliant invoicing</li>
+                  <li>&#10004; Real-time availability check</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Concierge Chat -->
+        <div id="ctab-chat" class="contact-tab-pane hidden">
+          <div style="max-width:620px;margin:0 auto;text-align:center;padding:40px 20px;">
+            <div style="width:72px;height:72px;background:var(--emerald-deep);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--emerald-deep);margin-bottom:12px;">Interactive Concierge</h2>
+            <p style="color:var(--text-muted);line-height:1.7;margin-bottom:28px;">Our trip concierge helps you configure a personalised itinerary in under 2 minutes. Tell us your departure city and we'll recommend destinations, durations, and estimate pricing.</p>
+            <button class="btn-luxury trigger-chat" style="padding:16px 36px;font-size:1rem;">Launch Concierge Chat &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-padding section-dark">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">FREQUENTLY ASKED QUESTIONS</span>
+          <h2 class="section-title">Common Traveller Queries</h2>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-item"><div class="faq-question"><span>Which airport is closest to Ooty and Valparai?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">Coimbatore International Airport (CJB) is closest to Ooty (88 km), Valparai (104 km), and Anamalai. Our drivers meet you directly at arrivals.</div></div>
+          <div class="faq-item"><div class="faq-question"><span>Can we book Nilgiri Toy Train tickets through Coimbatour DMC?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">Yes! We handle First Class toy train seat reservations for Ooty to Coonoor as part of our Nilgiri tour packages.</div></div>
+          <div class="faq-item"><div class="faq-question"><span>Do you offer customised packages for agencies and corporates?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">Absolutely. We craft 100% bespoke B2B itineraries tailored to group size, meal choices, vehicle preferences, and net budget. GST invoicing provided.</div></div>
+          <div class="faq-item"><div class="faq-question"><span>What vehicles do you provide for mountain travel?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">We maintain a fleet of modern, insured luxury SUVs (Innova Crysta, Fortuner) and minibuses driven by certified local mountain drivers.</div></div>
+          <div class="faq-item"><div class="faq-question"><span>How quickly do you respond to agency enquiries?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">We respond to all agency enquiries within 4 business hours with a detailed day-by-day itinerary and competitive net pricing.</div></div>
+          <div class="faq-item"><div class="faq-question"><span>Best months to visit Ooty and Valparai?</span><span class="faq-icon">&#9660;</span></div><div class="faq-answer">October to June is ideal. March–June for escaping summer heat; October–February for crisp winter skies and wildlife sightings. Avoid peak monsoon (July–Aug) for mountain driving.</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================================================
+       CONCIERGE CHAT MODAL
+       ========================================================================== -->
+  <div id="chatModalBackdrop" class="modal-backdrop">
+    <div class="chat-modal-box">
+      <div class="chat-modal-header">
+        <div class="chat-header-info">
+          <div class="chat-bot-avatar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--bg-dark)" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+          <div>
+            <div class="chat-header-title">Coimbatour DMC Concierge</div>
+            <div class="chat-header-status"><span class="status-dot"></span> Active Local Assistant</div>
+          </div>
+        </div>
+        <button id="closeChatModal" class="modal-close-btn">✕</button>
+      </div>
+
+      <div id="chatModalBody" class="chat-modal-body"></div>
+
+      <div class="chat-modal-footer">
+        <input type="text" id="chatInputField" class="chat-input-field" placeholder="Type your departure city or response..." />
+        <button id="chatSendBtn" class="chat-send-btn">Send ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       PACKAGE DETAIL MODAL
+       ========================================================================== -->
+  <div id="pkgModalBackdrop" class="modal-backdrop">
+    <div id="pkgModalContent"></div>
+  </div>
+
+  <!-- ==========================================================================
+       ENTERPRISE FOOTER
+       ========================================================================== -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="nav-brand" data-view="home" style="margin-bottom:12px;">
+            <img src="assets/images/coimbatore_dmc_logo.png" alt="Coimbatour DMC Logo" class="brand-logo-img" />
+            <div class="brand-title">
+              <span class="brand-name">COIMBATOUR DMC</span>
+              <span class="brand-subtitle">Your Friendly DMC for Coimbatore</span>
+            </div>
+          </a>
+          <p>Your trusted direct Destination Management Company for curated travel across Coimbatore, Ooty, Valparai, and the Western Ghats since 2014.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>EXPLORE</h4>
+          <ul class="footer-links">
+            <li><a data-view="destinations">Ooty & Nilgiris</a></li>
+            <li><a data-view="destinations">Valparai Hills</a></li>
+            <li><a data-view="destinations">Anamalai Tiger Reserve</a></li>
+            <li><a data-view="destinations">Coimbatore & Adiyogi</a></li>
+            <li><a data-view="destinations">Siruvani Waterfalls</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>TOUR CATEGORIES</h4>
+          <ul class="footer-links">
+            <li><a data-view="packages">Hill Station Tours</a></li>
+            <li><a data-view="packages">Wildlife & Nature</a></li>
+            <li><a data-view="packages">Spiritual Retreats</a></li>
+            <li><a data-view="packages">Adventure Treks</a></li>
+            <li><a data-view="packages">Corporate / MICE</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>CONTACT US</h4>
+          <p style="font-size:0.88rem; color:rgba(255,255,255,0.7); line-height:1.7;">
+            Race Course Road, Coimbatore, TN 641018<br>
+            +91 6374 56 0077<br>
+            vanga@coimbatourindia.com
+          </p>
+          <div style="margin-top:16px;">
+            <button class="btn-luxury trigger-chat" style="padding:8px 16px; font-size:0.75rem;">Plan My Trip →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Coimbatour DMC. All Rights Reserved.</div>
+        <div>Your Friendly DMC for Coimbatore & Western Ghats</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
 </html>
