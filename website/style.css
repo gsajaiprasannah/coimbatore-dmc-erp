@@ -138,9 +138,11 @@ body {
 
 .brand-logo-img {
   height: 48px;
-  width: 48px;
-  border-radius: 12px;
-  object-fit: cover;
+  width: auto;
+  max-width: 160px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: transparent;
   border: 1.5px solid var(--gold-primary);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 10px var(--gold-glow);
   transition: var(--transition);
@@ -1465,6 +1467,8 @@ body {
   }
   .brand-logo-img {
     height: 42px;
+    width: auto;
+    max-width: 130px;
   }
   .brand-name {
     font-size: 0.98rem;
